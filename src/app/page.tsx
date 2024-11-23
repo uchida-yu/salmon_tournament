@@ -193,6 +193,7 @@ const StyledSearchInput = styled.input`
   width: 100%;
   background-color: #333333af;
   color: #fff;
+  font-size: 16px;
 `;
 
 const StyledRecruitPopup = styled.div`
@@ -216,7 +217,7 @@ const StyledRecruitButton = styled.button`
   height: 20px;
   display: flex;
   align-items: center;
-  font-style: italic;
+  font-weight: bold;
 `;
 
 const StyledContactLink = styled.a`
