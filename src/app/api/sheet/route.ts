@@ -25,7 +25,9 @@ export async function GET() {
     }).then((res) => res.json());
 
     return NextResponse.json({
-      response,
+      client_email,
+      private_key,
+      token,
     });
   } catch (error) {
     console.error('APIエラー:', error);
