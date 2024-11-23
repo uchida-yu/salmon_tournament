@@ -11,7 +11,7 @@ export async function GET() {
 
   try {
     // 認証トークンの取得
-    const token = await auth.authorize();
+    // const token = await auth.authorize();
 
     // リクエストURL
     const range = 'Sheet1!A:J'; // 取得する範囲
@@ -27,7 +27,6 @@ export async function GET() {
     return NextResponse.json({
       client_email,
       private_key,
-      token,
     });
   } catch (error) {
     console.error('APIエラー:', error);
