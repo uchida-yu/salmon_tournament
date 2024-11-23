@@ -18,11 +18,11 @@ export async function GET() {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`;
 
     // HTTPリクエスト
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token.access_token}`,
-      },
-    }).then((res) => res.json());
+    // const response = await fetch(url, {
+    //   headers: {
+    //     Authorization: `Bearer ${token.access_token}`,
+    //   },
+    // }).then((res) => res.json());
 
     return NextResponse.json({
       client_email,
