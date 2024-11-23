@@ -25,41 +25,11 @@ export async function GET() {
       },
     }).then((res) => res.json());
 
-    // const response ={
-    //   "range": "Sheet1!A1:G103",
-    //   "majorDimension": "ROWS",
-    //   "values": [
-    //       [
-    //           "タイムスタンプ",
-    //           "主催者名",
-    //           "タイカイ名",
-    //           "日付",
-    //           "開始時刻",
-    //           "終了時刻",
-    //           "申請URL"
-    //       ],
-    //       [
-    //           "2024/11/22 4:50:07",
-    //           "クマサン",
-    //           "イクラ集め大会",
-    //           "2024/11/22",
-    //           "21:00:00",
-    //           "23:00:00",
-    //           "https://test......"
-    //       ],
-    //       [
-    //           "2024/11/22 19:35:48",
-    //           "イカちゃん",
-    //           "イカちゃん杯",
-    //           "2024/11/23",
-    //           "10:00:00",
-    //           "12:00:00",
-    //           "https://xxxxxxx......"
-    //       ]
-    //   ]
-    // }
     return NextResponse.json({
       response,
+      client_email, // FIXME: 消す↓
+      private_key,
+      token,
     });
   } catch (error) {
     console.error('APIエラー:', error);
