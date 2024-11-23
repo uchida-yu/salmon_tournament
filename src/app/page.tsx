@@ -16,7 +16,7 @@ const StyledTitle = styled.h1`
 const StyledLoading = styled.div`
   font-size: 24px;
   text-align: center;
-  margin-bottom: 16px;
+  margin: 32px;
 `;
 
 const StyledHeaderButtonContainer = styled.div`
