@@ -23,7 +23,7 @@ const StyledHeaderButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 16px;
+  margin: 16px 0;
 `;
 
 const RegisterButton = styled.button`
@@ -76,15 +76,22 @@ const StyledTable = styled.table`
   }
 `;
 
+const StyledTr = styled.tr<{ status: "pre" | "end" }>`
+  & td {
+    background-color: ${({ status }) =>
+      status === "pre" ? "#dbef3b" : "#98a832"};
+  }
+`;
+
 const StyledTournament = styled.div`
   font-weight: bold;
 `;
 
-const StyledOrganizer = styled.div`
+const StyledOrganizer = styled.div<{ hasLink: boolean }>`
   margin-top: 4px;
   font-size: 10px;
-  color: #603bff;
-  text-decoration: underline;
+  color: ${({ hasLink }) => (hasLink ? "#603bff" : "#333")};
+  text-decoration: ${({ hasLink }) => (hasLink ? "underline" : "none")};
 `;
 
 const StyledCenter = styled.div`
@@ -102,6 +109,7 @@ const StyledModalLayer = styled.div`
   height: 100%;
   background-color: #000;
   opacity: 0.5;
+  z-index: 2;
 `;
 
 const StyledConfirm = styled.div`
@@ -113,6 +121,7 @@ const StyledConfirm = styled.div`
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 3;
 `;
 
 const StyledConfirmTitle = styled.div`
@@ -186,13 +195,14 @@ const StyledSearchInput = styled.input`
   color: #fff;
 `;
 
-const StyledRecruit = styled.div`
+const StyledRecruitPopup = styled.div`
   position: absolute;
   background-color: #000000c3;
   color: #fff;
   border-radius: 8px;
   display: none;
   padding: 8px;
+  z-index: 1;
 `;
 
 const StyledRecruitButton = styled.button`
@@ -221,10 +231,11 @@ const StyledSearchRecruitLabel = styled.label`
   align-items: center;
   line-height: 1;
   color: #fff;
+  font-size: 14px;
 `;
 const StyledSearchItemLabel = styled.label`
   color: #fff;
-  font-size: 10px;
+  font-size: 16px;
 `;
 
 // ここから機能
@@ -258,15 +269,15 @@ export default function Home() {
     hideClosed: true,
   });
 
-  const sortList = (list: SheetData[], type: keyof SheetData) => {
+  const listSort = (list: SheetData[], type: keyof SheetData) => {
     if (type === "eventDate") {
-      setFilteredList(
-        [...list].sort((a, b) => {
-          const aDate = new Date(`${a[type]}`);
-          const bDate = new Date(`${b[type]}`);
-          return bDate.getTime() - aDate.getTime();
-        })
-      );
+      return [...list].sort((a, b) => {
+        const aDate = new Date(`${a[type]}`);
+        const bDate = new Date(`${b[type]}`);
+        return bDate.getTime() - aDate.getTime();
+      });
+    } else {
+      return list;
     }
   };
 
@@ -293,8 +304,9 @@ export default function Home() {
       String.fromCharCode(match.charCodeAt(0) - 0x60)
     );
 
-  const searchList = () => {
-    const l = sheetData.filter((v) => {
+  const listSearch = (defaultList?: SheetData[]) => {
+    const data = defaultList || sheetData;
+    const l = listSort(data, "eventDate").filter((v) => {
       if (
         search.organizer !== "" &&
         !convertToKana(v.organizer).includes(convertToKana(search.organizer))
@@ -354,13 +366,13 @@ export default function Home() {
     (async () => {
       const list = await googleSheetService.getSheetData();
       setSheetData(list);
-      sortList(list, "eventDate");
+      listSearch(list);
       setLoading(false);
     })();
   }, []);
 
   useEffect(() => {
-    searchList();
+    listSearch();
   }, [search]);
 
   return (
@@ -388,7 +400,9 @@ export default function Home() {
               </RegisterButton>
             </StyledHeaderButtonContainer>
             <StyledSearchContainer>
-              <StyledSearchItemLabel>タイカイ</StyledSearchItemLabel>
+              <StyledSearchItemLabel className="ika-font">
+                タイカイ
+              </StyledSearchItemLabel>
               <StyledSearchContainerRow>
                 <StyledSearchInput
                   type="text"
@@ -405,7 +419,26 @@ export default function Home() {
                   }
                 ></StyledSearchInput>
               </StyledSearchContainerRow>
-              <StyledSearchItemLabel>かいさいにちじ</StyledSearchItemLabel>
+              <StyledSearchItemLabel className="ika-font">
+                にってい
+              </StyledSearchItemLabel>
+              <StyledSearchRecruitLabel
+                className="ika-font"
+                htmlFor="hide-closed"
+              >
+                <input
+                  id="hide-closed"
+                  type="checkbox"
+                  onChange={(e) =>
+                    setSearch({
+                      ...search,
+                      hideClosed: e.target.checked,
+                    })
+                  }
+                  defaultChecked={search.hideClosed}
+                />
+                <div>おわったタイカイをかくす</div>
+              </StyledSearchRecruitLabel>
               <StyledSearchContainerRow>
                 <StyledSearchInput
                   type="date"
@@ -421,23 +454,9 @@ export default function Home() {
                   }
                 ></StyledSearchInput>
               </StyledSearchContainerRow>
-              <StyledSearchContainerRow className="ika-font">
-                <StyledSearchRecruitLabel htmlFor="hide-closed">
-                  <input
-                    id="hide-closed"
-                    type="checkbox"
-                    onChange={(e) =>
-                      setSearch({
-                        ...search,
-                        hideClosed: e.target.checked,
-                      })
-                    }
-                    defaultChecked={search.hideClosed}
-                  />
-                  <div>おわったタイカイをかくす</div>
-                </StyledSearchRecruitLabel>
-              </StyledSearchContainerRow>
-              <StyledSearchItemLabel>ぼしゅう</StyledSearchItemLabel>
+              <StyledSearchItemLabel className="ika-font">
+                ぼしゅう
+              </StyledSearchItemLabel>
               <StyledSearchContainerRow className="ika-font">
                 <StyledSearchRecruitLabel htmlFor="recruitment-pre">
                   <input
@@ -488,7 +507,7 @@ export default function Home() {
                 <tr>
                   <th className="ika-font">タイカイ</th>
                   <th className="ika-font" style={{ width: "90px" }}>
-                    かいさいにちじ
+                    にってい
                   </th>
                   <th className="ika-font" style={{ width: "80px" }}>
                     ぼしゅう
@@ -496,17 +515,16 @@ export default function Home() {
                   <th className="ika-font" style={{ width: "70px" }}></th>
                 </tr>
                 {filteredList.map((v, i) => (
-                  <tr
+                  <StyledTr
                     key={i}
-                    style={{
-                      filter: isClosed(v.eventDate) ? "brightness(0.8)" : "",
-                    }}
+                    status={isClosed(v.eventDate) ? "end" : "pre"}
                   >
                     <td>
                       <StyledCenter>
                         <StyledTournament>{v.tournamentTitle}</StyledTournament>
                         <StyledOrganizer
-                          onClick={() => setConfirmUrl(v.tournamentUrl)}
+                          onClick={() => setConfirmUrl(v.organizerSns ?? "")}
+                          hasLink={!!v.organizerSns}
                         >
                           {v.organizer}
                         </StyledOrganizer>
@@ -516,11 +534,11 @@ export default function Home() {
                       <StyledCenter>
                         {v.eventDate.toLocaleDateString()}{" "}
                         {v.eventDate.getHours().toString().padStart(2, "0")}:
-                        {v.eventDate.getMinutes().toString().padStart(2, "0")}〜
+                        {v.eventDate.getMinutes().toString().padStart(2, "0")}-
                       </StyledCenter>
                     </td>
                     <td>
-                      <div className="ika-font">
+                      <div>
                         <div
                           style={{
                             display: "flex",
@@ -529,10 +547,12 @@ export default function Home() {
                             justifyContent: "center",
                           }}
                         >
-                          {getStatus(
-                            v.recruitmentDateFrom,
-                            v.recruitmentDateTo
-                          )}
+                          <span className="ika-font">
+                            {getStatus(
+                              v.recruitmentDateFrom,
+                              v.recruitmentDateTo
+                            )}
+                          </span>
                           <StyledRecruitButton
                             onClick={() => {
                               setRecruitPopUpId(recruitPopUpId === i ? -1 : i);
@@ -541,7 +561,7 @@ export default function Home() {
                             i
                           </StyledRecruitButton>
                         </div>
-                        <StyledRecruit
+                        <StyledRecruitPopup
                           onClick={async () => {
                             setRecruitPopUpId(-1);
                           }}
@@ -574,7 +594,7 @@ export default function Home() {
                               .toString()
                               .padStart(2, "0")}
                           </div>
-                        </StyledRecruit>
+                        </StyledRecruitPopup>
                       </div>
                     </td>
                     <td>
@@ -585,7 +605,7 @@ export default function Home() {
                         かくにん
                       </StyledConfirmButton>
                     </td>
-                  </tr>
+                  </StyledTr>
                 ))}
                 {filteredList.length === 0 ? (
                   <tr>
