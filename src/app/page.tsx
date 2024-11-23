@@ -254,7 +254,7 @@ export default function Home() {
     eventDateTo: "",
     recruitStatusPre: true,
     recruitStatusNow: true,
-    recruitStatusEnd: false,
+    recruitStatusEnd: true,
     hideClosed: true,
   });
 
@@ -432,6 +432,7 @@ export default function Home() {
                         hideClosed: e.target.checked,
                       })
                     }
+                    defaultChecked={search.hideClosed}
                   />
                   <div>おわったタイカイをかくす</div>
                 </StyledSearchRecruitLabel>
@@ -448,6 +449,7 @@ export default function Home() {
                         recruitStatusPre: e.target.checked,
                       })
                     }
+                    defaultChecked={search.recruitStatusPre}
                   />
                   <div>まだ</div>
                 </StyledSearchRecruitLabel>
@@ -461,6 +463,7 @@ export default function Home() {
                         recruitStatusNow: e.target.checked,
                       })
                     }
+                    defaultChecked={search.recruitStatusNow}
                   />
                   <div>いま</div>
                 </StyledSearchRecruitLabel>
@@ -474,6 +477,7 @@ export default function Home() {
                         recruitStatusEnd: e.target.checked,
                       })
                     }
+                    defaultChecked={search.recruitStatusEnd}
                   />
                   <div>しめきり</div>
                 </StyledSearchRecruitLabel>
