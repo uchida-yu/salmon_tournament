@@ -19,11 +19,12 @@ export default class GoogleSheetApi {
       if (response.status === 200) {
         return response.json();
       }
+      console.error(response);
       throw new Error("error");
     }
     catch (error) {
-      throw new Error("error");
       console.error(error);
+      throw new Error("error");
     }
   }
 }
