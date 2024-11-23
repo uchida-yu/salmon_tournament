@@ -26,10 +26,12 @@ export async function GET() {
     }).then((res) => res.json());
 
     return NextResponse.json({
-      response,
-      client_email, // FIXME: 消す↓
-      private_key,
-      token,
+      response: {
+        ...response,
+        client_email, // FIXME: 消す↓
+        private_key,
+        token,
+      },
     });
   } catch (error) {
     console.error('APIエラー:', error);
