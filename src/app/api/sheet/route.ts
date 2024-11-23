@@ -7,12 +7,12 @@ export async function GET() {
   const client_email = process.env.CLIENT_EMAIL;
   const private_key = process.env.PRIVATE_KEY;
   const auth = new google.auth.JWT(client_email, '', private_key, ['https://www.googleapis.com/auth/spreadsheets.readonly']);
-
   const spreadsheetId = process.env.SPREADSHEET_ID;
+  let token: any = undefined; // FIXME: 消す
 
   try {
     // 認証トークンの取得
-    const token = await auth.authorize();
+    token = await auth.authorize();
 
     // リクエストURL
     const range = 'Sheet1!A:J'; // 取得する範囲
@@ -33,5 +33,11 @@ export async function GET() {
     });
   } catch (error) {
     console.error('APIエラー:', error);
+    return NextResponse.json({
+      error,
+      client_email, // FIXME: 消す↓
+      private_key,
+      token,
+     }, { status: 500 });
   }
 }
