@@ -670,11 +670,11 @@ export default function Home() {
                           <StyledTournament>
                             {v.tournamentTitle}
                           </StyledTournament>
-                          <StyledOrganizer
-                            onClick={() => setConfirmUrl(v.organizerSns ?? "")}
-                            $hasLink={v.organizerSns ? "true" : "false"}
-                          >
+                          <StyledOrganizer $hasLink="false">
                             {v.organizer}
+                            {v.organizerAccount
+                              ? `(${v.organizerAccount})`
+                              : ""}
                           </StyledOrganizer>
                         </StyledCenter>
                       </td>
@@ -774,10 +774,20 @@ export default function Home() {
         )}
       </main>
       <footer className={styles.footer}>
+        <div
+          style={{
+            marginBottom: "8px",
+            color: "#fff",
+            textAlign: "center",
+            fontSize: "12px",
+          }}
+        >
+          スプラトゥーン3・サーモンランのタイカイを検索するための非公式のサイトです。
+        </div>
         <StyledContactLink
           href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_MAIL}`}
         >
-          お問い合せ、通報、ご意見、ご要望はこちらまで
+          お問い合せ、通報、ご意見、ご要望はこちら
         </StyledContactLink>
       </footer>
       {confirmUrl === "" ? null : (

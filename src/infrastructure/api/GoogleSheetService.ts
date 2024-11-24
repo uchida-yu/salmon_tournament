@@ -8,7 +8,7 @@ export type SheetData = {
   recruitmentDateFrom: Date;
   recruitmentDateTo: Date;
   tournamentUrl: string;
-  organizerSns?: string;
+  organizerAccount?: string;
   group?: string[];
   rule?: string;
 }
@@ -31,7 +31,7 @@ export default class GoogleSheetService {
         recruitmentDateTo: new Date(v[4]),
         eventDate: new Date(v[5]),
         tournamentUrl: v[6],
-        organizerSns: v[7],
+        organizerAccount: v[7],
         group: v[8] ? v[8].split(',') : undefined,
         rule: v[9] ? v[9] : undefined,
       }));
