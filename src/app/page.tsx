@@ -139,6 +139,7 @@ const StyledConfirmUrl = styled.div`
   font-size: 14px;
   margin: 16px 0;
   font-weight: bold;
+  word-break: break-word;
 `;
 
 const StyledButtonContainer = styled.div`
@@ -802,7 +803,7 @@ export default function Home() {
               <StyledOkButton
                 className="ika-font"
                 onClick={() => {
-                  location.href = confirmUrl;
+                  window.open(confirmUrl, "_blank", "noreferrer");
                   setConfirmUrl("");
                 }}
               >
