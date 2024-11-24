@@ -65,12 +65,12 @@ const StyledTable = styled.table`
   }
   & th {
     background-color: #000;
-    padding: 8px;
+    padding: 8px 4px;
     color: #4aea76;
   }
   & td {
     background-color: #dbef3b;
-    padding: 8px;
+    padding: 4px;
     border-top: 2px dashed #ccc;
     color: #333;
     text-align: center;
@@ -247,7 +247,7 @@ const StyledSearchRecruitLabel = styled.label`
 `;
 const StyledSearchItemLabel = styled.label`
   color: #fff;
-  font-size: 16px;
+  font-size: 12px;
 `;
 
 const StyledSortLabelContainer = styled.div`
@@ -261,7 +261,7 @@ const StyledSortIcon = styled.div<{ type: "asc" | "desc" | "none" }>`
   display: ${({ type }) => (type === "none" ? "none" : "block")};
   font-size: 12px;
   transform: ${({ type }) =>
-    type === "asc" ? "rotate(-90deg)" : "rotate(90deg)"};
+    type === "desc" ? "rotate(-90deg)" : "rotate(90deg)"};
 `;
 
 // ここから機能
@@ -278,7 +278,7 @@ export default function Home() {
     type: keyof SheetData | "";
     order: "asc" | "desc";
   }>({
-    type: "eventDate",
+    type: "",
     order: "desc",
   });
 
@@ -457,9 +457,7 @@ export default function Home() {
               </RegisterButton>
             </StyledHeaderButtonContainer>
             <StyledSearchContainer>
-              <StyledSearchItemLabel className="ika-font">
-                タイカイ
-              </StyledSearchItemLabel>
+              <StyledSearchItemLabel>大会名・主催</StyledSearchItemLabel>
               <StyledSearchContainerRow>
                 <StyledSearchInput
                   type="text"
@@ -476,9 +474,7 @@ export default function Home() {
                   }
                 ></StyledSearchInput>
               </StyledSearchContainerRow>
-              <StyledSearchItemLabel className="ika-font">
-                にってい
-              </StyledSearchItemLabel>
+              <StyledSearchItemLabel>日程</StyledSearchItemLabel>
               <StyledSearchRecruitLabel
                 className="ika-font"
                 htmlFor="hide-closed"
@@ -511,9 +507,7 @@ export default function Home() {
                   }
                 ></StyledSearchInput>
               </StyledSearchContainerRow>
-              <StyledSearchItemLabel className="ika-font">
-                ぼしゅう
-              </StyledSearchItemLabel>
+              <StyledSearchItemLabel>募集状況</StyledSearchItemLabel>
               <StyledSearchContainerRow className="ika-font">
                 <StyledSearchRecruitLabel htmlFor="recruitment-pre">
                   <input
@@ -605,7 +599,7 @@ export default function Home() {
                           })
                         }
                       >
-                        しゅさいしゃ
+                        しゅさい
                         <StyledSortIcon
                           type={sort.type === "organizer" ? sort.order : "none"}
                         >
