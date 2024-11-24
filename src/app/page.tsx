@@ -561,12 +561,24 @@ export default function Home() {
               </StyledSearchContainerRow>
             </StyledSearchContainer>
             {displayCalendar ? (
-              <Calendar
-                events={filteredList.map((v) => ({
-                  title: v.tournamentTitle,
-                  date: v.eventDate.toISOString(),
-                }))}
-              />
+              <>
+                <div
+                  style={{
+                    marginBottom: "8px",
+                    color: "#dbef3b",
+                    textAlign: "center",
+                    fontSize: "10px",
+                  }}
+                >
+                  ※カレンダー機能調整もう少し調整します
+                </div>
+                <Calendar
+                  events={filteredList.map((v) => ({
+                    title: v.tournamentTitle,
+                    date: v.eventDate.toISOString(),
+                  }))}
+                />
+              </>
             ) : (
               <StyledTable>
                 <tbody>
