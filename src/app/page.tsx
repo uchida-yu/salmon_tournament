@@ -76,10 +76,10 @@ const StyledTable = styled.table`
   }
 `;
 
-const StyledTr = styled.tr<{ status: "pre" | "end" }>`
+const StyledTr = styled.tr<{ $status: "pre" | "end" }>`
   & td {
-    background-color: ${({ status }) =>
-      status === "pre" ? "#dbef3b" : "#98a832"};
+    background-color: ${({ $status }) =>
+      $status === "pre" ? "#dbef3b" : "#98a832"};
   }
 `;
 
@@ -87,11 +87,12 @@ const StyledTournament = styled.div`
   font-weight: bold;
 `;
 
-const StyledOrganizer = styled.div<{ hasLink: boolean }>`
+const StyledOrganizer = styled.div<{ $hasLink: "true" | "false" }>`
   margin-top: 4px;
   font-size: 10px;
-  color: ${({ hasLink }) => (hasLink ? "#603bff" : "#333")};
-  text-decoration: ${({ hasLink }) => (hasLink ? "underline" : "none")};
+  color: ${({ $hasLink }) => ($hasLink === "true" ? "#603bff" : "#333")};
+  text-decoration: ${({ $hasLink }) =>
+    $hasLink === "true" ? "underline" : "none"};
 `;
 
 const StyledCenter = styled.div`
@@ -165,7 +166,7 @@ const StyledNgButton = styled.button`
 
 const StyledConfirmButton = styled.button`
   background-color: #ff4f1d;
-  color: #000;
+  color: #fff;
   padding: 8px;
   border-radius: 16px;
   border: none;
@@ -239,6 +240,20 @@ const StyledSearchItemLabel = styled.label`
   font-size: 16px;
 `;
 
+const StyledSortLabelContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledSortIcon = styled.div<{ type: "asc" | "desc" | "none" }>`
+  display: ${({ type }) => (type === "none" ? "none" : "block")};
+  font-size: 12px;
+  transform: ${({ type }) =>
+    type === "asc" ? "rotate(-90deg)" : "rotate(90deg)"};
+`;
+
 // ここから機能
 
 export default function Home() {
@@ -249,6 +264,13 @@ export default function Home() {
   const [confirmUrl, setConfirmUrl] = useState("");
   const [filteredList, setFilteredList] = useState<SheetData[]>([]);
   const [recruitPopUpId, setRecruitPopUpId] = useState<number>(-1);
+  const [sort, setSort] = useState<{
+    type: keyof SheetData | "";
+    order: "asc" | "desc";
+  }>({
+    type: "eventDate",
+    order: "desc",
+  });
 
   const [search, setSearch] = useState<{
     organizer: string;
@@ -270,12 +292,34 @@ export default function Home() {
     hideClosed: true,
   });
 
-  const listSort = (list: SheetData[], type: keyof SheetData) => {
+  const listSort = (list: SheetData[]) => {
+    const { type, order } = sort;
     if (type === "eventDate") {
       return [...list].sort((a, b) => {
         const aDate = new Date(`${a[type]}`);
         const bDate = new Date(`${b[type]}`);
-        return bDate.getTime() - aDate.getTime();
+
+        return order === "desc"
+          ? bDate.getTime() - aDate.getTime()
+          : aDate.getTime() - bDate.getTime();
+      });
+    } else if (type === "tournamentTitle" || type === "organizer") {
+      return [...list].sort((a, b) => {
+        const aStr = a[type].toLowerCase();
+        const bStr = b[type].toLowerCase();
+
+        return order === "desc"
+          ? bStr.localeCompare(aStr)
+          : aStr.localeCompare(bStr);
+      });
+    } else if (type === "recruitmentDateFrom") {
+      return [...list].sort((a, b) => {
+        const aDate = new Date(`${a[type]}`);
+        const bDate = new Date(`${b[type]}`);
+
+        return order === "desc"
+          ? bDate.getTime() - aDate.getTime()
+          : aDate.getTime() - bDate.getTime();
       });
     } else {
       return list;
@@ -307,7 +351,7 @@ export default function Home() {
 
   const listSearch = (defaultList?: SheetData[]) => {
     const data = defaultList || sheetData;
-    const l = listSort(data, "eventDate").filter((v) => {
+    const l = listSort(data).filter((v) => {
       if (
         search.organizer !== "" &&
         !convertToKana(v.organizer).includes(convertToKana(search.organizer))
@@ -374,7 +418,7 @@ export default function Home() {
 
   useEffect(() => {
     listSearch();
-  }, [search]);
+  }, [search, sort]);
 
   return (
     <div className={styles.page}>
@@ -506,26 +550,91 @@ export default function Home() {
             <StyledTable>
               <tbody>
                 <tr>
-                  <th className="ika-font">タイカイ</th>
+                  <th className="ika-font">
+                    <StyledSortLabelContainer
+                      onClick={() =>
+                        setSort({
+                          type: "tournamentTitle",
+                          order: sort.order === "asc" ? "desc" : "asc",
+                        })
+                      }
+                    >
+                      タイカイ
+                      <StyledSortIcon
+                        type={
+                          sort.type === "tournamentTitle" ? sort.order : "none"
+                        }
+                      >
+                        -
+                      </StyledSortIcon>
+                    </StyledSortLabelContainer>
+                    <StyledSortLabelContainer
+                      onClick={() =>
+                        setSort({
+                          type: "organizer",
+                          order: sort.order === "asc" ? "desc" : "asc",
+                        })
+                      }
+                    >
+                      しゅさいしゃ
+                      <StyledSortIcon
+                        type={sort.type === "organizer" ? sort.order : "none"}
+                      >
+                        -
+                      </StyledSortIcon>
+                    </StyledSortLabelContainer>
+                  </th>
                   <th className="ika-font" style={{ width: "90px" }}>
-                    にってい
+                    <StyledSortLabelContainer
+                      onClick={() =>
+                        setSort({
+                          type: "eventDate",
+                          order: sort.order === "asc" ? "desc" : "asc",
+                        })
+                      }
+                    >
+                      にってい
+                      <StyledSortIcon
+                        type={sort.type === "eventDate" ? sort.order : "none"}
+                      >
+                        -
+                      </StyledSortIcon>
+                    </StyledSortLabelContainer>
                   </th>
                   <th className="ika-font" style={{ width: "80px" }}>
-                    ぼしゅう
+                    <StyledSortLabelContainer
+                      onClick={() =>
+                        setSort({
+                          type: "recruitmentDateFrom",
+                          order: sort.order === "asc" ? "desc" : "asc",
+                        })
+                      }
+                    >
+                      ぼしゅう
+                      <StyledSortIcon
+                        type={
+                          sort.type === "recruitmentDateFrom"
+                            ? sort.order
+                            : "none"
+                        }
+                      >
+                        -
+                      </StyledSortIcon>
+                    </StyledSortLabelContainer>
                   </th>
                   <th className="ika-font" style={{ width: "70px" }}></th>
                 </tr>
                 {filteredList.map((v, i) => (
                   <StyledTr
                     key={i}
-                    status={isClosed(v.eventDate) ? "end" : "pre"}
+                    $status={isClosed(v.eventDate) ? "end" : "pre"}
                   >
                     <td>
                       <StyledCenter>
                         <StyledTournament>{v.tournamentTitle}</StyledTournament>
                         <StyledOrganizer
                           onClick={() => setConfirmUrl(v.organizerSns ?? "")}
-                          hasLink={!!v.organizerSns}
+                          $hasLink={v.organizerSns ? "true" : "false"}
                         >
                           {v.organizer}
                         </StyledOrganizer>
