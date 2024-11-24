@@ -6,6 +6,7 @@ import GoogleSheetService, {
   SheetData,
 } from "@/infrastructure/api/GoogleSheetService";
 import { useState, useEffect } from "react";
+import Calendar from "./ui/component/Calender";
 
 const StyledTitle = styled.h1`
   font-size: 36px;
@@ -173,6 +174,15 @@ const StyledConfirmButton = styled.button`
   font-size: 10px;
 `;
 
+const StyledToggleButton = styled.button`
+  background-color: #603bff;
+  color: #fff;
+  padding: 8px;
+  border-radius: 16px;
+  border: none;
+  font-size: 10px;
+`;
+
 const StyledSearchContainer = styled.div`
   display: flex;
   gap: 8px;
@@ -292,6 +302,8 @@ export default function Home() {
     hideClosed: true,
   });
 
+  const [displayCalendar, setDisplayCalendar] = useState(false);
+
   const listSort = (list: SheetData[]) => {
     const { type, order } = sort;
     if (type === "eventDate") {
@@ -329,11 +341,11 @@ export default function Home() {
   const getStatus = (start: Date, end: Date) => {
     const now = new Date();
     if (now.getTime() < start.getTime()) {
-      return "まだ";
+      return "これから";
     } else if (now.getTime() > end.getTime()) {
       return "しめきり";
     } else {
-      return "いま";
+      return "うけつけ";
     }
   };
 
@@ -386,13 +398,13 @@ export default function Home() {
 
       if (
         !search.recruitStatusPre &&
-        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === "まだ"
+        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === "これから"
       ) {
         return false;
       }
       if (
         !search.recruitStatusNow &&
-        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === "いま"
+        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === "うけつけ"
       ) {
         return false;
       }
@@ -515,7 +527,7 @@ export default function Home() {
                     }
                     defaultChecked={search.recruitStatusPre}
                   />
-                  <div>まだ</div>
+                  <div>これから</div>
                 </StyledSearchRecruitLabel>
                 <StyledSearchRecruitLabel htmlFor="recruitment-now">
                   <input
@@ -529,7 +541,7 @@ export default function Home() {
                     }
                     defaultChecked={search.recruitStatusNow}
                   />
-                  <div>いま</div>
+                  <div>うけつけ</div>
                 </StyledSearchRecruitLabel>
                 <StyledSearchRecruitLabel htmlFor="recruitment-end">
                   <input
@@ -545,189 +557,212 @@ export default function Home() {
                   />
                   <div>しめきり</div>
                 </StyledSearchRecruitLabel>
+                <StyledToggleButton
+                  className="ika-font"
+                  style={{ marginLeft: "auto" }}
+                  onClick={() => setDisplayCalendar(!displayCalendar)}
+                >
+                  {displayCalendar ? "リストひょうじ" : "カレンダーひょうじ⚙️"}
+                </StyledToggleButton>
               </StyledSearchContainerRow>
             </StyledSearchContainer>
-            <StyledTable>
-              <tbody>
-                <tr>
-                  <th className="ika-font">
-                    <StyledSortLabelContainer
-                      onClick={() =>
-                        setSort({
-                          type: "tournamentTitle",
-                          order: sort.order === "asc" ? "desc" : "asc",
-                        })
-                      }
-                    >
-                      タイカイ
-                      <StyledSortIcon
-                        type={
-                          sort.type === "tournamentTitle" ? sort.order : "none"
+            {displayCalendar ? (
+              <Calendar
+                events={filteredList.map((v) => ({
+                  title: v.tournamentTitle,
+                  date: v.eventDate.toISOString(),
+                }))}
+              />
+            ) : (
+              <StyledTable>
+                <tbody>
+                  <tr>
+                    <th className="ika-font">
+                      <StyledSortLabelContainer
+                        onClick={() =>
+                          setSort({
+                            type: "tournamentTitle",
+                            order: sort.order === "asc" ? "desc" : "asc",
+                          })
                         }
                       >
-                        -
-                      </StyledSortIcon>
-                    </StyledSortLabelContainer>
-                    <StyledSortLabelContainer
-                      onClick={() =>
-                        setSort({
-                          type: "organizer",
-                          order: sort.order === "asc" ? "desc" : "asc",
-                        })
-                      }
-                    >
-                      しゅさいしゃ
-                      <StyledSortIcon
-                        type={sort.type === "organizer" ? sort.order : "none"}
-                      >
-                        -
-                      </StyledSortIcon>
-                    </StyledSortLabelContainer>
-                  </th>
-                  <th className="ika-font" style={{ width: "90px" }}>
-                    <StyledSortLabelContainer
-                      onClick={() =>
-                        setSort({
-                          type: "eventDate",
-                          order: sort.order === "asc" ? "desc" : "asc",
-                        })
-                      }
-                    >
-                      にってい
-                      <StyledSortIcon
-                        type={sort.type === "eventDate" ? sort.order : "none"}
-                      >
-                        -
-                      </StyledSortIcon>
-                    </StyledSortLabelContainer>
-                  </th>
-                  <th className="ika-font" style={{ width: "80px" }}>
-                    <StyledSortLabelContainer
-                      onClick={() =>
-                        setSort({
-                          type: "recruitmentDateFrom",
-                          order: sort.order === "asc" ? "desc" : "asc",
-                        })
-                      }
-                    >
-                      ぼしゅう
-                      <StyledSortIcon
-                        type={
-                          sort.type === "recruitmentDateFrom"
-                            ? sort.order
-                            : "none"
+                        タイカイ
+                        <StyledSortIcon
+                          type={
+                            sort.type === "tournamentTitle"
+                              ? sort.order
+                              : "none"
+                          }
+                        >
+                          -
+                        </StyledSortIcon>
+                      </StyledSortLabelContainer>
+                      <StyledSortLabelContainer
+                        onClick={() =>
+                          setSort({
+                            type: "organizer",
+                            order: sort.order === "asc" ? "desc" : "asc",
+                          })
                         }
                       >
-                        -
-                      </StyledSortIcon>
-                    </StyledSortLabelContainer>
-                  </th>
-                  <th className="ika-font" style={{ width: "70px" }}></th>
-                </tr>
-                {filteredList.map((v, i) => (
-                  <StyledTr
-                    key={i}
-                    $status={isClosed(v.eventDate) ? "end" : "pre"}
-                  >
-                    <td>
-                      <StyledCenter>
-                        <StyledTournament>{v.tournamentTitle}</StyledTournament>
-                        <StyledOrganizer
-                          onClick={() => setConfirmUrl(v.organizerSns ?? "")}
-                          $hasLink={v.organizerSns ? "true" : "false"}
+                        しゅさいしゃ
+                        <StyledSortIcon
+                          type={sort.type === "organizer" ? sort.order : "none"}
                         >
-                          {v.organizer}
-                        </StyledOrganizer>
-                      </StyledCenter>
-                    </td>
-                    <td>
-                      <StyledCenter>
-                        {v.eventDate.toLocaleDateString()}{" "}
-                        {v.eventDate.getHours().toString().padStart(2, "0")}:
-                        {v.eventDate.getMinutes().toString().padStart(2, "0")}-
-                      </StyledCenter>
-                    </td>
-                    <td>
-                      <div>
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: "8px",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
+                          -
+                        </StyledSortIcon>
+                      </StyledSortLabelContainer>
+                    </th>
+                    <th className="ika-font" style={{ width: "90px" }}>
+                      <StyledSortLabelContainer
+                        onClick={() =>
+                          setSort({
+                            type: "eventDate",
+                            order: sort.order === "asc" ? "desc" : "asc",
+                          })
+                        }
+                      >
+                        にってい
+                        <StyledSortIcon
+                          type={sort.type === "eventDate" ? sort.order : "none"}
                         >
-                          <span className="ika-font">
-                            {getStatus(
-                              v.recruitmentDateFrom,
-                              v.recruitmentDateTo
-                            )}
-                          </span>
-                          <StyledRecruitButton
-                            onClick={() => {
-                              setRecruitPopUpId(recruitPopUpId === i ? -1 : i);
+                          -
+                        </StyledSortIcon>
+                      </StyledSortLabelContainer>
+                    </th>
+                    <th className="ika-font" style={{ width: "100px" }}>
+                      <StyledSortLabelContainer
+                        onClick={() =>
+                          setSort({
+                            type: "recruitmentDateFrom",
+                            order: sort.order === "asc" ? "desc" : "asc",
+                          })
+                        }
+                      >
+                        ぼしゅう
+                        <StyledSortIcon
+                          type={
+                            sort.type === "recruitmentDateFrom"
+                              ? sort.order
+                              : "none"
+                          }
+                        >
+                          -
+                        </StyledSortIcon>
+                      </StyledSortLabelContainer>
+                    </th>
+                    <th className="ika-font" style={{ width: "70px" }}></th>
+                  </tr>
+                  {filteredList.map((v, i) => (
+                    <StyledTr
+                      key={i}
+                      $status={isClosed(v.eventDate) ? "end" : "pre"}
+                    >
+                      <td>
+                        <StyledCenter>
+                          <StyledTournament>
+                            {v.tournamentTitle}
+                          </StyledTournament>
+                          <StyledOrganizer
+                            onClick={() => setConfirmUrl(v.organizerSns ?? "")}
+                            $hasLink={v.organizerSns ? "true" : "false"}
+                          >
+                            {v.organizer}
+                          </StyledOrganizer>
+                        </StyledCenter>
+                      </td>
+                      <td>
+                        <StyledCenter>
+                          {v.eventDate.toLocaleDateString()}{" "}
+                          {v.eventDate.getHours().toString().padStart(2, "0")}:
+                          {v.eventDate.getMinutes().toString().padStart(2, "0")}
+                          -
+                        </StyledCenter>
+                      </td>
+                      <td>
+                        <div>
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "8px",
+                              alignItems: "center",
+                              justifyContent: "center",
                             }}
                           >
-                            i
-                          </StyledRecruitButton>
+                            <span className="ika-font">
+                              {getStatus(
+                                v.recruitmentDateFrom,
+                                v.recruitmentDateTo
+                              )}
+                            </span>
+                            <StyledRecruitButton
+                              onClick={() => {
+                                setRecruitPopUpId(
+                                  recruitPopUpId === i ? -1 : i
+                                );
+                              }}
+                            >
+                              i
+                            </StyledRecruitButton>
+                          </div>
+                          <StyledRecruitPopup
+                            onClick={async () => {
+                              setRecruitPopUpId(-1);
+                            }}
+                            style={{
+                              display: recruitPopUpId === i ? "block" : "none",
+                            }}
+                          >
+                            <div style={{ position: "relative" }}>
+                              {v.recruitmentDateFrom.toLocaleDateString()}{" "}
+                              {v.recruitmentDateFrom
+                                .getHours()
+                                .toString()
+                                .padStart(2, "0")}
+                              :
+                              {v.recruitmentDateFrom
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")}
+                            </div>
+                            <div>-</div>
+                            <div>
+                              {v.recruitmentDateTo.toLocaleDateString()}{" "}
+                              {v.recruitmentDateTo
+                                .getHours()
+                                .toString()
+                                .padStart(2, "0")}
+                              :
+                              {v.recruitmentDateTo
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")}
+                            </div>
+                          </StyledRecruitPopup>
                         </div>
-                        <StyledRecruitPopup
-                          onClick={async () => {
-                            setRecruitPopUpId(-1);
-                          }}
-                          style={{
-                            display: recruitPopUpId === i ? "block" : "none",
-                          }}
+                      </td>
+                      <td>
+                        <StyledConfirmButton
+                          className="ika-font"
+                          onClick={() => setConfirmUrl(v.tournamentUrl)}
                         >
-                          <div style={{ position: "relative" }}>
-                            {v.recruitmentDateFrom.toLocaleDateString()}{" "}
-                            {v.recruitmentDateFrom
-                              .getHours()
-                              .toString()
-                              .padStart(2, "0")}
-                            :
-                            {v.recruitmentDateFrom
-                              .getMinutes()
-                              .toString()
-                              .padStart(2, "0")}
-                          </div>
-                          <div>-</div>
-                          <div>
-                            {v.recruitmentDateTo.toLocaleDateString()}{" "}
-                            {v.recruitmentDateTo
-                              .getHours()
-                              .toString()
-                              .padStart(2, "0")}
-                            :
-                            {v.recruitmentDateTo
-                              .getMinutes()
-                              .toString()
-                              .padStart(2, "0")}
-                          </div>
-                        </StyledRecruitPopup>
-                      </div>
-                    </td>
-                    <td>
-                      <StyledConfirmButton
-                        className="ika-font"
-                        onClick={() => setConfirmUrl(v.tournamentUrl)}
-                      >
-                        かくにん
-                      </StyledConfirmButton>
-                    </td>
-                  </StyledTr>
-                ))}
-                {filteredList.length === 0 ? (
-                  <tr>
-                    <td className="ika-font" colSpan={4}>
-                      みつかりませんでした
-                    </td>
-                  </tr>
-                ) : (
-                  ""
-                )}
-              </tbody>
-            </StyledTable>
+                          かくにん
+                        </StyledConfirmButton>
+                      </td>
+                    </StyledTr>
+                  ))}
+                  {filteredList.length === 0 ? (
+                    <tr>
+                      <td className="ika-font" colSpan={4}>
+                        みつかりませんでした
+                      </td>
+                    </tr>
+                  ) : (
+                    ""
+                  )}
+                </tbody>
+              </StyledTable>
+            )}
           </>
         )}
       </main>

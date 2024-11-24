@@ -49,3 +49,29 @@ a {
     color-scheme: dark;
   }
 }
+
+.fc-toolbar-title  {
+  font-size: 16px !important;
+}
+
+.fc-button {
+  font-size: 12px !important;
+  padding: 8px !important;
+}
+
+.fc-col-header-cell-cushion {
+  font-weight: normal !important;
+  font-size: 12px !important;
+}
+
+.fc-col-header-cell, .fc-daygrid-day-number, .fc-event-title, .fc-event-time, .fc-timegrid-slot-label-cushion, .fc-toolbar-title, .fc-timegrid-axis-cushion {
+  color: #fff !important;
+}
+
+.fc-event-title, .fc-event-time, .fc-timegrid-slot-label-cushion, .fc-timegrid-axis-cushion {
+  font-size: 10px !important;
+}
+
+.fc-scrollgrid {
+  background-color: #00000030 !important;
+}
