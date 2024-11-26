@@ -40,6 +40,6 @@ export default class GoogleSheetService {
         organizerAccount: v[7],
         group: v[8] ? v[8].split(',') : undefined,
         rule: v[9] ? v[9] : undefined,
-      }));
+      })).sort((a, b) => a.createDateTime > b.createDateTime ? -1 : 1);
     }
 }
