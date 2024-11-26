@@ -576,7 +576,7 @@ export default function Home() {
                 </div>
                 <Calendar
                   events={filteredList.map((v) => ({
-                    title: v.tournamentTitle,
+                    title: `${v.tournamentTitle}(${v.organizer})`,
                     date: v.eventDate.toISOString(),
                   }))}
                 />
@@ -777,19 +777,27 @@ export default function Home() {
       <footer className={styles.footer}>
         <div
           style={{
-            marginBottom: "8px",
-            color: "#fff",
-            textAlign: "center",
-            fontSize: "12px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          スプラトゥーン3・サーモンランのタイカイを検索するための非公式のサイトです。
+          <div
+            style={{
+              marginBottom: "8px",
+              color: "#fff",
+              textAlign: "center",
+              fontSize: "12px",
+            }}
+          >
+            スプラトゥーン3・サーモンランのタイカイを検索するための非公式のサイトです。
+          </div>
+          <StyledContactLink
+            href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_MAIL}`}
+          >
+            お問い合せ、通報、ご意見、ご要望はこちら
+          </StyledContactLink>
         </div>
-        <StyledContactLink
-          href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_MAIL}`}
-        >
-          お問い合せ、通報、ご意見、ご要望はこちら
-        </StyledContactLink>
       </footer>
       {confirmUrl === "" ? null : (
         <>
