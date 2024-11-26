@@ -124,6 +124,7 @@ const StyledConfirm = styled.div`
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
+  color: #000;
 `;
 
 const StyledConfirmTitle = styled.div`
