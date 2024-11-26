@@ -7,23 +7,28 @@ export type SheetData = {
   eventDate: Date;
   recruitmentDateFrom: Date;
   recruitmentDateTo: Date;
-  tournamentUrl: string;
+  tournamentUrl?: string;
   organizerAccount?: string;
   group?: string[];
   rule?: string;
 }
 
 export default class GoogleSheetService {
+    // allow domain
+    private readonly allowDomainList = [
+      'https://s.nintendo.com',
+      'https://x.com'
+    ];
     public async getSheetData() {
       const googleSheetApi = new GoogleSheetApi();
       const {response} = await googleSheetApi.getSheetData();
 
       const checkDomain = (url: string) => {
         const urlObj = new URL(url);
-        return urlObj.origin === 'https://s.nintendo.com';
+        return this.allowDomainList.some((domain) => urlObj.origin === domain);
       }
 
-      return response.values.filter((v, i) => i !== 0 && checkDomain(v[6])).map((v) => ({
+      return response.values.filter((v, i) => i !== 0 && (!v[6] || checkDomain(v[6]))).map((v) => ({
         createDateTime: v[0],
         tournamentTitle: v[1],
         organizer: v[2],

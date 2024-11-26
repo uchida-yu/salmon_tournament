@@ -859,46 +859,65 @@ export default function Home() {
                 )
               </small>
             </StyledConfirmInfo>
-            <StyledConfirmMessage>
-              あやしい文字列が含まれていないことをご確認の上アクセスしてください
-            </StyledConfirmMessage>
-            <StyledConfirmUrl>{confirmInfo.tournamentUrl}</StyledConfirmUrl>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginBottom: "16px",
-              }}
-            >
-              <QRCodeSVG
-                value={confirmInfo.tournamentUrl}
-                style={{
-                  padding: "8px",
-                  backgroundColor: "#fff",
-                  borderRadius: "4px",
-                }}
-              />
-            </div>
+
+            {confirmInfo.tournamentUrl ? (
+              <>
+                <StyledConfirmMessage>
+                  あやしい文字列が含まれていないことをご確認の上アクセスしてください
+                </StyledConfirmMessage>
+                <StyledConfirmUrl>{confirmInfo.tournamentUrl}</StyledConfirmUrl>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginBottom: "16px",
+                  }}
+                >
+                  <QRCodeSVG
+                    value={confirmInfo.tournamentUrl}
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "#fff",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </div>
+              </>
+            ) : null}
+
             <StyledButtonContainer>
-              <StyledNgButton
-                className="ika-font"
-                onClick={() => setConfirmInfo(undefined)}
-              >
-                やめておく
-              </StyledNgButton>
-              <StyledOkButton
-                className="ika-font"
-                onClick={() => {
-                  window.open(
-                    confirmInfo.tournamentUrl,
-                    "_blank",
-                    "noreferrer"
-                  );
-                  setConfirmInfo(undefined);
-                }}
-              >
-                ひらく
-              </StyledOkButton>
+              {confirmInfo.tournamentUrl ? (
+                <>
+                  <StyledNgButton
+                    className="ika-font"
+                    onClick={() => setConfirmInfo(undefined)}
+                  >
+                    やめておく
+                  </StyledNgButton>
+                  <StyledOkButton
+                    className="ika-font"
+                    onClick={() => {
+                      window.open(
+                        confirmInfo.tournamentUrl,
+                        "_blank",
+                        "noreferrer"
+                      );
+                      setConfirmInfo(undefined);
+                    }}
+                  >
+                    ひらく
+                  </StyledOkButton>
+                </>
+              ) : (
+                <>
+                  <StyledNgButton
+                    className="ika-font"
+                    onClick={() => setConfirmInfo(undefined)}
+                  >
+                    とじる
+                  </StyledNgButton>
+                </>
+              )}
             </StyledButtonContainer>
           </StyledConfirm>
         </>
