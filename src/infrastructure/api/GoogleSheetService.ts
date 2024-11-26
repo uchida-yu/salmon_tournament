@@ -17,7 +17,8 @@ export default class GoogleSheetService {
     // allow domain
     private readonly allowDomainList = [
       'https://s.nintendo.com',
-      'https://x.com'
+      'https://x.com',
+      'https://ikanakama.ink',
     ];
     public async getSheetData() {
       const googleSheetApi = new GoogleSheetApi();

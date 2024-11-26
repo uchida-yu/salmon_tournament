@@ -42,6 +42,7 @@ const StyledTable = styled.table`
   border-collapse: collapse;
   width: 100%;
   margin-bottom: 16px;
+  table-layout: fixed;
 
   & tr:first-of-type {
     & th:first-of-type {
@@ -95,6 +96,7 @@ const StyledOrganizer = styled.div<{ $hasLink: "true" | "false" }>`
   color: ${({ $hasLink }) => ($hasLink === "true" ? "#603bff" : "#333")};
   text-decoration: ${({ $hasLink }) =>
     $hasLink === "true" ? "underline" : "none"};
+  word-break: break-word;
 `;
 
 const StyledCenter = styled.div`
