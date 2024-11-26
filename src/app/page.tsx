@@ -139,7 +139,7 @@ const StyledConfirmMessage = styled.div`
 
 const StyledConfirmUrl = styled.div`
   font-size: 14px;
-  margin: 16px 0;
+  margin: 8px 0 16px;
   font-weight: bold;
   word-break: break-word;
 `;
@@ -267,6 +267,14 @@ const StyledSortIcon = styled.div<{ type: "asc" | "desc" | "none" }>`
     type === "desc" ? "rotate(-90deg)" : "rotate(90deg)"};
 `;
 
+const StyledConfirmInfo = styled.div`
+  font-weight: bold;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
 // ここから機能
 
 export default function Home() {
@@ -274,7 +282,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(true);
   const [sheetData, setSheetData] = useState<SheetData[]>([]);
-  const [confirmUrl, setConfirmUrl] = useState("");
+  const [confirmInfo, setConfirmInfo] = useState<SheetData>();
   const [filteredList, setFilteredList] = useState<SheetData[]>([]);
   const [recruitPopUpId, setRecruitPopUpId] = useState<number>(-1);
   const [sort, setSort] = useState<{
@@ -579,7 +587,17 @@ export default function Home() {
                   events={filteredList.map((v) => ({
                     title: `${v.tournamentTitle}(${v.organizer})`,
                     date: v.eventDate.toISOString(),
+                    eventInfo: v,
                   }))}
+                  eventClick={(info: {
+                    event: {
+                      title: string;
+                      date: string;
+                      extendedProps: { eventInfo: SheetData };
+                    };
+                  }) => {
+                    setConfirmInfo(info.event.extendedProps.eventInfo);
+                  }}
                 />
               </>
             ) : (
@@ -753,7 +771,7 @@ export default function Home() {
                       <td>
                         <StyledConfirmButton
                           className="ika-font"
-                          onClick={() => setConfirmUrl(v.tournamentUrl)}
+                          onClick={() => setConfirmInfo(v)}
                         >
                           かくにん
                         </StyledConfirmButton>
@@ -800,19 +818,51 @@ export default function Home() {
           </StyledContactLink>
         </div>
       </footer>
-      {confirmUrl === "" ? null : (
+      {!confirmInfo ? null : (
         <>
           <StyledModalLayer></StyledModalLayer>
           <StyledConfirm>
             <StyledConfirmTitle className="ika-font">
               かくにん
             </StyledConfirmTitle>
+            <StyledConfirmInfo>
+              <div>
+                {confirmInfo.tournamentTitle}({confirmInfo.organizer})
+              </div>
+              <div>
+                {confirmInfo.eventDate.toLocaleDateString()}{" "}
+                {confirmInfo.eventDate.getHours().toString().padStart(2, "0")}:
+                {confirmInfo.eventDate.getMinutes().toString().padStart(2, "0")}
+                -
+              </div>
+              <small>
+                (募集期間:{confirmInfo.recruitmentDateFrom.toLocaleDateString()}{" "}
+                {confirmInfo.recruitmentDateFrom
+                  .getHours()
+                  .toString()
+                  .padStart(2, "0")}
+                :
+                {confirmInfo.recruitmentDateFrom
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0")}
+                - {confirmInfo.recruitmentDateTo.toLocaleDateString()}{" "}
+                {confirmInfo.recruitmentDateTo
+                  .getHours()
+                  .toString()
+                  .padStart(2, "0")}
+                :
+                {confirmInfo.recruitmentDateTo
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0")}{" "}
+                )
+              </small>
+            </StyledConfirmInfo>
             <StyledConfirmMessage>
-              あやしい文字列が含まれていないことをご確認の上
-              <br />
-              アクセスしてください
+              あやしい文字列が含まれていないことをご確認の上アクセスしてください
             </StyledConfirmMessage>
-            <StyledConfirmUrl>{confirmUrl}</StyledConfirmUrl>
+            <StyledConfirmUrl>{confirmInfo.tournamentUrl}</StyledConfirmUrl>
             <div
               style={{
                 display: "flex",
@@ -821,7 +871,7 @@ export default function Home() {
               }}
             >
               <QRCodeSVG
-                value={confirmUrl}
+                value={confirmInfo.tournamentUrl}
                 style={{
                   padding: "8px",
                   backgroundColor: "#fff",
@@ -832,15 +882,19 @@ export default function Home() {
             <StyledButtonContainer>
               <StyledNgButton
                 className="ika-font"
-                onClick={() => setConfirmUrl("")}
+                onClick={() => setConfirmInfo(undefined)}
               >
                 やめておく
               </StyledNgButton>
               <StyledOkButton
                 className="ika-font"
                 onClick={() => {
-                  window.open(confirmUrl, "_blank", "noreferrer");
-                  setConfirmUrl("");
+                  window.open(
+                    confirmInfo.tournamentUrl,
+                    "_blank",
+                    "noreferrer"
+                  );
+                  setConfirmInfo(undefined);
                 }}
               >
                 ひらく

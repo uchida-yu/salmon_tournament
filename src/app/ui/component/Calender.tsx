@@ -1,29 +1,34 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import jaLocale from "@fullcalendar/core/locales/ja";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import listPlugin from "@fullcalendar/list";
+import { SheetData } from "@/infrastructure/api/GoogleSheetService";
 
 type CalendarProps = {
   events: {
     title: string;
     date: string;
+    eventInfo: SheetData;
   }[];
+  eventClick?: (info: any) => void;
 };
 
 export default function Calendar(props: CalendarProps) {
-  const { events } = props;
-  console.log(events);
+  const { events, eventClick } = props;
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin]}
       initialView="dayGridMonth"
-      events={events}
+      events={events.map((event) => ({
+        title: event.title,
+        date: event.date,
+        eventInfo: event.eventInfo,
+      }))}
       headerToolbar={{
         left: "prev,next today",
         center: "title",
         right: "dayGridMonth,timeGridWeek",
       }}
+      eventClick={eventClick}
     />
   );
 }
