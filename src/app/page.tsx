@@ -7,6 +7,7 @@ import GoogleSheetService, {
 } from "@/infrastructure/api/GoogleSheetService";
 import { useState, useEffect } from "react";
 import Calendar from "./ui/component/Calender";
+import { QRCodeSVG } from "qrcode.react";
 
 const StyledTitle = styled.h1`
   font-size: 36px;
@@ -812,6 +813,22 @@ export default function Home() {
               アクセスしてください
             </StyledConfirmMessage>
             <StyledConfirmUrl>{confirmUrl}</StyledConfirmUrl>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: "16px",
+              }}
+            >
+              <QRCodeSVG
+                value={confirmUrl}
+                style={{
+                  padding: "8px",
+                  backgroundColor: "#fff",
+                  borderRadius: "4px",
+                }}
+              />
+            </div>
             <StyledButtonContainer>
               <StyledNgButton
                 className="ika-font"
