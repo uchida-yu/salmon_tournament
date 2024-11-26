@@ -129,7 +129,8 @@ const StyledConfirm = styled.div`
 `;
 
 const StyledConfirmTitle = styled.div`
-  font-size: 24px;
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 const StyledConfirmMessage = styled.div`
@@ -142,6 +143,9 @@ const StyledConfirmUrl = styled.div`
   margin: 8px 0 16px;
   font-weight: bold;
   word-break: break-word;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 8px;
 `;
 
 const StyledButtonContainer = styled.div`
@@ -268,7 +272,6 @@ const StyledSortIcon = styled.div<{ type: "asc" | "desc" | "none" }>`
 `;
 
 const StyledConfirmInfo = styled.div`
-  font-weight: bold;
   margin: 8px 0;
   display: flex;
   flex-direction: column;
@@ -657,7 +660,7 @@ export default function Home() {
                         </StyledSortIcon>
                       </StyledSortLabelContainer>
                     </th>
-                    <th className="ika-font" style={{ width: "100px" }}>
+                    <th className="ika-font" style={{ width: "60px" }}>
                       <StyledSortLabelContainer
                         onClick={() =>
                           setSort({
@@ -722,50 +725,7 @@ export default function Home() {
                                 v.recruitmentDateTo
                               )}
                             </span>
-                            <StyledRecruitButton
-                              onClick={() => {
-                                setRecruitPopUpId(
-                                  recruitPopUpId === i ? -1 : i
-                                );
-                              }}
-                            >
-                              i
-                            </StyledRecruitButton>
                           </div>
-                          <StyledRecruitPopup
-                            onClick={async () => {
-                              setRecruitPopUpId(-1);
-                            }}
-                            style={{
-                              display: recruitPopUpId === i ? "block" : "none",
-                            }}
-                          >
-                            <div style={{ position: "relative" }}>
-                              {v.recruitmentDateFrom.toLocaleDateString()}{" "}
-                              {v.recruitmentDateFrom
-                                .getHours()
-                                .toString()
-                                .padStart(2, "0")}
-                              :
-                              {v.recruitmentDateFrom
-                                .getMinutes()
-                                .toString()
-                                .padStart(2, "0")}
-                            </div>
-                            <div>-</div>
-                            <div>
-                              {v.recruitmentDateTo.toLocaleDateString()}{" "}
-                              {v.recruitmentDateTo
-                                .getHours()
-                                .toString()
-                                .padStart(2, "0")}
-                              :
-                              {v.recruitmentDateTo
-                                .getMinutes()
-                                .toString()
-                                .padStart(2, "0")}
-                            </div>
-                          </StyledRecruitPopup>
                         </div>
                       </td>
                       <td>
@@ -773,7 +733,7 @@ export default function Home() {
                           className="ika-font"
                           onClick={() => setConfirmInfo(v)}
                         >
-                          かくにん
+                          くわしく
                         </StyledConfirmButton>
                       </td>
                     </StyledTr>
@@ -822,13 +782,10 @@ export default function Home() {
         <>
           <StyledModalLayer></StyledModalLayer>
           <StyledConfirm>
-            <StyledConfirmTitle className="ika-font">
-              かくにん
+            <StyledConfirmTitle>
+              {confirmInfo.tournamentTitle}({confirmInfo.organizer})
             </StyledConfirmTitle>
             <StyledConfirmInfo>
-              <div>
-                {confirmInfo.tournamentTitle}({confirmInfo.organizer})
-              </div>
               <div>
                 {confirmInfo.eventDate.toLocaleDateString()}{" "}
                 {confirmInfo.eventDate.getHours().toString().padStart(2, "0")}:
