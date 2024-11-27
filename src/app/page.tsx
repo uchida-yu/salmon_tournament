@@ -135,6 +135,10 @@ const StyledConfirmTitle = styled.div`
   font-weight: bold;
 `;
 
+const StyledConfirmMarker = styled.span`
+  background: linear-gradient(transparent 0%, #5fff7e 0%);
+`;
+
 const StyledConfirmMessage = styled.div`
   font-size: 12px;
   margin: 8px 0;
@@ -274,6 +278,7 @@ const StyledConfirmInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  font-size: 14px;
 `;
 
 // ここから機能
@@ -855,10 +860,16 @@ export default function Home() {
             </StyledConfirmTitle>
             <StyledConfirmInfo>
               <div>
-                {confirmInfo.eventDate.toLocaleDateString()}{" "}
-                {confirmInfo.eventDate.getHours().toString().padStart(2, "0")}:
-                {confirmInfo.eventDate.getMinutes().toString().padStart(2, "0")}
-                -
+                <StyledConfirmMarker>
+                  {confirmInfo.eventDate.toLocaleDateString()}{" "}
+                  {confirmInfo.eventDate.getHours().toString().padStart(2, "0")}
+                  :
+                  {confirmInfo.eventDate
+                    .getMinutes()
+                    .toString()
+                    .padStart(2, "0")}
+                  -
+                </StyledConfirmMarker>
               </div>
               <small>
                 募集期間:{confirmInfo.recruitmentDateFrom.toLocaleDateString()}{" "}
