@@ -15,18 +15,35 @@ export type SheetData = {
 
 export default class GoogleSheetService {
     // allow domain
-    private readonly allowDomainList = [
-      'https://s.nintendo.com',
-      'https://x.com',
-      'https://ikanakama.ink',
+    public readonly allowDomainList = [
+      { origin: 'https://s.nintendo.com',
+        type: 'support',
+        name: 'タイカイサポート'
+      },
+      {
+        origin: 'https://x.com',
+        type: 'x',
+        name: 'エックス'
+      },
+      {
+        origin: 'https://ikanakama.ink',
+        type: 'ikanakama',
+        name: 'イカナカマ'
+      }
     ];
+
+    public getUrlName(url: string) {
+      const urlObj = new URL(url);
+      return this.allowDomainList.find((domain) => urlObj.origin === domain.origin)?.name;
+    }
+
     public async getSheetData() {
       const googleSheetApi = new GoogleSheetApi();
       const {response} = await googleSheetApi.getSheetData();
 
       const checkDomain = (url: string) => {
         const urlObj = new URL(url);
-        return this.allowDomainList.some((domain) => urlObj.origin === domain);
+        return this.allowDomainList.some((domain) => urlObj.origin === domain.origin);
       }
 
       return response.values.filter((v, i) => i !== 0 && (!v[6] || checkDomain(v[6]))).map((v) => ({
