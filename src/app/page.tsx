@@ -7,6 +7,7 @@ import GoogleSheetService, {
 } from "@/infrastructure/api/GoogleSheetService";
 import { useState, useEffect } from "react";
 import Calendar from "./ui/component/Calender";
+import CheckButton from "./ui/component/CheckButton";
 import { QRCodeSVG } from "qrcode.react";
 
 const StyledTitle = styled.h1`
@@ -200,7 +201,7 @@ const StyledSearchContainer = styled.div`
   display: flex;
   gap: 8px;
   flex-flow: column;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `;
 
 const StyledSearchItem = styled.div`
@@ -369,11 +370,12 @@ export default function Home() {
     }
   };
 
-  const isClosed = (end: Date) => {
+  const isClosed = (eventDate: Date) => {
     // 一番長くて120分のタイカイを考慮
-    const nowAdd2hours = new Date();
-    nowAdd2hours.setHours(nowAdd2hours.getHours() + 2);
-    return nowAdd2hours.getTime() > end.getTime();
+    const now = new Date();
+    const dateAdd2hour = new Date(eventDate);
+    dateAdd2hour.setHours(dateAdd2hour.getHours() + 2);
+    return now.getTime() > dateAdd2hour.getTime();
   };
 
   const convertToKana = (str: string) =>
@@ -513,24 +515,26 @@ export default function Home() {
                 </StyledSearchContainerRow>
               </StyledSearchItem>
               <StyledSearchItem>
-                <StyledSearchItemLabel>日程</StyledSearchItemLabel>
-                <StyledSearchRecruitLabel
-                  className="ika-font"
-                  htmlFor="hide-closed"
-                >
-                  <input
-                    id="hide-closed"
-                    type="checkbox"
-                    onChange={(e) =>
-                      setSearch({
-                        ...search,
-                        hideClosed: e.target.checked,
-                      })
-                    }
-                    defaultChecked={search.hideClosed}
-                  />
-                  <div>おわったタイカイをかくす</div>
-                </StyledSearchRecruitLabel>
+                <StyledSearchItemLabel style={{ display: "flex", gap: "16px" }}>
+                  日程
+                  <StyledSearchRecruitLabel
+                    className="ika-font"
+                    htmlFor="hide-closed"
+                  >
+                    <input
+                      id="hide-closed"
+                      type="checkbox"
+                      onChange={(e) =>
+                        setSearch({
+                          ...search,
+                          hideClosed: e.target.checked,
+                        })
+                      }
+                      defaultChecked={search.hideClosed}
+                    />
+                    <div>おわったタイカイをかくす</div>
+                  </StyledSearchRecruitLabel>
+                </StyledSearchItemLabel>
                 <StyledSearchContainerRow>
                   <StyledSearchInput
                     type="date"
@@ -547,13 +551,19 @@ export default function Home() {
                   ></StyledSearchInput>
                 </StyledSearchContainerRow>
               </StyledSearchItem>
-              <StyledSearchItem>
-                <StyledSearchItemLabel>募集状況</StyledSearchItemLabel>
-                <StyledSearchContainerRow className="ika-font">
-                  <StyledSearchRecruitLabel htmlFor="recruitment-pre">
-                    <input
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "start",
+                  gap: "16px",
+                }}
+              >
+                <StyledSearchItem>
+                  <StyledSearchItemLabel>募集状況</StyledSearchItemLabel>
+                  <StyledSearchContainerRow>
+                    <CheckButton
                       id="recruitment-pre"
-                      type="checkbox"
+                      label="これから"
                       onChange={(e) =>
                         setSearch({
                           ...search,
@@ -561,13 +571,10 @@ export default function Home() {
                         })
                       }
                       defaultChecked={search.recruitStatusPre}
-                    />
-                    <div>これから</div>
-                  </StyledSearchRecruitLabel>
-                  <StyledSearchRecruitLabel htmlFor="recruitment-now">
-                    <input
+                    ></CheckButton>
+                    <CheckButton
                       id="recruitment-now"
-                      type="checkbox"
+                      label="うけつけ"
                       onChange={(e) =>
                         setSearch({
                           ...search,
@@ -575,13 +582,10 @@ export default function Home() {
                         })
                       }
                       defaultChecked={search.recruitStatusNow}
-                    />
-                    <div>うけつけ</div>
-                  </StyledSearchRecruitLabel>
-                  <StyledSearchRecruitLabel htmlFor="recruitment-end">
-                    <input
+                    ></CheckButton>
+                    <CheckButton
                       id="recruitment-end"
-                      type="checkbox"
+                      label="しめきり"
                       onChange={(e) =>
                         setSearch({
                           ...search,
@@ -589,62 +593,62 @@ export default function Home() {
                         })
                       }
                       defaultChecked={search.recruitStatusEnd}
-                    />
-                    <div>しめきり</div>
-                  </StyledSearchRecruitLabel>
-                </StyledSearchContainerRow>
-              </StyledSearchItem>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "end",
-                }}
-              >
+                    ></CheckButton>
+                  </StyledSearchContainerRow>
+                </StyledSearchItem>
                 <StyledSearchItem>
                   <StyledSearchItemLabel>大会種類</StyledSearchItemLabel>
                   <StyledSearchContainerRow className="ika-font">
-                    <StyledSearchRecruitLabel htmlFor="tournament-type-nintendo">
-                      <input
-                        id="tournament-type-nintendo"
-                        type="checkbox"
-                        onChange={(e) =>
-                          setSearch({
-                            ...search,
-                            tournamentTypeNintendo: e.target.checked,
-                          })
-                        }
-                        defaultChecked={search.tournamentTypeNintendo}
-                      />
-                      <div>タイカイサポート</div>
-                    </StyledSearchRecruitLabel>
-                    <StyledSearchRecruitLabel htmlFor="tournament-type-other">
-                      <input
-                        id="tournament-type-other"
-                        type="checkbox"
-                        onChange={(e) =>
-                          setSearch({
-                            ...search,
-                            tournamentTypeOther: e.target.checked,
-                          })
-                        }
-                        defaultChecked={search.tournamentTypeOther}
-                      />
-                      <div>そのほか</div>
-                    </StyledSearchRecruitLabel>
+                    <CheckButton
+                      id="tournament-type-nintendo"
+                      label="タイカイサポート"
+                      onChange={(e) =>
+                        setSearch({
+                          ...search,
+                          tournamentTypeNintendo: e.target.checked,
+                        })
+                      }
+                      defaultChecked={search.tournamentTypeNintendo}
+                    ></CheckButton>
+                    <CheckButton
+                      id="tournament-type-other"
+                      label="そのほか"
+                      onChange={(e) =>
+                        setSearch({
+                          ...search,
+                          tournamentTypeOther: e.target.checked,
+                        })
+                      }
+                      defaultChecked={search.tournamentTypeOther}
+                    ></CheckButton>
                   </StyledSearchContainerRow>
                 </StyledSearchItem>
-                <div>
-                  <StyledToggleButton
-                    className="ika-font"
-                    style={{ marginLeft: "auto" }}
-                    onClick={() => setDisplayCalendar(!displayCalendar)}
-                  >
-                    {displayCalendar
-                      ? "リストひょうじ"
-                      : "カレンダーひょうじ⚙️"}
-                  </StyledToggleButton>
-                </div>
+              </div>
+              <div
+                style={{
+                  marginTop: "8px",
+                  display: "flex",
+                  justifyContent: "end",
+                  alignContent: "baseline",
+                }}
+              >
+                <span
+                  style={{
+                    color: "#fff",
+                    fontSize: "12px",
+                    display: "flex",
+                    alignItems: "end",
+                  }}
+                >
+                  {!displayCalendar ? "ヘッダークリックで並び替え" : ""}
+                </span>
+                <StyledToggleButton
+                  className="ika-font"
+                  style={{ marginLeft: "auto" }}
+                  onClick={() => setDisplayCalendar(!displayCalendar)}
+                >
+                  {displayCalendar ? "リストひょうじ" : "カレンダーひょうじ⚙️"}
+                </StyledToggleButton>
               </div>
             </StyledSearchContainer>
             {displayCalendar ? (
