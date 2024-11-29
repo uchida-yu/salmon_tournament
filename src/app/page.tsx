@@ -122,7 +122,7 @@ const StyledConfirm = styled.div`
   width: 80%;
   position: fixed;
   background-color: #dbef3b;
-  padding: 16px;
+  padding: 8px 16px 16px;
   border-radius: 8px;
   top: 10%;
   left: 50%;
@@ -227,20 +227,6 @@ const StyledSearchInput = styled.input`
   font-size: 16px;
 `;
 
-const StyledRecruitButton = styled.button`
-  background-color: #603bff;
-  color: #fff;
-  padding: 8px;
-  border-radius: 16px;
-  border: none;
-  font-size: 10px;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-`;
-
 const StyledContactLink = styled.a`
   color: #4aea76;
   text-decoration: underline;
@@ -282,6 +268,25 @@ const StyledConfirmInfo = styled.div`
   font-size: 14px;
 `;
 
+const StyledMemoContainer = styled.div`
+  padding: 8px;
+  border-radius: 8px;
+  margin: 8px 0;
+  color: #000;
+  font-size: 12px;
+`;
+
+const StyledMemoTitle = styled.div`
+  font-size: 16px;
+  margin-bottom: 8px;
+`;
+
+const StyledCreateDatetime = styled.div`
+  font-size: 10px;
+  color: #333;
+  text-align: right;
+  margin-bottom: 8px;
+`;
 // ここから機能
 
 export default function Home() {
@@ -455,6 +460,10 @@ export default function Home() {
       return true;
     });
     setFilteredList(l);
+  };
+
+  const toStrDateTime = (date: Date) => {
+    return `${date.toLocaleDateString()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
   };
 
   useEffect(() => {
@@ -780,10 +789,7 @@ export default function Home() {
                       </td>
                       <td>
                         <StyledCenter>
-                          {v.eventDate.toLocaleDateString()}{" "}
-                          {v.eventDate.getHours().toString().padStart(2, "0")}:
-                          {v.eventDate.getMinutes().toString().padStart(2, "0")}
-                          -
+                          {toStrDateTime(v.eventDate)}-
                         </StyledCenter>
                       </td>
                       <td>
@@ -859,43 +865,22 @@ export default function Home() {
         <>
           <StyledModalLayer></StyledModalLayer>
           <StyledConfirm>
+            <StyledCreateDatetime>
+              登録日:{toStrDateTime(confirmInfo.createDateTime)}
+            </StyledCreateDatetime>
             <StyledConfirmTitle>
               {confirmInfo.tournamentTitle}({confirmInfo.organizer})
             </StyledConfirmTitle>
             <StyledConfirmInfo>
               <div>
                 <StyledConfirmMarker>
-                  {confirmInfo.eventDate.toLocaleDateString()}{" "}
-                  {confirmInfo.eventDate.getHours().toString().padStart(2, "0")}
-                  :
-                  {confirmInfo.eventDate
-                    .getMinutes()
-                    .toString()
-                    .padStart(2, "0")}
-                  -
+                  {toStrDateTime(confirmInfo.eventDate)}-
                 </StyledConfirmMarker>
               </div>
               <small>
-                募集期間:{confirmInfo.recruitmentDateFrom.toLocaleDateString()}{" "}
-                {confirmInfo.recruitmentDateFrom
-                  .getHours()
-                  .toString()
-                  .padStart(2, "0")}
-                :
-                {confirmInfo.recruitmentDateFrom
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0")}
-                - {confirmInfo.recruitmentDateTo.toLocaleDateString()}{" "}
-                {confirmInfo.recruitmentDateTo
-                  .getHours()
-                  .toString()
-                  .padStart(2, "0")}
-                :
-                {confirmInfo.recruitmentDateTo
-                  .getMinutes()
-                  .toString()
-                  .padStart(2, "0")}{" "}
+                募集期間:
+                {toStrDateTime(confirmInfo.recruitmentDateFrom)}-
+                {toStrDateTime(confirmInfo.recruitmentDateTo)}
               </small>
             </StyledConfirmInfo>
             {confirmInfo.tournamentUrl ? (
@@ -924,6 +909,13 @@ export default function Home() {
                   />
                 </div>
               </>
+            ) : null}
+
+            {confirmInfo.memo ? (
+              <StyledMemoContainer>
+                <StyledMemoTitle className="ika-font">びこう</StyledMemoTitle>
+                <div>{confirmInfo.memo}</div>
+              </StyledMemoContainer>
             ) : null}
 
             <StyledButtonContainer>

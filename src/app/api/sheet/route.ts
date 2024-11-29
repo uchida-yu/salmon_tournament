@@ -14,7 +14,7 @@ export async function GET() {
     const token = await auth.authorize();
 
     // リクエストURL
-    const range = 'Sheet1!A:J'; // 取得する範囲
+    const range = 'Sheet1!A:K'; // 取得する範囲
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`;
 
     // HTTPリクエスト
