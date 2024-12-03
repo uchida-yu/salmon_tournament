@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import Calendar from "./ui/component/Calender";
 import CheckButton from "./ui/component/CheckButton";
 import { QRCodeSVG } from "qrcode.react";
+import Button from "./ui/component/Button";
 
 const StyledTitle = styled.h1`
   font-size: 36px;
@@ -27,15 +28,6 @@ const StyledHeaderButtonContainer = styled.div`
   justify-content: center;
   gap: 8px;
   margin: 16px 0;
-`;
-
-const RegisterButton = styled.button`
-  background-color: #4aea76;
-  color: #000;
-  padding: 8px;
-  border-radius: 16px;
-  border: none;
-  line-height: 1;
 `;
 
 const StyledTable = styled.table`
@@ -157,44 +149,8 @@ const StyledConfirmUrl = styled.div`
 
 const StyledButtonContainer = styled.div`
   display: flex;
-  justify-content: end;
+  justify-content: center;
   gap: 8px;
-`;
-
-const StyledOkButton = styled.button`
-  background-color: #ff4f1d;
-  color: #fff;
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
-  width: 100%;
-`;
-
-const StyledNgButton = styled.button`
-  background-color: #ccc;
-  color: #000;
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
-  width: 100%;
-`;
-
-const StyledConfirmButton = styled.button`
-  background-color: #ff4f1d;
-  color: #fff;
-  padding: 8px;
-  border-radius: 16px;
-  border: none;
-  font-size: 10px;
-`;
-
-const StyledToggleButton = styled.button`
-  background-color: #603bff;
-  color: #fff;
-  padding: 8px;
-  border-radius: 16px;
-  border: none;
-  font-size: 10px;
 `;
 
 const StyledSearchContainer = styled.div`
@@ -491,17 +447,16 @@ export default function Home() {
         ) : (
           <>
             <StyledHeaderButtonContainer>
-              <RegisterButton
-                className="ika-font"
+              <Button
+                color="green"
+                label="タイカイをトウロクする"
                 onClick={() => {
                   window.open(
                     process.env.NEXT_PUBLIC_GOOGLE_FORM_URL,
                     "_blank"
                   );
                 }}
-              >
-                タイカイをトウロクする
-              </RegisterButton>
+              />
             </StyledHeaderButtonContainer>
             <StyledSearchContainer>
               <StyledSearchItem>
@@ -651,13 +606,14 @@ export default function Home() {
                 >
                   {!displayCalendar ? "ヘッダークリックで並び替え" : ""}
                 </span>
-                <StyledToggleButton
-                  className="ika-font"
+                <Button
+                  color="blue"
+                  label={
+                    displayCalendar ? "リストひょうじ" : "カレンダーひょうじ⚙️"
+                  }
                   style={{ marginLeft: "auto" }}
                   onClick={() => setDisplayCalendar(!displayCalendar)}
-                >
-                  {displayCalendar ? "リストひょうじ" : "カレンダーひょうじ⚙️"}
-                </StyledToggleButton>
+                />
               </div>
             </StyledSearchContainer>
             {displayCalendar ? (
@@ -812,12 +768,11 @@ export default function Home() {
                         </div>
                       </td>
                       <td>
-                        <StyledConfirmButton
-                          className="ika-font"
+                        <Button
+                          color="red"
+                          label="くわしく"
                           onClick={() => setConfirmInfo(v)}
-                        >
-                          くわしく
-                        </StyledConfirmButton>
+                        />
                       </td>
                     </StyledTr>
                   ))}
@@ -921,14 +876,15 @@ export default function Home() {
             <StyledButtonContainer>
               {confirmInfo.tournamentUrl ? (
                 <>
-                  <StyledNgButton
-                    className="ika-font"
+                  <Button
+                    label="やめておく"
+                    style={{ width: "200px" }}
                     onClick={() => setConfirmInfo(undefined)}
-                  >
-                    やめておく
-                  </StyledNgButton>
-                  <StyledOkButton
-                    className="ika-font"
+                  />
+                  <Button
+                    color="red"
+                    label="ひらく"
+                    style={{ width: "200px" }}
                     onClick={() => {
                       window.open(
                         confirmInfo.tournamentUrl,
@@ -937,18 +893,15 @@ export default function Home() {
                       );
                       setConfirmInfo(undefined);
                     }}
-                  >
-                    ひらく
-                  </StyledOkButton>
+                  />
                 </>
               ) : (
                 <>
-                  <StyledNgButton
-                    className="ika-font"
+                  <Button
+                    label="とじる"
+                    style={{ width: "200px" }}
                     onClick={() => setConfirmInfo(undefined)}
-                  >
-                    とじる
-                  </StyledNgButton>
+                  />
                 </>
               )}
             </StyledButtonContainer>
