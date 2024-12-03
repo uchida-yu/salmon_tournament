@@ -112,6 +112,8 @@ const StyledModalLayer = styled.div`
 
 const StyledConfirm = styled.div`
   width: 80%;
+  max-height: 95%;
+  overflow-y: auto;
   position: fixed;
   background-color: #dbef3b;
   padding: 8px 16px 16px;
@@ -126,6 +128,7 @@ const StyledConfirm = styled.div`
 const StyledConfirmTitle = styled.div`
   font-size: 16px;
   font-weight: bold;
+  margin-bottom: 8px;
 `;
 
 const StyledConfirmMarker = styled.span`
@@ -230,11 +233,6 @@ const StyledMemoContainer = styled.div`
   margin: 8px 0;
   color: #000;
   font-size: 12px;
-`;
-
-const StyledMemoTitle = styled.div`
-  font-size: 16px;
-  margin-bottom: 8px;
 `;
 
 const StyledCreateDatetime = styled.div`
@@ -818,7 +816,9 @@ export default function Home() {
       </footer>
       {!confirmInfo ? null : (
         <>
-          <StyledModalLayer></StyledModalLayer>
+          <StyledModalLayer
+            onClick={() => setConfirmInfo(undefined)}
+          ></StyledModalLayer>
           <StyledConfirm>
             <StyledCreateDatetime>
               登録日:{toStrDateTime(confirmInfo.createDateTime)}
@@ -840,9 +840,9 @@ export default function Home() {
             </StyledConfirmInfo>
             {confirmInfo.tournamentUrl ? (
               <>
-                <div className="ika-font">
+                <StyledConfirmTitle className="ika-font">
                   {googleSheetService.getUrlName(confirmInfo.tournamentUrl)}
-                </div>
+                </StyledConfirmTitle>
                 <StyledConfirmMessage>
                   あやしい文字列が含まれていないことをご確認の上アクセスしてください
                 </StyledConfirmMessage>
@@ -855,6 +855,8 @@ export default function Home() {
                   }}
                 >
                   <QRCodeSVG
+                    width={100}
+                    height={100}
                     value={confirmInfo.tournamentUrl}
                     style={{
                       padding: "8px",
@@ -868,7 +870,9 @@ export default function Home() {
 
             {confirmInfo.memo ? (
               <StyledMemoContainer>
-                <StyledMemoTitle className="ika-font">びこう</StyledMemoTitle>
+                <StyledConfirmTitle className="ika-font">
+                  メモ
+                </StyledConfirmTitle>
                 <div>{confirmInfo.memo}</div>
               </StyledMemoContainer>
             ) : null}
