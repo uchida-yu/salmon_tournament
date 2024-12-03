@@ -167,12 +167,19 @@ const StyledSearchItem = styled.div`
   display: flex;
   gap: 8px;
   flex-flow: column;
+  width: 100%;
+`;
+
+const StyledSearchItemRow = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #fff;
 `;
 
 const StyledSearchContainerRow = styled.div`
   display: flex;
   gap: 8px;
-  color: #333;
   align-items: center;
 `;
 
@@ -457,9 +464,9 @@ export default function Home() {
               />
             </StyledHeaderButtonContainer>
             <StyledSearchContainer>
-              <StyledSearchItem>
-                <StyledSearchItemLabel>大会名・主催</StyledSearchItemLabel>
-                <StyledSearchContainerRow>
+              <StyledSearchContainerRow>
+                <StyledSearchItem>
+                  <StyledSearchItemLabel>大会名</StyledSearchItemLabel>
                   <StyledSearchInput
                     type="text"
                     placeholder="タイカイ名"
@@ -467,6 +474,9 @@ export default function Home() {
                       setSearch({ ...search, tournamentTitle: e.target.value })
                     }
                   ></StyledSearchInput>
+                </StyledSearchItem>
+                <StyledSearchItem>
+                  <StyledSearchItemLabel>主催</StyledSearchItemLabel>
                   <StyledSearchInput
                     type="text"
                     placeholder="主催者名"
@@ -474,55 +484,54 @@ export default function Home() {
                       setSearch({ ...search, organizer: e.target.value })
                     }
                   ></StyledSearchInput>
-                </StyledSearchContainerRow>
-              </StyledSearchItem>
-              <StyledSearchItem>
-                <StyledSearchItemLabel style={{ display: "flex", gap: "16px" }}>
-                  日程
-                  <StyledSearchRecruitLabel
-                    className="ika-font"
-                    htmlFor="hide-closed"
+                </StyledSearchItem>
+              </StyledSearchContainerRow>
+
+              <StyledSearchContainerRow>
+                <StyledSearchItem>
+                  <StyledSearchItemLabel
+                    style={{ display: "flex", gap: "16px" }}
                   >
-                    <input
-                      id="hide-closed"
-                      type="checkbox"
+                    日程
+                    <StyledSearchRecruitLabel
+                      className="ika-font"
+                      htmlFor="hide-closed"
+                    >
+                      <input
+                        id="hide-closed"
+                        type="checkbox"
+                        onChange={(e) =>
+                          setSearch({
+                            ...search,
+                            hideClosed: e.target.checked,
+                          })
+                        }
+                        defaultChecked={search.hideClosed}
+                      />
+                      <div>おわったタイカイをかくす</div>
+                    </StyledSearchRecruitLabel>
+                  </StyledSearchItemLabel>
+                  <StyledSearchItemRow>
+                    <StyledSearchInput
+                      type="date"
                       onChange={(e) =>
-                        setSearch({
-                          ...search,
-                          hideClosed: e.target.checked,
-                        })
+                        setSearch({ ...search, eventDateFrom: e.target.value })
                       }
-                      defaultChecked={search.hideClosed}
-                    />
-                    <div>おわったタイカイをかくす</div>
-                  </StyledSearchRecruitLabel>
-                </StyledSearchItemLabel>
-                <StyledSearchContainerRow>
-                  <StyledSearchInput
-                    type="date"
-                    onChange={(e) =>
-                      setSearch({ ...search, eventDateFrom: e.target.value })
-                    }
-                  ></StyledSearchInput>
-                  -
-                  <StyledSearchInput
-                    type="date"
-                    onChange={(e) =>
-                      setSearch({ ...search, eventDateTo: e.target.value })
-                    }
-                  ></StyledSearchInput>
-                </StyledSearchContainerRow>
-              </StyledSearchItem>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "start",
-                  gap: "16px",
-                }}
-              >
+                    ></StyledSearchInput>
+                    -
+                    <StyledSearchInput
+                      type="date"
+                      onChange={(e) =>
+                        setSearch({ ...search, eventDateTo: e.target.value })
+                      }
+                    ></StyledSearchInput>
+                  </StyledSearchItemRow>
+                </StyledSearchItem>
+              </StyledSearchContainerRow>
+              <StyledSearchContainerRow>
                 <StyledSearchItem>
                   <StyledSearchItemLabel>募集状況</StyledSearchItemLabel>
-                  <StyledSearchContainerRow>
+                  <StyledSearchItemRow>
                     <CheckButton
                       id="recruitment-pre"
                       label="これから"
@@ -556,11 +565,11 @@ export default function Home() {
                       }
                       defaultChecked={search.recruitStatusEnd}
                     ></CheckButton>
-                  </StyledSearchContainerRow>
+                  </StyledSearchItemRow>
                 </StyledSearchItem>
                 <StyledSearchItem>
                   <StyledSearchItemLabel>大会種類</StyledSearchItemLabel>
-                  <StyledSearchContainerRow className="ika-font">
+                  <StyledSearchItemRow>
                     <CheckButton
                       id="tournament-type-nintendo"
                       label="タイカイサポート"
@@ -583,9 +592,9 @@ export default function Home() {
                       }
                       defaultChecked={search.tournamentTypeOther}
                     ></CheckButton>
-                  </StyledSearchContainerRow>
+                  </StyledSearchItemRow>
                 </StyledSearchItem>
-              </div>
+              </StyledSearchContainerRow>
               <div
                 style={{
                   marginTop: "8px",
