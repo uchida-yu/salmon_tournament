@@ -64,6 +64,10 @@ a {
   font-size: 12px !important;
 }
 
+.fc-col-header-cell, .fc-daygrid-day-number, .fc-daygrid .fc-event-title, .fc-daygrid .fc-event-time .fc-timegrid-slot-label-cushion, .fc-toolbar-title, .fc-timegrid-axis-cushion {
+  color: #fff !important;
+}
+
 .fc-toolbar-title {
   font-size: 12px !important;
 }
