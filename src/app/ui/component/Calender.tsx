@@ -22,7 +22,24 @@ export default function Calendar(props: CalendarProps) {
         title: event.title,
         date: event.date,
         eventInfo: event.eventInfo,
+        color:"#dbef3b"
       }))}
+      eventBackgroundColor="#dbef3b"
+      eventTextColor="#000"
+      eventBorderColor="#fff"
+      eventTimeFormat={{
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }}
+      slotLabelFormat={
+        {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        }
+      }
+      allDaySlot={false}
       headerToolbar={{
         left: "prev,next today",
         center: "title",
