@@ -10,6 +10,7 @@ import Calendar from "./ui/component/Calender";
 import CheckButton from "./ui/component/CheckButton";
 import { QRCodeSVG } from "qrcode.react";
 import Button from "./ui/component/Button";
+import OrganizerAccount from "./ui/component/OrganizerAccount";
 
 const StyledTitle = styled.h1`
   font-size: 36px;
@@ -83,12 +84,11 @@ const StyledTournament = styled.div`
   font-weight: bold;
 `;
 
-const StyledOrganizer = styled.div<{ $hasLink: "true" | "false" }>`
+const StyledOrganizer = styled.a<{ $hasLink: boolean }>`
   margin-top: 4px;
   font-size: 10px;
-  color: ${({ $hasLink }) => ($hasLink === "true" ? "#603bff" : "#333")};
-  text-decoration: ${({ $hasLink }) =>
-    $hasLink === "true" ? "underline" : "none"};
+  color: ${({ $hasLink }) => ($hasLink ? "#603bff" : "#333")};
+  text-decoration: ${({ $hasLink }) => ($hasLink ? "underline" : "none")};
   word-break: break-word;
 `;
 
@@ -742,12 +742,12 @@ export default function Home() {
                           <StyledTournament>
                             {v.tournamentTitle}
                           </StyledTournament>
-                          <StyledOrganizer $hasLink="false">
-                            {v.organizer}
-                            {v.organizerAccount
-                              ? `(${v.organizerAccount})`
-                              : ""}
-                          </StyledOrganizer>
+                          <OrganizerAccount
+                            organizer={v.organizer}
+                            account={v.organizerAccount}
+                            accountType={v.organizerAccountType}
+                            accountUrl={v.accountUrl}
+                          />
                         </StyledCenter>
                       </td>
                       <td>
@@ -833,8 +833,14 @@ export default function Home() {
               登録日:{toStrDateTime(confirmInfo.createDateTime)}
             </StyledCreateDatetime>
             <StyledConfirmTitle>
-              {confirmInfo.tournamentTitle}({confirmInfo.organizer})
+              {confirmInfo.tournamentTitle}
             </StyledConfirmTitle>
+            <OrganizerAccount
+              organizer={confirmInfo.organizer}
+              account={confirmInfo.organizerAccount}
+              accountType={confirmInfo.organizerAccountType}
+              accountUrl={confirmInfo.accountUrl}
+            />
             <StyledConfirmInfo>
               <div>
                 <StyledConfirmMarker>

@@ -1,8 +1,8 @@
 import GoogleSheetApi from "./GoogleSheetApi";
 
-type AccountType = 'X' | 'YouTube' | 'Twitch';
+export type AccountType = 'X' | 'YouTube' | 'Twitch';
 
-export type SheetData = {
+export type SheetRawData = {
   createDateTime: Date;                // A
   tournamentTitle: string;             // B
   organizer: string;                   // C
@@ -16,7 +16,11 @@ export type SheetData = {
   memo?: string;                       // K
 }
 
-const SHEET_COLUMN_INDEX: Record<keyof SheetData, number> = {
+export type SheetData = SheetRawData & {
+  accountUrl?: string;
+}
+
+const SHEET_COLUMN_INDEX: Record<keyof SheetRawData, number> = {
   createDateTime: 0,
   tournamentTitle: 1,
   organizer: 2,
@@ -28,6 +32,12 @@ const SHEET_COLUMN_INDEX: Record<keyof SheetData, number> = {
   organizerAccountType: 8,
   eventEndDateTime: 9,
   memo: 10
+}
+
+const ACCOUNT_URL_LIST: Record<AccountType, string> = {
+  X: 'https://x.com/',
+  YouTube: 'https://www.youtube.com/@',
+  Twitch: 'https://www.twitch.tv/'
 }
 
 export default class GoogleSheetService {
@@ -54,6 +64,13 @@ export default class GoogleSheetService {
       return this.allowDomainList.find((domain) => urlObj.origin === domain.origin)?.name;
     }
 
+    private getAccountUrl(account?: string, accountType?: AccountType) {
+      if (!account || !accountType) {
+        return '';
+      }
+      return ACCOUNT_URL_LIST[accountType] + account.replace(/^@/, '');
+    }
+
     public async getSheetData() {
       const googleSheetApi = new GoogleSheetApi();
       const {response} = await googleSheetApi.getSheetData();
@@ -73,6 +90,7 @@ export default class GoogleSheetService {
         tournamentUrl: v[SHEET_COLUMN_INDEX['tournamentUrl']],
         organizerAccount: v[SHEET_COLUMN_INDEX['organizerAccount']],
         organizerAccountType: v[SHEET_COLUMN_INDEX['organizerAccountType']] as AccountType,
+        accountUrl: this.getAccountUrl(v[SHEET_COLUMN_INDEX['organizerAccount']], v[SHEET_COLUMN_INDEX['organizerAccountType']] as AccountType),
         eventEndDateTime: v[SHEET_COLUMN_INDEX['eventEndDateTime']] ? new Date(v[SHEET_COLUMN_INDEX['eventEndDateTime']]) : undefined,
         memo: v[SHEET_COLUMN_INDEX['memo']]
       })).sort((a, b) => a.createDateTime > b.createDateTime ? -1 : 1);
