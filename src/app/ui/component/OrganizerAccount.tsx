@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   font-size: 12px;
-  flex-flow: column;
+  gap: 4px;
 `;
 
 const StyledLink = styled.a`
@@ -40,7 +40,6 @@ export default function OrganizerAccount(props: Props) {
             target="blank"
             rel="noopener noreferrer"
           >
-            {account}
             {accountType === "X" && <FontAwesomeIcon icon={faXTwitter} />}
             {accountType === "YouTube" && <FontAwesomeIcon icon={faYoutube} />}
             {accountType === "Twitch" && <FontAwesomeIcon icon={faTwitch} />}
