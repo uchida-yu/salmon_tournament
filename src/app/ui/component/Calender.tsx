@@ -7,6 +7,7 @@ type CalendarProps = {
   events: {
     title: string;
     date: string;
+    end: string;
     eventInfo: SheetData;
   }[];
   eventClick?: (info: any) => void;
@@ -21,24 +22,24 @@ export default function Calendar(props: CalendarProps) {
       events={events.map((event) => ({
         title: event.title,
         date: event.date,
+        start: event.date,
+        end: event.end,
         eventInfo: event.eventInfo,
-        color:"#dbef3b"
+        color: "#dbef3b",
       }))}
       eventBackgroundColor="#dbef3b"
       eventTextColor="#000"
       eventBorderColor="#fff"
       eventTimeFormat={{
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
       }}
-      slotLabelFormat={
-        {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        }
-      }
+      slotLabelFormat={{
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }}
       allDaySlot={false}
       headerToolbar={{
         left: "prev,next today",

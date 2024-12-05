@@ -351,12 +351,28 @@ export default function Home() {
     }
   };
 
-  const isClosed = (eventDate: Date) => {
-    // 一番長くて120分のタイカイを考慮
+  const checkValidDate = (date: string) => {
+    const d = new Date(date);
+    return d instanceof Date && !isNaN(d.getTime());
+  };
+
+  const getEventEndDateTime = (
+    eventStartDate: Date,
+    eventEndDateTime?: Date
+  ) => {
+    // 初期はeventEndDateがなかったため、ない場合は2時間後を返す
+    if (!eventEndDateTime || !checkValidDate(eventEndDateTime.toString())) {
+      const end = new Date(eventStartDate);
+      end.setHours(end.getHours() + 2);
+      return end;
+    }
+    return eventEndDateTime;
+  };
+
+  const isClosed = (eventStartDate: Date, eventEndDate?: Date) => {
     const now = new Date();
-    const dateAdd2hour = new Date(eventDate);
-    dateAdd2hour.setHours(dateAdd2hour.getHours() + 2);
-    return now.getTime() > dateAdd2hour.getTime();
+    const end = getEventEndDateTime(eventStartDate, eventEndDate);
+    return now.getTime() > end.getTime();
   };
 
   const convertToKana = (str: string) =>
@@ -665,6 +681,10 @@ export default function Home() {
                   events={filteredList.map((v) => ({
                     title: `${v.tournamentTitle}(${v.organizer})`,
                     date: v.eventDate.toISOString(),
+                    end: getEventEndDateTime(
+                      v.eventDate,
+                      v.eventEndDateTime
+                    ).toISOString(),
                     eventInfo: v,
                   }))}
                   eventClick={(info: {
@@ -764,6 +784,9 @@ export default function Home() {
                       onClick={() => setConfirmInfo(v)}
                     >
                       <td>
+                        {toStrDateTime(
+                          getEventEndDateTime(v.eventDate, v.eventEndDateTime)
+                        )}
                         <StyledCenter>
                           <StyledTournament>
                             {v.tournamentTitle}
@@ -862,6 +885,9 @@ export default function Home() {
               <div>
                 <StyledConfirmMarker>
                   {toStrDateTime(confirmInfo.eventDate)}-
+                  {confirmInfo.eventEndDateTime
+                    ? toStrDateTime(confirmInfo.eventEndDateTime)
+                    : ""}
                 </StyledConfirmMarker>
               </div>
               <small>
@@ -958,6 +984,9 @@ export default function Home() {
               <li>アカウントのリンク化の対応をしました</li>
               <li>
                 「くわしく」ボタンを消し、行全体をクリックで詳細を表示するようにしました
+              </li>
+              <li>
+                大会の終了日時を表示するようにしました（詳細、カレンダーのweek表示）
               </li>
             </StyledInfoList>
             <StyledButtonContainer>
