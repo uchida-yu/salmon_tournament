@@ -12,6 +12,9 @@ const StyledContainer = styled.div`
   align-items: center;
   font-size: 12px;
   gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: fit-content;
 `;
 
 const StyledLink = styled.a`
