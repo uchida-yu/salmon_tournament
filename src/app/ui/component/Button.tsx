@@ -1,7 +1,8 @@
+import React from "react";
 import styled from "styled-components";
 
 const StyledButton = styled.button<{
-  $color: "red" | "green" | "blue" | "gray";
+  $color: "red" | "green" | "blue" | "black" | "gray";
   $size: "small" | "medium" | "large";
 }>`
   background-color: ${({ $color }) =>
@@ -11,7 +12,9 @@ const StyledButton = styled.button<{
         ? "#603bff"
         : $color === "green"
           ? "#4aea76"
-          : "#ccc"};
+          : $color === "black"
+            ? "#000"
+            : "#ccc"};
   color: ${({ $color }) =>
     $color === "gray" || $color === "green" ? "#000" : "#fff"};
   padding: 8px;
@@ -23,14 +26,22 @@ const StyledButton = styled.button<{
 
 type Props = {
   label: string;
-  color?: "red" | "green" | "blue" | "gray";
+  color?: "red" | "green" | "blue" | "black" | "gray";
   size?: "small" | "medium" | "large";
   style?: React.CSSProperties;
   onClick: () => void;
+  children?: React.ReactNode;
 };
 
 export default function Button(props: Props) {
-  const { color = "gray", size = "small", label, style, onClick } = props;
+  const {
+    color = "gray",
+    size = "small",
+    label,
+    style,
+    children,
+    onClick,
+  } = props;
   return (
     <StyledButton
       type="button"
@@ -41,6 +52,7 @@ export default function Button(props: Props) {
       style={style}
     >
       {label}
+      {children}
     </StyledButton>
   );
 }

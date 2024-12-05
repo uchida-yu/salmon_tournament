@@ -68,6 +68,10 @@ a {
   color: #fff !important;
 }
 
+.fc-event-main-frame .fc-event-time, .fc-event-main-frame .fc-event-title {
+  color: #000 !important;
+}
+
 .fc-toolbar-title {
   font-size: 12px !important;
 }

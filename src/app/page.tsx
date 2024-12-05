@@ -11,6 +11,26 @@ import CheckButton from "./ui/component/CheckButton";
 import { QRCodeSVG } from "qrcode.react";
 import Button from "./ui/component/Button";
 import OrganizerAccount from "./ui/component/OrganizerAccount";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+
+const StyledInfoButtonContainer = styled.div`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+`;
+
+const StyledInfoList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  & li:before {
+    content: "- ";
+    margin-right: 4px;
+  }
+  margin-bottom: 8px;
+`;
 
 const StyledTitle = styled.h1`
   font-size: 36px;
@@ -77,19 +97,12 @@ const StyledTr = styled.tr<{ $status: "pre" | "end" }>`
   & td {
     background-color: ${({ $status }) =>
       $status === "pre" ? "#dbef3b" : "#98a832"};
+    cursor: pointer;
   }
 `;
 
 const StyledTournament = styled.div`
   font-weight: bold;
-`;
-
-const StyledOrganizer = styled.a<{ $hasLink: boolean }>`
-  margin-top: 4px;
-  font-size: 10px;
-  color: ${({ $hasLink }) => ($hasLink ? "#603bff" : "#333")};
-  text-decoration: ${({ $hasLink }) => ($hasLink ? "underline" : "none")};
-  word-break: break-word;
 `;
 
 const StyledCenter = styled.div`
@@ -106,26 +119,26 @@ const StyledModalLayer = styled.div`
   width: 100%;
   height: 100%;
   background-color: #000;
-  opacity: 0.5;
+  opacity: 0.3;
   z-index: 2;
 `;
 
-const StyledConfirm = styled.div`
+const StyledModal = styled.div`
   width: 80%;
   max-height: 95%;
   overflow-y: auto;
   position: fixed;
   background-color: #dbef3b;
+  color: #000;
   padding: 8px 16px 16px;
   border-radius: 8px;
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
-  color: #000;
 `;
 
-const StyledConfirmTitle = styled.div`
+const StyledModalTitle = styled.div`
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 8px;
@@ -217,6 +230,7 @@ const StyledSortLabelContainer = styled.div`
   gap: 8px;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 
 const StyledSortIcon = styled.div<{ type: "asc" | "desc" | "none" }>`
@@ -254,6 +268,7 @@ export default function Home() {
   const googleSheetService = new GoogleSheetService();
 
   const [loading, setLoading] = useState(true);
+  const [showInformation, setShowInformation] = useState(false);
   const [sheetData, setSheetData] = useState<SheetData[]>([]);
   const [confirmInfo, setConfirmInfo] = useState<SheetData>();
   const [filteredList, setFilteredList] = useState<SheetData[]>([]);
@@ -442,6 +457,17 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
+      <StyledInfoButtonContainer>
+        <Button
+          label="アップデート"
+          onClick={() => setShowInformation(true)}
+          style={{ padding: "4px 8px" }}
+          color="black"
+        >
+          <FontAwesomeIcon icon={faCircleInfo} />
+        </Button>
+      </StyledInfoButtonContainer>
+
       <StyledTitle className="ika-font">
         <div>サーモンラン</div>
         <div>タイカイ スケジュール</div>
@@ -730,12 +756,12 @@ export default function Home() {
                         </StyledSortIcon>
                       </StyledSortLabelContainer>
                     </th>
-                    <th className="ika-font" style={{ width: "70px" }}></th>
                   </tr>
                   {filteredList.map((v, i) => (
                     <StyledTr
                       key={i}
                       $status={isClosed(v.eventDate) ? "end" : "pre"}
+                      onClick={() => setConfirmInfo(v)}
                     >
                       <td>
                         <StyledCenter>
@@ -773,13 +799,6 @@ export default function Home() {
                             </span>
                           </div>
                         </div>
-                      </td>
-                      <td>
-                        <Button
-                          color="red"
-                          label="くわしく"
-                          onClick={() => setConfirmInfo(v)}
-                        />
                       </td>
                     </StyledTr>
                   ))}
@@ -828,13 +847,11 @@ export default function Home() {
           <StyledModalLayer
             onClick={() => setConfirmInfo(undefined)}
           ></StyledModalLayer>
-          <StyledConfirm>
+          <StyledModal>
             <StyledCreateDatetime>
               登録日:{toStrDateTime(confirmInfo.createDateTime)}
             </StyledCreateDatetime>
-            <StyledConfirmTitle>
-              {confirmInfo.tournamentTitle}
-            </StyledConfirmTitle>
+            <StyledModalTitle>{confirmInfo.tournamentTitle}</StyledModalTitle>
             <OrganizerAccount
               organizer={confirmInfo.organizer}
               account={confirmInfo.organizerAccount}
@@ -855,9 +872,9 @@ export default function Home() {
             </StyledConfirmInfo>
             {confirmInfo.tournamentUrl ? (
               <>
-                <StyledConfirmTitle className="ika-font">
+                <StyledModalTitle className="ika-font">
                   {googleSheetService.getUrlName(confirmInfo.tournamentUrl)}
-                </StyledConfirmTitle>
+                </StyledModalTitle>
                 <StyledConfirmMessage>
                   あやしい文字列が含まれていないことをご確認の上アクセスしてください
                 </StyledConfirmMessage>
@@ -885,9 +902,7 @@ export default function Home() {
 
             {confirmInfo.memo ? (
               <StyledMemoContainer>
-                <StyledConfirmTitle className="ika-font">
-                  メモ
-                </StyledConfirmTitle>
+                <StyledModalTitle className="ika-font">メモ</StyledModalTitle>
                 <div>{confirmInfo.memo}</div>
               </StyledMemoContainer>
             ) : null}
@@ -924,9 +939,37 @@ export default function Home() {
                 </>
               )}
             </StyledButtonContainer>
-          </StyledConfirm>
+          </StyledModal>
         </>
       )}
+      {showInformation ? (
+        <>
+          <StyledModalLayer
+            onClick={() => setShowInformation(false)}
+          ></StyledModalLayer>
+          <StyledModal>
+            <StyledModalTitle className="ika-font">
+              さいきんのアップデート
+            </StyledModalTitle>
+            <small>
+              <strong className="ika-font">2024/12/05</strong>
+            </small>
+            <StyledInfoList>
+              <li>アカウントのリンク化の対応をしました</li>
+              <li>
+                「くわしく」ボタンを消し、行全体をクリックで詳細を表示するようにしました
+              </li>
+            </StyledInfoList>
+            <StyledButtonContainer>
+              <Button
+                label="とじる"
+                style={{ width: "200px" }}
+                onClick={() => setShowInformation(false)}
+              />
+            </StyledButtonContainer>
+          </StyledModal>
+        </>
+      ) : null}
     </div>
   );
 }

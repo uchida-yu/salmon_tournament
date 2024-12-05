@@ -42,6 +42,7 @@ export default function OrganizerAccount(props: Props) {
             href={accountUrl}
             target="blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
           >
             {accountType === "X" && <FontAwesomeIcon icon={faXTwitter} />}
             {accountType === "YouTube" && <FontAwesomeIcon icon={faYoutube} />}
