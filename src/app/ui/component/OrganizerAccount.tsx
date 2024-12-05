@@ -11,6 +11,7 @@ const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   font-size: 12px;
+  flex-flow: column;
 `;
 
 const StyledLink = styled.a`
@@ -33,8 +34,7 @@ export default function OrganizerAccount(props: Props) {
     <StyledContainer>
       <div>{organizer}</div>
       {accountType && accountUrl ? (
-        <>
-          (
+        <div>
           <StyledLink
             href={accountUrl}
             target="blank"
@@ -45,8 +45,7 @@ export default function OrganizerAccount(props: Props) {
             {accountType === "YouTube" && <FontAwesomeIcon icon={faYoutube} />}
             {accountType === "Twitch" && <FontAwesomeIcon icon={faTwitch} />}
           </StyledLink>
-          )
-        </>
+        </div>
       ) : account ? (
         <div>({account})</div>
       ) : null}
