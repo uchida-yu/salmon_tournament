@@ -8,7 +8,7 @@ export type SheetRawData = {
   organizer: string;                   // C
   recruitmentDateFrom: Date;           // D
   recruitmentDateTo: Date;             // E
-  eventDate: Date;                     // F
+  eventStartDateTime: Date;            // F
   tournamentUrl?: string;              // G
   organizerAccount?: string;           // H
   organizerAccountType?: AccountType;  // I
@@ -26,7 +26,7 @@ const SHEET_COLUMN_INDEX: Record<keyof SheetRawData, number> = {
   organizer: 2,
   recruitmentDateFrom: 3,
   recruitmentDateTo: 4,
-  eventDate: 5,
+  eventStartDateTime: 5,
   tournamentUrl: 6,
   organizerAccount: 7,
   organizerAccountType: 8,
@@ -86,7 +86,7 @@ export default class GoogleSheetService {
         organizer: v[SHEET_COLUMN_INDEX['organizer']],
         recruitmentDateFrom: new Date(v[SHEET_COLUMN_INDEX['recruitmentDateFrom']]),
         recruitmentDateTo: new Date(v[SHEET_COLUMN_INDEX['recruitmentDateTo']]),
-        eventDate: new Date(v[SHEET_COLUMN_INDEX['eventDate']]),
+        eventStartDateTime: new Date(v[SHEET_COLUMN_INDEX['eventStartDateTime']]),
         tournamentUrl: v[SHEET_COLUMN_INDEX['tournamentUrl']],
         organizerAccount: v[SHEET_COLUMN_INDEX['organizerAccount']],
         organizerAccountType: v[SHEET_COLUMN_INDEX['organizerAccountType']] as AccountType,

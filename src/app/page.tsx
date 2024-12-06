@@ -308,7 +308,7 @@ export default function Home() {
 
   const listSort = (list: SheetData[]) => {
     const { type, order } = sort;
-    if (type === "eventDate") {
+    if (type === "eventStartDateTime") {
       return [...list].sort((a, b) => {
         const aDate = new Date(`${a[type]}`);
         const bDate = new Date(`${b[type]}`);
@@ -400,18 +400,19 @@ export default function Home() {
       if (
         search.eventDateFrom !== "" &&
         new Date(search.eventDateFrom).getTime() >
-          new Date(v.eventDate).getTime()
+          new Date(v.eventStartDateTime).getTime()
       ) {
         return false;
       }
       if (
         search.eventDateTo !== "" &&
-        new Date(search.eventDateTo).getTime() < new Date(v.eventDate).getTime()
+        new Date(search.eventDateTo).getTime() <
+          new Date(v.eventStartDateTime).getTime()
       ) {
         return false;
       }
 
-      if (search.hideClosed && isClosed(v.eventDate)) {
+      if (search.hideClosed && isClosed(v.eventStartDateTime)) {
         return false;
       }
 
@@ -680,9 +681,9 @@ export default function Home() {
                 <Calendar
                   events={filteredList.map((v) => ({
                     title: `${v.tournamentTitle}(${v.organizer})`,
-                    date: v.eventDate.toISOString(),
+                    date: v.eventStartDateTime.toISOString(),
                     end: getEventEndDateTime(
-                      v.eventDate,
+                      v.eventStartDateTime,
                       v.eventEndDateTime
                     ).toISOString(),
                     eventInfo: v,
@@ -742,14 +743,18 @@ export default function Home() {
                       <StyledSortLabelContainer
                         onClick={() =>
                           setSort({
-                            type: "eventDate",
+                            type: "eventStartDateTime",
                             order: sort.order === "asc" ? "desc" : "asc",
                           })
                         }
                       >
                         にってい
                         <StyledSortIcon
-                          type={sort.type === "eventDate" ? sort.order : "none"}
+                          type={
+                            sort.type === "eventStartDateTime"
+                              ? sort.order
+                              : "none"
+                          }
                         >
                           -
                         </StyledSortIcon>
@@ -780,7 +785,7 @@ export default function Home() {
                   {filteredList.map((v, i) => (
                     <StyledTr
                       key={i}
-                      $status={isClosed(v.eventDate) ? "end" : "pre"}
+                      $status={isClosed(v.eventStartDateTime) ? "end" : "pre"}
                       onClick={() => setConfirmInfo(v)}
                     >
                       <td>
@@ -798,7 +803,7 @@ export default function Home() {
                       </td>
                       <td>
                         <StyledCenter>
-                          {toStrDateTime(v.eventDate)}-
+                          {toStrDateTime(v.eventStartDateTime)}-
                         </StyledCenter>
                       </td>
                       <td>
@@ -881,7 +886,7 @@ export default function Home() {
             <StyledConfirmInfo>
               <div>
                 <StyledConfirmMarker>
-                  {toStrDateTime(confirmInfo.eventDate)}-
+                  {toStrDateTime(confirmInfo.eventStartDateTime)}-
                   {confirmInfo.eventEndDateTime
                     ? toStrDateTime(confirmInfo.eventEndDateTime)
                     : ""}
