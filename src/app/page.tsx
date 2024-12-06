@@ -969,6 +969,12 @@ export default function Home() {
               さいきんのアップデート
             </StyledModalTitle>
             <small>
+              <strong className="ika-font">2024/12/06</strong>
+            </small>
+            <StyledInfoList>
+              <li>Googleカレンダーへの追加リンクを設置しました</li>
+            </StyledInfoList>
+            <small>
               <strong className="ika-font">2024/12/05</strong>
             </small>
             <StyledInfoList>

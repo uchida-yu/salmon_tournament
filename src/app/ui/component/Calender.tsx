@@ -2,6 +2,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { SheetData } from "@/infrastructure/api/GoogleSheetService";
+import momentPlugin from "@fullcalendar/moment";
 
 type CalendarProps = {
   events: {
@@ -17,7 +18,7 @@ export default function Calendar(props: CalendarProps) {
   const { events, eventClick } = props;
   return (
     <FullCalendar
-      plugins={[dayGridPlugin, timeGridPlugin]}
+      plugins={[dayGridPlugin, timeGridPlugin, momentPlugin]}
       initialView="dayGridMonth"
       events={events.map((event) => ({
         title: event.title,
@@ -46,6 +47,7 @@ export default function Calendar(props: CalendarProps) {
         center: "title",
         right: "dayGridMonth,timeGridWeek",
       }}
+      titleFormat="YYYY/MM"
       eventClick={eventClick}
     />
   );
