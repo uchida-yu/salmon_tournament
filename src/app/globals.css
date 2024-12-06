@@ -8,6 +8,11 @@
   src: url('./fonts/ikamodoki.woff2') format('woff');
 }
 
+@font-face {
+  font-family: 'paintball';
+  src: url('./fonts/Paintball_Beta_3.woff2') format('woff');
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -41,7 +46,7 @@ a {
 }
 
 .ika-font {
-  font-family: 'ikamodoki', sans-serif;
+  font-family: 'ikamodoki', 'paintball', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -12,7 +12,7 @@ export type SheetRawData = {
   tournamentUrl?: string;              // G
   organizerAccount?: string;           // H
   organizerAccountType?: AccountType;  // I
-  eventEndDateTime?: Date;             // J
+  eventEndDateTime: Date;              // J
   memo?: string;                       // K
 }
 
@@ -80,6 +80,24 @@ export default class GoogleSheetService {
         return this.allowDomainList.some((domain) => urlObj.origin === domain.origin);
       }
 
+      const checkValidDate = (date: string) => {
+        const d = new Date(date);
+        return d instanceof Date && !isNaN(d.getTime());
+      };
+
+      const getEventEndDateTime = (
+        eventStartDate: string,
+        eventEndDateTime?: string
+      ) => {
+        // 初期はeventEndDateがなかったため、ない場合は2時間後を返す
+        if (!eventEndDateTime || !checkValidDate(eventEndDateTime)) {
+          const end = new Date(eventStartDate);
+          end.setHours(end.getHours() + 2);
+          return end;
+        }
+        return new Date(eventEndDateTime);
+      };
+
       return response.values.filter((v, i) => i !== 0 && (!v[6] || checkDomain(v[6]))).map((v) => ({
         createDateTime: new Date(v[SHEET_COLUMN_INDEX['createDateTime']]),
         tournamentTitle: v[SHEET_COLUMN_INDEX['tournamentTitle']],
@@ -91,7 +109,7 @@ export default class GoogleSheetService {
         organizerAccount: v[SHEET_COLUMN_INDEX['organizerAccount']],
         organizerAccountType: v[SHEET_COLUMN_INDEX['organizerAccountType']] as AccountType,
         accountUrl: this.getAccountUrl(v[SHEET_COLUMN_INDEX['organizerAccount']], v[SHEET_COLUMN_INDEX['organizerAccountType']] as AccountType),
-        eventEndDateTime: v[SHEET_COLUMN_INDEX['eventEndDateTime']] ? new Date(v[SHEET_COLUMN_INDEX['eventEndDateTime']]) : undefined,
+        eventEndDateTime: getEventEndDateTime(v[SHEET_COLUMN_INDEX['eventStartDateTime']], v[SHEET_COLUMN_INDEX['eventEndDateTime']]),
         memo: v[SHEET_COLUMN_INDEX['memo']]
       })).sort((a, b) => a.createDateTime > b.createDateTime ? -1 : 1);
     }

@@ -13,6 +13,7 @@ import Button from "./ui/component/Button";
 import OrganizerAccount from "./ui/component/OrganizerAccount";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import AddGoogleCalendarButton from "./ui/component/AddGoogleCalendarButton";
 
 const StyledInfoButtonContainer = styled.div`
   position: absolute;
@@ -125,16 +126,16 @@ const StyledModalLayer = styled.div`
 
 const StyledModal = styled.div`
   width: 80%;
-  max-height: 95%;
+  max-height: 90%;
   overflow-y: auto;
   position: fixed;
   background-color: #dbef3b;
   color: #000;
   padding: 8px 16px 16px;
   border-radius: 8px;
-  top: 10%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: 3;
 `;
 
@@ -155,7 +156,7 @@ const StyledConfirmMessage = styled.div`
 
 const StyledConfirmUrl = styled.div`
   font-size: 14px;
-  margin: 8px 0 16px;
+  margin: 8px 0;
   font-weight: bold;
   word-break: break-word;
   background-color: #fff;
@@ -163,10 +164,14 @@ const StyledConfirmUrl = styled.div`
   padding: 8px;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledModalFooterButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 8px;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(transparent, 4px, #daef3b);
+  padding-top: 16px;
 `;
 
 const StyledSearchContainer = styled.div`
@@ -249,9 +254,8 @@ const StyledConfirmInfo = styled.div`
 `;
 
 const StyledMemoContainer = styled.div`
-  padding: 8px;
   border-radius: 8px;
-  margin: 8px 0;
+  margin-bottom: 8px;
   color: #000;
   font-size: 12px;
 `;
@@ -259,8 +263,12 @@ const StyledMemoContainer = styled.div`
 const StyledCreateDatetime = styled.div`
   font-size: 10px;
   color: #333;
-  text-align: right;
-  margin-bottom: 8px;
+  line-height: 1;
+`;
+const StyledModalHeader = styled.div`
+  margin: 0 -8px 8px -8px;
+  display: flex;
+  justify-content: space-between;
 `;
 // ここから機能
 
@@ -351,28 +359,9 @@ export default function Home() {
     }
   };
 
-  const checkValidDate = (date: string) => {
-    const d = new Date(date);
-    return d instanceof Date && !isNaN(d.getTime());
-  };
-
-  const getEventEndDateTime = (
-    eventStartDate: Date,
-    eventEndDateTime?: Date
-  ) => {
-    // 初期はeventEndDateがなかったため、ない場合は2時間後を返す
-    if (!eventEndDateTime || !checkValidDate(eventEndDateTime.toString())) {
-      const end = new Date(eventStartDate);
-      end.setHours(end.getHours() + 2);
-      return end;
-    }
-    return eventEndDateTime;
-  };
-
-  const isClosed = (eventStartDate: Date, eventEndDate?: Date) => {
+  const isClosed = (eventEndDate: Date) => {
     const now = new Date();
-    const end = getEventEndDateTime(eventStartDate, eventEndDate);
-    return now.getTime() > end.getTime();
+    return now.getTime() > eventEndDate.getTime();
   };
 
   const convertToKana = (str: string) =>
@@ -412,7 +401,7 @@ export default function Home() {
         return false;
       }
 
-      if (search.hideClosed && isClosed(v.eventStartDateTime)) {
+      if (search.hideClosed && isClosed(v.eventEndDateTime)) {
         return false;
       }
 
@@ -682,10 +671,7 @@ export default function Home() {
                   events={filteredList.map((v) => ({
                     title: `${v.tournamentTitle}(${v.organizer})`,
                     date: v.eventStartDateTime.toISOString(),
-                    end: getEventEndDateTime(
-                      v.eventStartDateTime,
-                      v.eventEndDateTime
-                    ).toISOString(),
+                    end: v.eventEndDateTime.toISOString(),
                     eventInfo: v,
                   }))}
                   eventClick={(info: {
@@ -785,7 +771,7 @@ export default function Home() {
                   {filteredList.map((v, i) => (
                     <StyledTr
                       key={i}
-                      $status={isClosed(v.eventStartDateTime) ? "end" : "pre"}
+                      $status={isClosed(v.eventEndDateTime) ? "end" : "pre"}
                       onClick={() => setConfirmInfo(v)}
                     >
                       <td>
@@ -873,9 +859,12 @@ export default function Home() {
             onClick={() => setConfirmInfo(undefined)}
           ></StyledModalLayer>
           <StyledModal>
-            <StyledCreateDatetime>
-              登録日:{toStrDateTime(confirmInfo.createDateTime)}
-            </StyledCreateDatetime>
+            <StyledModalHeader>
+              <StyledCreateDatetime>
+                登録日:{toStrDateTime(confirmInfo.createDateTime)}
+              </StyledCreateDatetime>
+              <AddGoogleCalendarButton eventInfo={confirmInfo} />
+            </StyledModalHeader>
             <StyledModalTitle>{confirmInfo.tournamentTitle}</StyledModalTitle>
             <OrganizerAccount
               organizer={confirmInfo.organizer}
@@ -911,7 +900,7 @@ export default function Home() {
                   style={{
                     display: "flex",
                     justifyContent: "center",
-                    marginBottom: "16px",
+                    marginBottom: "8px",
                   }}
                 >
                   <QRCodeSVG
@@ -935,7 +924,7 @@ export default function Home() {
               </StyledMemoContainer>
             ) : null}
 
-            <StyledButtonContainer>
+            <StyledModalFooterButtonContainer>
               {confirmInfo.tournamentUrl ? (
                 <>
                   <Button
@@ -966,7 +955,7 @@ export default function Home() {
                   />
                 </>
               )}
-            </StyledButtonContainer>
+            </StyledModalFooterButtonContainer>
           </StyledModal>
         </>
       )}
@@ -991,13 +980,13 @@ export default function Home() {
                 大会の終了日時を表示するようにしました（詳細、カレンダーのweek表示）
               </li>
             </StyledInfoList>
-            <StyledButtonContainer>
+            <StyledModalFooterButtonContainer>
               <Button
                 label="とじる"
                 style={{ width: "200px" }}
                 onClick={() => setShowInformation(false)}
               />
-            </StyledButtonContainer>
+            </StyledModalFooterButtonContainer>
           </StyledModal>
         </>
       ) : null}
