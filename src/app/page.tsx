@@ -784,9 +784,6 @@ export default function Home() {
                       onClick={() => setConfirmInfo(v)}
                     >
                       <td>
-                        {toStrDateTime(
-                          getEventEndDateTime(v.eventDate, v.eventEndDateTime)
-                        )}
                         <StyledCenter>
                           <StyledTournament>
                             {v.tournamentTitle}
