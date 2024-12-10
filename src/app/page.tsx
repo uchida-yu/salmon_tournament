@@ -1,6 +1,5 @@
 "use client";
 import "./globals.css";
-import styles from "./page.module.css";
 import styled from "styled-components";
 import GoogleSheetService, {
   SheetData,
@@ -16,6 +15,25 @@ import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import AddGoogleCalendarButton from "./ui/component/AddGoogleCalendarButton";
 import Modal from "./ui/component/Modal";
 import UpdateInformation from "./ui/component/UpdateInformation";
+
+const StyledPage = styled.div`
+  min-height: 100svh;
+  padding: 80px;
+  margin: auto;
+
+  @media (max-width: 600px) {
+    padding: 24px 16px 16px;
+    min-height: 1000px;
+  }
+`;
+
+const StyledPageFooter = styled.footer`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin-top: 32px;
+`;
 
 const StyledInfoButtonContainer = styled.div`
   position: absolute;
@@ -425,7 +443,7 @@ export default function Home() {
   }, [search, sort]);
 
   return (
-    <div className={styles.page}>
+    <StyledPage>
       <StyledInfoButtonContainer>
         <Button
           label="アップデート"
@@ -441,7 +459,7 @@ export default function Home() {
         <div>サーモンラン</div>
         <div>タイカイ スケジュール</div>
       </StyledTitle>
-      <main className={styles.main}>
+      <main>
         {loading ? (
           <StyledLoading className="ika-font">つうしんちゅう...</StyledLoading>
         ) : (
@@ -768,7 +786,7 @@ export default function Home() {
                   ))}
                   {filteredList.length === 0 ? (
                     <tr>
-                      <td className="ika-font" colSpan={4}>
+                      <td className="ika-font" colSpan={3}>
                         みつかりませんでした
                       </td>
                     </tr>
@@ -781,7 +799,7 @@ export default function Home() {
           </>
         )}
       </main>
-      <footer className={styles.footer}>
+      <StyledPageFooter>
         <div
           style={{
             display: "flex",
@@ -805,7 +823,7 @@ export default function Home() {
             お問い合せ、通報、ご意見、ご要望はこちら
           </StyledContactLink>
         </div>
-      </footer>
+      </StyledPageFooter>
       {!confirmInfo ? null : (
         <Modal onClose={() => setConfirmInfo(undefined)}>
           <StyledModalHeader>
@@ -922,6 +940,6 @@ export default function Home() {
           </StyledModalFooterButtonContainer>
         </Modal>
       ) : null}
-    </div>
+    </StyledPage>
   );
 }
