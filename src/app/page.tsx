@@ -15,23 +15,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import AddGoogleCalendarButton from "./ui/component/AddGoogleCalendarButton";
 import Modal from "./ui/component/Modal";
+import UpdateInformation from "./ui/component/UpdateInformation";
 
 const StyledInfoButtonContainer = styled.div`
   position: absolute;
   top: 8px;
   right: 8px;
-`;
-
-const StyledInfoList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-size: 12px;
-  & li:before {
-    content: "- ";
-    margin-right: 4px;
-  }
-  margin-bottom: 8px;
 `;
 
 const StyledTitle = styled.h1`
@@ -249,7 +238,6 @@ const StyledModalHeader = styled.div`
 
 export default function Home() {
   const googleSheetService = new GoogleSheetService();
-
   const [loading, setLoading] = useState(true);
   const [showInformation, setShowInformation] = useState(false);
   const [sheetData, setSheetData] = useState<SheetData[]>([]);
@@ -924,24 +912,7 @@ export default function Home() {
           <StyledModalTitle className="ika-font">
             さいきんのアップデート
           </StyledModalTitle>
-          <small>
-            <strong className="ika-font">2024/12/06</strong>
-          </small>
-          <StyledInfoList>
-            <li>Googleカレンダーへの追加リンクを設置しました</li>
-          </StyledInfoList>
-          <small>
-            <strong className="ika-font">2024/12/05</strong>
-          </small>
-          <StyledInfoList>
-            <li>アカウントのリンク化の対応をしました</li>
-            <li>
-              「くわしく」ボタンを消し、行全体をクリックで詳細を表示するようにしました
-            </li>
-            <li>
-              大会の終了日時を表示するようにしました（詳細、カレンダーのweek表示）
-            </li>
-          </StyledInfoList>
+          <UpdateInformation />
           <StyledModalFooterButtonContainer>
             <Button
               label="とじる"
