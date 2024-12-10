@@ -3,7 +3,7 @@ import Script from "next/script";
 
 export default function Analytics() {
   const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
-  console.log("GA_TRACKING_ID", GA_TRACKING_ID);
+  console.log("process", process);
   return (
     <>
       <Script
