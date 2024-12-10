@@ -7,14 +7,13 @@ export const metadata: Metadata = {
   description: "サーモンランのタイカイを検索するサイトです。",
 };
 
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID ?? "";
+const GA_TRACKING_ID = process.env.GA_TRACKING_ID ?? "";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log(process);
   return (
     <html lang="ja">
       <head>
