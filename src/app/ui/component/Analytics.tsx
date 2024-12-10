@@ -1,9 +1,8 @@
 "use client";
 import Script from "next/script";
 
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
-
 export default function Analytics() {
+  const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
   return (
     <>
       <Script
