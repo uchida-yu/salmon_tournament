@@ -14,6 +14,7 @@ import OrganizerAccount from "./ui/component/OrganizerAccount";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import AddGoogleCalendarButton from "./ui/component/AddGoogleCalendarButton";
+import Modal from "./ui/component/Modal";
 
 const StyledInfoButtonContainer = styled.div`
   position: absolute;
@@ -111,32 +112,6 @@ const StyledCenter = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`;
-
-const StyledModalLayer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-  opacity: 0.3;
-  z-index: 2;
-`;
-
-const StyledModal = styled.div`
-  width: 80%;
-  max-height: 90%;
-  overflow-y: auto;
-  position: fixed;
-  background-color: #dbef3b;
-  color: #000;
-  padding: 8px 16px 16px;
-  border-radius: 8px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
 `;
 
 const StyledModalTitle = styled.div`
@@ -657,16 +632,6 @@ export default function Home() {
             </StyledSearchContainer>
             {displayCalendar ? (
               <>
-                <div
-                  style={{
-                    marginBottom: "8px",
-                    color: "#dbef3b",
-                    textAlign: "center",
-                    fontSize: "10px",
-                  }}
-                >
-                  ※カレンダー機能調整もう少し調整します
-                </div>
                 <Calendar
                   events={filteredList.map((v) => ({
                     title: `${v.tournamentTitle}(${v.organizer})`,
@@ -854,147 +819,137 @@ export default function Home() {
         </div>
       </footer>
       {!confirmInfo ? null : (
-        <>
-          <StyledModalLayer
-            onClick={() => setConfirmInfo(undefined)}
-          ></StyledModalLayer>
-          <StyledModal>
-            <StyledModalHeader>
-              <StyledCreateDatetime>
-                登録日:{toStrDateTime(confirmInfo.createDateTime)}
-              </StyledCreateDatetime>
-              <AddGoogleCalendarButton eventInfo={confirmInfo} />
-            </StyledModalHeader>
-            <StyledModalTitle>{confirmInfo.tournamentTitle}</StyledModalTitle>
-            <OrganizerAccount
-              organizer={confirmInfo.organizer}
-              account={confirmInfo.organizerAccount}
-              accountType={confirmInfo.organizerAccountType}
-              accountUrl={confirmInfo.accountUrl}
-            />
-            <StyledConfirmInfo>
-              <div>
-                <StyledConfirmMarker>
-                  {toStrDateTime(confirmInfo.eventStartDateTime)}-
-                  {confirmInfo.eventEndDateTime
-                    ? toStrDateTime(confirmInfo.eventEndDateTime)
-                    : ""}
-                </StyledConfirmMarker>
+        <Modal onClose={() => setConfirmInfo(undefined)}>
+          <StyledModalHeader>
+            <StyledCreateDatetime>
+              登録日:{toStrDateTime(confirmInfo.createDateTime)}
+            </StyledCreateDatetime>
+            <AddGoogleCalendarButton eventInfo={confirmInfo} />
+          </StyledModalHeader>
+          <StyledModalTitle>{confirmInfo.tournamentTitle}</StyledModalTitle>
+          <OrganizerAccount
+            organizer={confirmInfo.organizer}
+            account={confirmInfo.organizerAccount}
+            accountType={confirmInfo.organizerAccountType}
+            accountUrl={confirmInfo.accountUrl}
+          />
+          <StyledConfirmInfo>
+            <div>
+              <StyledConfirmMarker>
+                {toStrDateTime(confirmInfo.eventStartDateTime)}-
+                {confirmInfo.eventEndDateTime
+                  ? toStrDateTime(confirmInfo.eventEndDateTime)
+                  : ""}
+              </StyledConfirmMarker>
+            </div>
+            <small>
+              募集期間:
+              {toStrDateTime(confirmInfo.recruitmentDateFrom)}-
+              {toStrDateTime(confirmInfo.recruitmentDateTo)}
+            </small>
+          </StyledConfirmInfo>
+          {confirmInfo.tournamentUrl ? (
+            <>
+              <StyledModalTitle className="ika-font">
+                {googleSheetService.getUrlName(confirmInfo.tournamentUrl)}
+              </StyledModalTitle>
+              <StyledConfirmMessage>
+                あやしい文字列が含まれていないことをご確認の上アクセスしてください
+              </StyledConfirmMessage>
+              <StyledConfirmUrl>{confirmInfo.tournamentUrl}</StyledConfirmUrl>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginBottom: "8px",
+                }}
+              >
+                <QRCodeSVG
+                  width={100}
+                  height={100}
+                  value={confirmInfo.tournamentUrl}
+                  style={{
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                    borderRadius: "4px",
+                  }}
+                />
               </div>
-              <small>
-                募集期間:
-                {toStrDateTime(confirmInfo.recruitmentDateFrom)}-
-                {toStrDateTime(confirmInfo.recruitmentDateTo)}
-              </small>
-            </StyledConfirmInfo>
+            </>
+          ) : null}
+
+          {confirmInfo.memo ? (
+            <StyledMemoContainer>
+              <StyledModalTitle className="ika-font">メモ</StyledModalTitle>
+              <div>{confirmInfo.memo}</div>
+            </StyledMemoContainer>
+          ) : null}
+
+          <StyledModalFooterButtonContainer>
             {confirmInfo.tournamentUrl ? (
               <>
-                <StyledModalTitle className="ika-font">
-                  {googleSheetService.getUrlName(confirmInfo.tournamentUrl)}
-                </StyledModalTitle>
-                <StyledConfirmMessage>
-                  あやしい文字列が含まれていないことをご確認の上アクセスしてください
-                </StyledConfirmMessage>
-                <StyledConfirmUrl>{confirmInfo.tournamentUrl}</StyledConfirmUrl>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginBottom: "8px",
+                <Button
+                  label="やめておく"
+                  style={{ width: "200px" }}
+                  onClick={() => setConfirmInfo(undefined)}
+                />
+                <Button
+                  color="red"
+                  label="ひらく"
+                  style={{ width: "200px" }}
+                  onClick={() => {
+                    window.open(
+                      confirmInfo.tournamentUrl,
+                      "_blank",
+                      "noreferrer"
+                    );
+                    setConfirmInfo(undefined);
                   }}
-                >
-                  <QRCodeSVG
-                    width={100}
-                    height={100}
-                    value={confirmInfo.tournamentUrl}
-                    style={{
-                      padding: "8px",
-                      backgroundColor: "#fff",
-                      borderRadius: "4px",
-                    }}
-                  />
-                </div>
+                />
               </>
-            ) : null}
-
-            {confirmInfo.memo ? (
-              <StyledMemoContainer>
-                <StyledModalTitle className="ika-font">メモ</StyledModalTitle>
-                <div>{confirmInfo.memo}</div>
-              </StyledMemoContainer>
-            ) : null}
-
-            <StyledModalFooterButtonContainer>
-              {confirmInfo.tournamentUrl ? (
-                <>
-                  <Button
-                    label="やめておく"
-                    style={{ width: "200px" }}
-                    onClick={() => setConfirmInfo(undefined)}
-                  />
-                  <Button
-                    color="red"
-                    label="ひらく"
-                    style={{ width: "200px" }}
-                    onClick={() => {
-                      window.open(
-                        confirmInfo.tournamentUrl,
-                        "_blank",
-                        "noreferrer"
-                      );
-                      setConfirmInfo(undefined);
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  <Button
-                    label="とじる"
-                    style={{ width: "200px" }}
-                    onClick={() => setConfirmInfo(undefined)}
-                  />
-                </>
-              )}
-            </StyledModalFooterButtonContainer>
-          </StyledModal>
-        </>
+            ) : (
+              <>
+                <Button
+                  label="とじる"
+                  style={{ width: "200px" }}
+                  onClick={() => setConfirmInfo(undefined)}
+                />
+              </>
+            )}
+          </StyledModalFooterButtonContainer>
+        </Modal>
       )}
       {showInformation ? (
-        <>
-          <StyledModalLayer
-            onClick={() => setShowInformation(false)}
-          ></StyledModalLayer>
-          <StyledModal>
-            <StyledModalTitle className="ika-font">
-              さいきんのアップデート
-            </StyledModalTitle>
-            <small>
-              <strong className="ika-font">2024/12/06</strong>
-            </small>
-            <StyledInfoList>
-              <li>Googleカレンダーへの追加リンクを設置しました</li>
-            </StyledInfoList>
-            <small>
-              <strong className="ika-font">2024/12/05</strong>
-            </small>
-            <StyledInfoList>
-              <li>アカウントのリンク化の対応をしました</li>
-              <li>
-                「くわしく」ボタンを消し、行全体をクリックで詳細を表示するようにしました
-              </li>
-              <li>
-                大会の終了日時を表示するようにしました（詳細、カレンダーのweek表示）
-              </li>
-            </StyledInfoList>
-            <StyledModalFooterButtonContainer>
-              <Button
-                label="とじる"
-                style={{ width: "200px" }}
-                onClick={() => setShowInformation(false)}
-              />
-            </StyledModalFooterButtonContainer>
-          </StyledModal>
-        </>
+        <Modal onClose={() => setShowInformation(false)}>
+          <StyledModalTitle className="ika-font">
+            さいきんのアップデート
+          </StyledModalTitle>
+          <small>
+            <strong className="ika-font">2024/12/06</strong>
+          </small>
+          <StyledInfoList>
+            <li>Googleカレンダーへの追加リンクを設置しました</li>
+          </StyledInfoList>
+          <small>
+            <strong className="ika-font">2024/12/05</strong>
+          </small>
+          <StyledInfoList>
+            <li>アカウントのリンク化の対応をしました</li>
+            <li>
+              「くわしく」ボタンを消し、行全体をクリックで詳細を表示するようにしました
+            </li>
+            <li>
+              大会の終了日時を表示するようにしました（詳細、カレンダーのweek表示）
+            </li>
+          </StyledInfoList>
+          <StyledModalFooterButtonContainer>
+            <Button
+              label="とじる"
+              style={{ width: "200px" }}
+              onClick={() => setShowInformation(false)}
+            />
+          </StyledModalFooterButtonContainer>
+        </Modal>
       ) : null}
     </div>
   );
