@@ -2,6 +2,8 @@ import styled from "styled-components";
 
 type Props = {
   children: React.ReactNode;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
   onClose: () => void;
 };
 
@@ -31,12 +33,32 @@ const StyledModal = styled.div`
   z-index: 3;
 `;
 
+const StyledModalHeader = styled.div`
+  margin: 0 -8px 8px -8px;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledModalFooter = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(transparent, 4px, #daef3b);
+  padding-top: 16px;
+`;
+
 export default function Modal(props: Props) {
-  const { children, onClose } = props;
+  const { header, children, footer, onClose } = props;
   return (
     <>
       <StyledModalLayer onClick={onClose}></StyledModalLayer>
-      <StyledModal>{children}</StyledModal>
+      <StyledModal>
+        {header && <StyledModalHeader>{header}</StyledModalHeader>}
+        {children}
+        {footer && <StyledModalFooter>{footer}</StyledModalFooter>}
+      </StyledModal>
     </>
   );
 }

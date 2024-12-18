@@ -146,16 +146,6 @@ const StyledConfirmUrl = styled.div`
   padding: 8px;
 `;
 
-const StyledModalFooterButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  position: sticky;
-  bottom: 0;
-  background: linear-gradient(transparent, 4px, #daef3b);
-  padding-top: 16px;
-`;
-
 const StyledSearchContainer = styled.div`
   display: flex;
   gap: 8px;
@@ -247,11 +237,7 @@ const StyledCreateDatetime = styled.div`
   color: #333;
   line-height: 1;
 `;
-const StyledModalHeader = styled.div`
-  margin: 0 -8px 8px -8px;
-  display: flex;
-  justify-content: space-between;
-`;
+
 // ここから機能
 
 export default function Home() {
@@ -825,13 +811,49 @@ export default function Home() {
         </div>
       </StyledPageFooter>
       {!confirmInfo ? null : (
-        <Modal onClose={() => setConfirmInfo(undefined)}>
-          <StyledModalHeader>
-            <StyledCreateDatetime>
-              登録日:{toStrDateTime(confirmInfo.createDateTime)}
-            </StyledCreateDatetime>
-            <AddGoogleCalendarButton eventInfo={confirmInfo} />
-          </StyledModalHeader>
+        <Modal
+          onClose={() => setConfirmInfo(undefined)}
+          header={
+            <>
+              <StyledCreateDatetime>
+                登録日:{toStrDateTime(confirmInfo.createDateTime)}
+              </StyledCreateDatetime>
+              <AddGoogleCalendarButton eventInfo={confirmInfo} />
+            </>
+          }
+          footer={
+            confirmInfo.tournamentUrl ? (
+              <>
+                <Button
+                  label="やめておく"
+                  style={{ width: "200px" }}
+                  onClick={() => setConfirmInfo(undefined)}
+                />
+                <Button
+                  color="red"
+                  label="ひらく"
+                  style={{ width: "200px" }}
+                  onClick={() => {
+                    window.open(
+                      confirmInfo.tournamentUrl,
+                      "_blank",
+                      "noreferrer"
+                    );
+                    setConfirmInfo(undefined);
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <Button
+                  label="とじる"
+                  style={{ width: "200px" }}
+                  onClick={() => setConfirmInfo(undefined)}
+                />
+              </>
+            )
+          }
+        >
           <StyledModalTitle>{confirmInfo.tournamentTitle}</StyledModalTitle>
           <OrganizerAccount
             organizer={confirmInfo.organizer}
@@ -890,54 +912,23 @@ export default function Home() {
               <div>{confirmInfo.memo}</div>
             </StyledMemoContainer>
           ) : null}
-
-          <StyledModalFooterButtonContainer>
-            {confirmInfo.tournamentUrl ? (
-              <>
-                <Button
-                  label="やめておく"
-                  style={{ width: "200px" }}
-                  onClick={() => setConfirmInfo(undefined)}
-                />
-                <Button
-                  color="red"
-                  label="ひらく"
-                  style={{ width: "200px" }}
-                  onClick={() => {
-                    window.open(
-                      confirmInfo.tournamentUrl,
-                      "_blank",
-                      "noreferrer"
-                    );
-                    setConfirmInfo(undefined);
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <Button
-                  label="とじる"
-                  style={{ width: "200px" }}
-                  onClick={() => setConfirmInfo(undefined)}
-                />
-              </>
-            )}
-          </StyledModalFooterButtonContainer>
         </Modal>
       )}
       {showInformation ? (
-        <Modal onClose={() => setShowInformation(false)}>
-          <StyledModalTitle className="ika-font">
-            さいきんのアップデート
-          </StyledModalTitle>
-          <UpdateInformation />
-          <StyledModalFooterButtonContainer>
+        <Modal
+          onClose={() => setShowInformation(false)}
+          footer={
             <Button
               label="とじる"
               style={{ width: "200px" }}
               onClick={() => setShowInformation(false)}
             />
-          </StyledModalFooterButtonContainer>
+          }
+        >
+          <StyledModalTitle className="ika-font">
+            さいきんのアップデート
+          </StyledModalTitle>
+          <UpdateInformation />
         </Modal>
       ) : null}
     </StyledPage>
