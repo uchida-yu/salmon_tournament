@@ -15,6 +15,8 @@ import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import AddGoogleCalendarButton from "./ui/component/AddGoogleCalendarButton";
 import Modal from "./ui/component/Modal";
 import UpdateInformation from "./ui/component/UpdateInformation";
+import InputText from "./ui/component/InputText";
+import Loading from "./ui/component/Loading";
 
 const StyledPage = styled.div`
   min-height: 100svh;
@@ -35,6 +37,19 @@ const StyledPageFooter = styled.footer`
   margin-top: 32px;
 `;
 
+const StyledPageFooterInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const StyledPageFooterDescription = styled.div`
+  margin-bottom: 8px;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+`;
+
 const StyledInfoButtonContainer = styled.div`
   position: absolute;
   top: 8px;
@@ -45,12 +60,6 @@ const StyledTitle = styled.h1`
   font-size: 36px;
   color: #000;
   text-align: center;
-`;
-
-const StyledLoading = styled.div`
-  font-size: 24px;
-  text-align: center;
-  margin: 32px;
 `;
 
 const StyledHeaderButtonContainer = styled.div`
@@ -171,16 +180,6 @@ const StyledSearchContainerRow = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
-`;
-
-const StyledSearchInput = styled.input`
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
-  width: 100%;
-  background-color: #333333af;
-  color: #fff;
-  font-size: 16px;
 `;
 
 const StyledContactLink = styled.a`
@@ -447,7 +446,7 @@ export default function Home() {
       </StyledTitle>
       <main>
         {loading ? (
-          <StyledLoading className="ika-font">つうしんちゅう...</StyledLoading>
+          <Loading />
         ) : (
           <>
             <StyledHeaderButtonContainer>
@@ -466,23 +465,21 @@ export default function Home() {
               <StyledSearchContainerRow>
                 <StyledSearchItem>
                   <StyledSearchItemLabel>大会名</StyledSearchItemLabel>
-                  <StyledSearchInput
-                    type="text"
+                  <InputText
                     placeholder="タイカイ名"
                     onChange={(e) =>
                       setSearch({ ...search, tournamentTitle: e.target.value })
                     }
-                  ></StyledSearchInput>
+                  ></InputText>
                 </StyledSearchItem>
                 <StyledSearchItem>
                   <StyledSearchItemLabel>主催</StyledSearchItemLabel>
-                  <StyledSearchInput
-                    type="text"
+                  <InputText
                     placeholder="主催者名"
                     onChange={(e) =>
                       setSearch({ ...search, organizer: e.target.value })
                     }
-                  ></StyledSearchInput>
+                  ></InputText>
                 </StyledSearchItem>
               </StyledSearchContainerRow>
 
@@ -511,19 +508,19 @@ export default function Home() {
                     </StyledSearchRecruitLabel>
                   </StyledSearchItemLabel>
                   <StyledSearchItemRow>
-                    <StyledSearchInput
+                    <InputText
                       type="date"
                       onChange={(e) =>
                         setSearch({ ...search, eventDateFrom: e.target.value })
                       }
-                    ></StyledSearchInput>
+                    ></InputText>
                     -
-                    <StyledSearchInput
+                    <InputText
                       type="date"
                       onChange={(e) =>
                         setSearch({ ...search, eventDateTo: e.target.value })
                       }
-                    ></StyledSearchInput>
+                    ></InputText>
                   </StyledSearchItemRow>
                 </StyledSearchItem>
               </StyledSearchContainerRow>
@@ -786,29 +783,16 @@ export default function Home() {
         )}
       </main>
       <StyledPageFooter>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              marginBottom: "8px",
-              color: "#fff",
-              textAlign: "center",
-              fontSize: "12px",
-            }}
-          >
+        <StyledPageFooterInner>
+          <StyledPageFooterDescription>
             スプラトゥーン3・サーモンランのタイカイを検索するための非公式のサイトです。
-          </div>
+          </StyledPageFooterDescription>
           <StyledContactLink
             href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_MAIL}`}
           >
             お問い合せ、通報、ご意見、ご要望はこちら
           </StyledContactLink>
-        </div>
+        </StyledPageFooterInner>
       </StyledPageFooter>
       {!confirmInfo ? null : (
         <Modal
