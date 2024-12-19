@@ -237,6 +237,21 @@ const StyledCreateDatetime = styled.div`
   line-height: 1;
 `;
 
+const StyledQRCodeSVG = styled(QRCodeSVG)`
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 4px;
+`;
+
+const StyledQRCodeSVGContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+`;
+
 // ここから機能
 
 export default function Home() {
@@ -253,6 +268,8 @@ export default function Home() {
     type: "",
     order: "desc",
   });
+
+  const [showQr, setShowQr] = useState(window.innerWidth > 600);
 
   const [search, setSearch] = useState<{
     organizer: string;
@@ -869,24 +886,23 @@ export default function Home() {
                 あやしい文字列が含まれていないことをご確認の上アクセスしてください
               </StyledConfirmMessage>
               <StyledConfirmUrl>{confirmInfo.tournamentUrl}</StyledConfirmUrl>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: "8px",
-                }}
-              >
-                <QRCodeSVG
-                  width={100}
-                  height={100}
-                  value={confirmInfo.tournamentUrl}
-                  style={{
-                    padding: "8px",
-                    backgroundColor: "#fff",
-                    borderRadius: "4px",
+              <StyledQRCodeSVGContainer>
+                {showQr && (
+                  <StyledQRCodeSVG
+                    width={100}
+                    height={100}
+                    value={confirmInfo.tournamentUrl}
+                  />
+                )}
+
+                <Button
+                  label={showQr ? "QRひひょうじ" : "QRひょうじ"}
+                  color="black"
+                  onClick={() => {
+                    setShowQr(!showQr);
                   }}
-                />
-              </div>
+                ></Button>
+              </StyledQRCodeSVGContainer>
             </>
           ) : null}
 
