@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Analytics from "./ui/component/Analytics";
+import RecoilProvider from "./recoil/provider/RecoilProvider";
 
 export const metadata: Metadata = {
   title: "サーモンランタイカイ検索",
@@ -19,7 +20,9 @@ export default function RootLayout({
       <head>
         <Analytics gaTrackingId={GA_TRACKING_ID} />
       </head>
-      <body>{children}</body>
+      <RecoilProvider>
+        <body>{children}</body>
+      </RecoilProvider>
     </html>
   );
 }

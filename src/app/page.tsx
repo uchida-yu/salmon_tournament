@@ -269,7 +269,7 @@ export default function Home() {
     order: "desc",
   });
 
-  const [showQr, setShowQr] = useState(window.innerWidth > 600);
+  const [showQr, setShowQr] = useState(false);
 
   const [search, setSearch] = useState<{
     organizer: string;
@@ -437,6 +437,7 @@ export default function Home() {
       setSheetData(list);
       listSearch(list);
       setLoading(false);
+      setShowQr(window.innerWidth > 600);
     })();
   }, []);
 
