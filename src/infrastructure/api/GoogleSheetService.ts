@@ -40,6 +40,13 @@ const ACCOUNT_URL_LIST: Record<AccountType, string> = {
   Twitch: 'https://www.twitch.tv/'
 }
 
+const ACCOUNT_URL_PATTERN: string[] = [
+  ACCOUNT_URL_LIST.X,
+  ACCOUNT_URL_LIST.YouTube,
+  ACCOUNT_URL_LIST.Twitch,
+  'https://youtube.com'
+]
+
 export default class GoogleSheetService {
     // allow domain
     public readonly allowDomainList = [
@@ -68,7 +75,15 @@ export default class GoogleSheetService {
       if (!account || !accountType) {
         return '';
       }
-      return ACCOUNT_URL_LIST[accountType] + account.replace(/^@/, '');
+
+      // アカウントにUrlが含まれている場合、そのまま返す
+      if (ACCOUNT_URL_PATTERN.some((url) => account?.includes(url))) {
+        return account;
+      }
+
+      // @が含まれている場合は除去
+      account = account.replace(/^@/, '');
+      return ACCOUNT_URL_LIST[accountType] + account;
     }
 
     public async getSheetData() {
