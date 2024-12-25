@@ -45,7 +45,7 @@ const StyledPageFooterInner = styled.div`
 
 const StyledPageFooterDescription = styled.div`
   margin-bottom: 8px;
-  color: #fff;
+  color: var(--background);
   text-align: center;
   font-size: 12px;
 `;
@@ -100,12 +100,12 @@ const StyledTable = styled.table`
   & th {
     background-color: #000;
     padding: 8px 4px;
-    color: #4aea76;
+    color: var(--green);
   }
   & td {
-    background-color: #dbef3b;
+    background-color: var(--yellow);
     padding: 4px;
-    border-top: 2px dashed #ccc;
+    border-top: 2px dashed var(--gray);
     color: #333;
     text-align: center;
   }
@@ -183,7 +183,7 @@ const StyledSearchContainerRow = styled.div`
 `;
 
 const StyledContactLink = styled.a`
-  color: #4aea76;
+  color: var(--green);
   text-decoration: underline;
   font-size: 12px;
 `;

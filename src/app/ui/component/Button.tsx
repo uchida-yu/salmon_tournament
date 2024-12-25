@@ -7,16 +7,16 @@ const StyledButton = styled.button<{
 }>`
   background-color: ${({ $color }) =>
     $color === "red"
-      ? "#ff4f1d"
+      ? "var(--red)"
       : $color === "blue"
-        ? "#603bff"
+        ? "var(--blue)"
         : $color === "green"
-          ? "#4aea76"
+          ? "var(--green)"
           : $color === "black"
-            ? "#000"
-            : "#ccc"};
+            ? "var(--black)"
+            : "var(--gray)"};
   color: ${({ $color }) =>
-    $color === "gray" || $color === "green" ? "#000" : "#fff"};
+    $color === "gray" || $color === "green" ? "var(--black)" : "var(--white)"};
   padding: 8px;
   border-radius: 16px;
   border: none;

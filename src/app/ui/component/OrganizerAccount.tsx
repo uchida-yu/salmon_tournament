@@ -21,7 +21,7 @@ const StyledLink = styled.a`
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #603bff;
+  color: var(--blue);
 `;
 
 type Props = {

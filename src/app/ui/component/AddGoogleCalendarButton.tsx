@@ -7,7 +7,7 @@ const StyledLink = styled.a`
   display: flex;
   gap: 4px;
   align-items: center;
-  background-color: #603bff;
+  background-color: var(--blue);
   color: #fff;
   padding: 4px 8px;
   border-radius: 16px;
