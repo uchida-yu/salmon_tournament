@@ -97,13 +97,6 @@ a {
   background-color: #00000030 !important;
 }
 
-.fc-view-harness:has(.fc-timegrid) {
-  min-height: 500px !important;
-}
-
-.fc-view-harness:has(.fc-daygrid) {
-  min-height: 400px !important;
-}
 
 
 .fc-col-header-cell,

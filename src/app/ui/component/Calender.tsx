@@ -47,6 +47,7 @@ export default function Calendar(props: CalendarProps) {
       }}
       titleFormat="YYYY/MM"
       eventClick={eventClick}
+      height={"auto"}
     />
   );
 }
