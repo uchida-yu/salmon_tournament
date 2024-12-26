@@ -114,3 +114,35 @@ a {
 .fc-theme-standard td, .fc-theme-standard th {
   border-color: var(--gray) !important;
 }
+
+.fc-theme-standard .fc-scrollgrid {
+  border: none !important;
+}
+
+.fc-scrollgrid-section td {
+  border-right: none !important;
+  border-bottom: none !important;
+}
+
+.fc-scrollgrid-section > th {
+  border-right: none !important;
+  background-color: transparent !important;
+}
+.fc-scrollgrid-section th tr th:first-child {
+  border-top-left-radius: 4px;
+}
+.fc-scrollgrid-section th tr th:last-child {
+  border-top-right-radius: 4px;
+}
+
+.fc-scrollgrid-sync-table tr:last-child td:first-child {
+  border-bottom-left-radius: 4px !important;
+}
+
+.fc-scrollgrid-sync-table tr:last-child td:last-child {
+  border-bottom-right-radius: 4px !important;
+}
+
+.fc-scrollgrid-section-body .fc-day-today {
+  background-color: #e1ff00 !important;
+}

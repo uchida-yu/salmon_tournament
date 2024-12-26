@@ -28,7 +28,6 @@ export default function Calendar(props: CalendarProps) {
         eventInfo: event.eventInfo,
         color: "#ff4f1d",
       }))}
-      eventBorderColor="#fff"
       eventTimeFormat={{
         hour: "2-digit",
         minute: "2-digit",
@@ -48,6 +47,7 @@ export default function Calendar(props: CalendarProps) {
       titleFormat="YYYY/MM"
       eventClick={eventClick}
       height={"auto"}
+      stickyHeaderDates={true}
     />
   );
 }
