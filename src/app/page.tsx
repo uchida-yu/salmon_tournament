@@ -630,7 +630,7 @@ export default function Home() {
                 <Button
                   color="blue"
                   label={
-                    displayCalendar ? "リストひょうじ" : "カレンダーひょうじ⚙️"
+                    displayCalendar ? "リストひょうじ" : "カレンダーひょうじ"
                   }
                   style={{ marginLeft: "auto" }}
                   onClick={() => setDisplayCalendar(!displayCalendar)}
