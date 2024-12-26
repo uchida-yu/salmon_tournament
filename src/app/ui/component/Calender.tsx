@@ -28,7 +28,6 @@ export default function Calendar(props: CalendarProps) {
         eventInfo: event.eventInfo,
         color: "#ff4f1d",
       }))}
-      eventTextColor="#000"
       eventBorderColor="#fff"
       eventTimeFormat={{
         hour: "2-digit",
