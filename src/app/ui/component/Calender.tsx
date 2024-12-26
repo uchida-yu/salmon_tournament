@@ -26,9 +26,8 @@ export default function Calendar(props: CalendarProps) {
         start: event.date,
         end: event.end,
         eventInfo: event.eventInfo,
-        color: "#dbef3b",
+        color: "#ff4f1d",
       }))}
-      eventBackgroundColor="#dbef3b"
       eventTextColor="#000"
       eventBorderColor="#fff"
       eventTimeFormat={{

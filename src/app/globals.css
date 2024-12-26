@@ -76,12 +76,21 @@ a {
   font-size: 12px !important;
 }
 
-.fc-col-header-cell, .fc-daygrid-day-number, .fc-daygrid .fc-event-title, .fc-daygrid .fc-event-time, .fc-timegrid-slot, .fc-timegrid-slot-label-cushion, .fc-toolbar-title, .fc-timegrid-axis-cushion {
+
+
+.fc-daygrid .fc-daygrid-event-harness-abs .fc-event-title,
+.fc-daygrid .fc-daygrid-event-harness-abs .fc-event-time,
+.fc-timeGridWeek-view, .fc-timegrid-event-harness .fc-event-title,
+.fc-timeGridWeek-view, .fc-timegrid-event-harness .fc-event-time,
+.fc-timegrid-slot,
+.fc-timegrid-slot-label-cushion,
+.fc-toolbar-title,
+.fc-timegrid-axis-cushion {
   color: #fff !important;
 }
 
 .fc-event-main-frame .fc-event-time, .fc-event-main-frame .fc-event-title {
-  color: #000 !important;
+  /* color: #000 !important; */
 }
 
 .fc-toolbar-title {
@@ -102,4 +111,18 @@ a {
 
 .fc-view-harness:has(.fc-daygrid) {
   min-height: 400px !important;
+}
+
+
+.fc-col-header-cell, .fc-timegrid-slot-label, .fc-timegrid-axis, .fc-timegrid-slot-label-cushion {
+  background-color: #000000 !important;
+  color: var(--green) !important;
+}
+
+.fc-scrollgrid-section-body .fc-day {
+  background-color: var(--yellow) !important;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+  border-color: var(--gray) !important;
 }
