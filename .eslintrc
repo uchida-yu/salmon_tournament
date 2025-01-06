@@ -23,9 +23,7 @@
     "prettier"
   ],
   "rules": {
-    // object-curly-newline
     "object-curly-newline": "off",
-    // no-confusing-arrow
     "no-confusing-arrow": "off",
     "react/jsx-curly-newline": "off",
     "function-paren-newline": "off",

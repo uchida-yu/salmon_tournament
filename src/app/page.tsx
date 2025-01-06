@@ -658,15 +658,7 @@ export default function Home() {
                   end: v.eventEndDateTime.toISOString(),
                   eventInfo: v,
                 }))}
-                eventClick={(info: {
-                  event: {
-                    title: string;
-                    date: string;
-                    extendedProps: { eventInfo: SheetData };
-                  };
-                }) => {
-                  setConfirmInfo(info.event.extendedProps.eventInfo);
-                }}
+                eventClick={setConfirmInfo}
               />
             ) : (
               <StyledTable>

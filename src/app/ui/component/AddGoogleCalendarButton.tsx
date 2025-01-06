@@ -1,7 +1,8 @@
-import styled from "styled-components";
-import { SheetData } from "@/infrastructure/api/GoogleSheetService";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import styled from 'styled-components';
+import { SheetData } from '@/infrastructure/api/GoogleSheetService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const StyledLink = styled.a`
   display: flex;
@@ -21,31 +22,31 @@ type Props = {
   eventInfo: SheetData;
 };
 
-const BASE_URL = "https://www.google.com/calendar/render?action=TEMPLATE";
+const BASE_URL = 'https://www.google.com/calendar/render?action=TEMPLATE';
 
 export default function AddGoogleCalendarButton(props: Props) {
   const { eventInfo } = props;
 
   const toGoogleCalendarDate = (date: Date) => {
     const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // 月は0始まり
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const hours = String(date.getUTCHours()).padStart(2, "0");
-    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-    const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // 月は0始まり
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
     return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
   };
 
   const title = encodeURIComponent(
-    `${eventInfo.tournamentTitle}(${eventInfo.organizer})`
+    `${eventInfo.tournamentTitle}(${eventInfo.organizer})`,
   );
 
   const details = encodeURIComponent(
-    `大会URL:\n${eventInfo.tournamentUrl}${eventInfo.memo ? `\nメモ:\n${eventInfo.memo}\n` : ""}`
+    `大会URL:\n${eventInfo.tournamentUrl}${eventInfo.memo ? `\nメモ:\n${eventInfo.memo}\n` : ''}`,
   );
 
   const dates = encodeURIComponent(
-    `${toGoogleCalendarDate(eventInfo.eventStartDateTime)}/${toGoogleCalendarDate(eventInfo.eventEndDateTime)}`
+    `${toGoogleCalendarDate(eventInfo.eventStartDateTime)}/${toGoogleCalendarDate(eventInfo.eventEndDateTime)}`,
   );
 
   const url = `${BASE_URL}&text=${title}&dates=${dates}&details=${details}`;

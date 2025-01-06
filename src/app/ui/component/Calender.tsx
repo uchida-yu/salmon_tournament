@@ -12,7 +12,7 @@ type CalendarProps = {
     end: string;
     eventInfo: SheetData;
   }[];
-  eventClick?: (info: any) => void;
+  eventClick?: (eventInfo: SheetData) => void;
 };
 
 export default function Calendar(props: CalendarProps) {
@@ -46,7 +46,11 @@ export default function Calendar(props: CalendarProps) {
         right: 'dayGridMonth,timeGridWeek',
       }}
       titleFormat="YYYY/MM"
-      eventClick={eventClick}
+      eventClick={(info) => {
+        if ('eventInfo' in info.event.extendedProps) {
+          eventClick?.(info.event.extendedProps.eventInfo);
+        }
+      }}
       height="auto"
       stickyHeaderDates
     />
