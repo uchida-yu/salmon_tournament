@@ -9,15 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "googleapis": "^144.0.0",
-    "next": "^15.0.3",
-    "qrcode.react": "^4.1.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "recoil": "^0.7.7",
-    "styled-components": "^6.0.8"
-  },
-  "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.1",
     "@fortawesome/free-brands-svg-icons": "^6.7.1",
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
@@ -28,13 +19,34 @@
     "@fullcalendar/moment": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
+    "googleapis": "^144.0.0",
+    "next": "^15.0.3",
+    "qrcode.react": "^4.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recoil": "^0.7.7",
+    "styled-components": "^6.0.8"
+  },
+  "devDependencies": {
     "@types/node": "^22.9.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/styled-components": "^5.1.34",
-    "eslint": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "eslint": "^8.50.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-config-next": "^13.5.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "moment": "^2.30.1",
     "prettier": "^3.3.3",
-    "typescript": "^5.6.3"
+    "stylelint": "^15.10.3",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-recess-order": "^4.3.0",
+    "stylelint-config-standard": "^34.0.0",
+    "stylelint-order": "^6.0.3",
+    "stylelint-prettier": "^4.0.2",
+    "typescript": "^5.7.2"
   }
 }

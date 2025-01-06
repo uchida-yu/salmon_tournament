@@ -10,7 +10,10 @@ type Headers = {
 };
 
 export default class HttpClient {
-  public static get<T>(url: string, options: { headers: Headers; body: string; agent?: Agent }): Promise<T> {
+  public static get<T>(
+    url: string,
+    options: { headers: Headers; body: string; agent?: Agent },
+  ): Promise<T> {
     return fetch(url, {
       headers: options.headers,
       agent: options.agent,
@@ -24,7 +27,10 @@ export default class HttpClient {
       .catch((error) => console.error(error));
   }
 
-  public static post<T>(url: string, options: { headers: Headers; body: string; agent?: Agent }): Promise<T> {
+  public static post<T>(
+    url: string,
+    options: { headers: Headers; body: string; agent?: Agent },
+  ): Promise<T> {
     return fetch(url, {
       method: 'POST',
       headers: options.headers,

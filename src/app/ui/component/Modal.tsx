@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 type Props = {
   children: React.ReactNode;
@@ -53,7 +54,7 @@ export default function Modal(props: Props) {
   const { header, children, footer, onClose } = props;
   return (
     <>
-      <StyledModalLayer onClick={onClose}></StyledModalLayer>
+      <StyledModalLayer onClick={onClose} />
       <StyledModal>
         {header && <StyledModalHeader>{header}</StyledModalHeader>}
         {children}

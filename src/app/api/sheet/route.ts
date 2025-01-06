@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
-import {google} from 'googleapis';
+import { google } from 'googleapis';
 
 export async function GET() {
-
   // OAuth2認証クライアントの作成
-  const client_email = process.env.CLIENT_EMAIL;
-  const atb_private_key = Buffer.from(process.env.PRIVATE_KEY ?? '', 'base64').toString('utf8');;
-  const auth = new google.auth.JWT(client_email, '', atb_private_key, ['https://www.googleapis.com/auth/spreadsheets.readonly']);
+  const clientEmail = process.env.CLIENT_EMAIL;
+  const atbPrivateKey = Buffer.from(
+    process.env.PRIVATE_KEY ?? '',
+    'base64',
+  ).toString('utf8');
+  const auth = new google.auth.JWT(clientEmail, '', atbPrivateKey, [
+    'https://www.googleapis.com/auth/spreadsheets.readonly',
+  ]);
   const spreadsheetId = process.env.SPREADSHEET_ID;
 
   try {

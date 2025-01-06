@@ -1,4 +1,5 @@
-import Script from "next/script";
+import React from 'react';
+import Script from 'next/script';
 
 export default function Analytics(props: { gaTrackingId: string }) {
   const { gaTrackingId } = props;
@@ -8,7 +9,7 @@ export default function Analytics(props: { gaTrackingId: string }) {
         src={`https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`}
         strategy="afterInteractive"
       />
-      <Script>
+      <Script id="ga-script">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

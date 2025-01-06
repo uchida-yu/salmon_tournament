@@ -1,22 +1,22 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const StyledButton = styled.button<{
-  $color: "red" | "green" | "blue" | "black" | "gray";
-  $size: "small" | "medium" | "large";
+  $color: 'red' | 'green' | 'blue' | 'black' | 'gray';
+  $size: 'small' | 'medium' | 'large';
 }>`
   background-color: ${({ $color }) =>
-    $color === "red"
-      ? "var(--red)"
-      : $color === "blue"
-        ? "var(--blue)"
-        : $color === "green"
-          ? "var(--green)"
-          : $color === "black"
-            ? "var(--black)"
-            : "var(--gray)"};
+    $color === 'red'
+      ? 'var(--red)'
+      : $color === 'blue'
+        ? 'var(--blue)'
+        : $color === 'green'
+          ? 'var(--green)'
+          : $color === 'black'
+            ? 'var(--black)'
+            : 'var(--gray)'};
   color: ${({ $color }) =>
-    $color === "gray" || $color === "green" ? "var(--black)" : "var(--white)"};
+    $color === 'gray' || $color === 'green' ? 'var(--black)' : 'var(--white)'};
   padding: 8px;
   border-radius: 16px;
   border: none;
@@ -26,8 +26,8 @@ const StyledButton = styled.button<{
 
 type Props = {
   label: string;
-  color?: "red" | "green" | "blue" | "black" | "gray";
-  size?: "small" | "medium" | "large";
+  color?: 'red' | 'green' | 'blue' | 'black' | 'gray';
+  size?: 'small' | 'medium' | 'large';
   style?: React.CSSProperties;
   onClick: () => void;
   children?: React.ReactNode;
@@ -35,8 +35,8 @@ type Props = {
 
 export default function Button(props: Props) {
   const {
-    color = "gray",
-    size = "small",
+    color = 'gray',
+    size = 'small',
     label,
     style,
     children,

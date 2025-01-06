@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const StyledSearchInput = styled.input`
   padding: 8px;
@@ -11,13 +12,13 @@ const StyledSearchInput = styled.input`
 `;
 
 type Props = {
-  type?: "text" | "date";
+  type?: 'text' | 'date';
   placeholder?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 function InputText(props: Props) {
-  const { type = "text", onChange, placeholder } = props;
+  const { type = 'text', onChange, placeholder } = props;
   return (
     <StyledSearchInput
       type={type}

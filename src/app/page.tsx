@@ -1,22 +1,25 @@
-"use client";
-import "./globals.css";
-import styled from "styled-components";
+/* eslint-disable @typescript-eslint/indent */
+
+'use client';
+
+import './globals.css';
+import styled from 'styled-components';
 import GoogleSheetService, {
   SheetData,
-} from "@/infrastructure/api/GoogleSheetService";
-import { useState, useEffect } from "react";
-import Calendar from "./ui/component/Calender";
-import CheckButton from "./ui/component/CheckButton";
-import { QRCodeSVG } from "qrcode.react";
-import Button from "./ui/component/Button";
-import OrganizerAccount from "./ui/component/OrganizerAccount";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import AddGoogleCalendarButton from "./ui/component/AddGoogleCalendarButton";
-import Modal from "./ui/component/Modal";
-import UpdateInformation from "./ui/component/UpdateInformation";
-import InputText from "./ui/component/InputText";
-import Loading from "./ui/component/Loading";
+} from '@/infrastructure/api/GoogleSheetService';
+import React, { useState, useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import Calendar from './ui/component/Calender';
+import CheckButton from './ui/component/CheckButton';
+import Button from './ui/component/Button';
+import OrganizerAccount from './ui/component/OrganizerAccount';
+import AddGoogleCalendarButton from './ui/component/AddGoogleCalendarButton';
+import Modal from './ui/component/Modal';
+import UpdateInformation from './ui/component/UpdateInformation';
+import InputText from './ui/component/InputText';
+import Loading from './ui/component/Loading';
 
 const StyledPage = styled.div`
   min-height: 100svh;
@@ -111,10 +114,10 @@ const StyledTable = styled.table`
   }
 `;
 
-const StyledTr = styled.tr<{ $status: "pre" | "end" }>`
+const StyledTr = styled.tr<{ $status: 'pre' | 'end' }>`
   & td {
     background-color: ${({ $status }) =>
-      $status === "pre" ? "#dbef3b" : "#98a832"};
+      $status === 'pre' ? '#dbef3b' : '#98a832'};
     cursor: pointer;
   }
 `;
@@ -209,11 +212,21 @@ const StyledSortLabelContainer = styled.div`
   cursor: pointer;
 `;
 
-const StyledSortIcon = styled.div<{ type: "asc" | "desc" | "none" }>`
-  display: ${({ type }) => (type === "none" ? "none" : "block")};
+const transformStyle = (type: 'asc' | 'desc' | 'none') => {
+  switch (type) {
+    case 'asc':
+      return 'rotate(-90deg)';
+    case 'desc':
+      return 'rotate(90deg)';
+    default:
+      return 'none';
+  }
+};
+
+const StyledSortIcon = styled.div<{ type: 'asc' | 'desc' | 'none' }>`
+  display: ${({ type }) => (type === 'none' ? 'none' : 'block')};
   font-size: 12px;
-  transform: ${({ type }) =>
-    type === "desc" ? "rotate(-90deg)" : "rotate(90deg)"};
+  transform: ${({ type }) => transformStyle(type)};
 `;
 
 const StyledConfirmInfo = styled.div`
@@ -262,11 +275,11 @@ export default function Home() {
   const [confirmInfo, setConfirmInfo] = useState<SheetData>();
   const [filteredList, setFilteredList] = useState<SheetData[]>([]);
   const [sort, setSort] = useState<{
-    type: keyof SheetData | "";
-    order: "asc" | "desc";
+    type: keyof SheetData | '';
+    order: 'asc' | 'desc';
   }>({
-    type: "",
-    order: "desc",
+    type: '',
+    order: 'desc',
   });
 
   const [showQr, setShowQr] = useState(false);
@@ -283,10 +296,10 @@ export default function Home() {
     tournamentTypeNintendo: boolean;
     tournamentTypeOther: boolean;
   }>({
-    organizer: "",
-    tournamentTitle: "",
-    eventDateFrom: "",
-    eventDateTo: "",
+    organizer: '',
+    tournamentTitle: '',
+    eventDateFrom: '',
+    eventDateTo: '',
     recruitStatusPre: true,
     recruitStatusNow: true,
     recruitStatusEnd: true,
@@ -299,47 +312,48 @@ export default function Home() {
 
   const listSort = (list: SheetData[]) => {
     const { type, order } = sort;
-    if (type === "eventStartDateTime") {
+    if (type === 'eventStartDateTime') {
       return [...list].sort((a, b) => {
         const aDate = new Date(`${a[type]}`);
         const bDate = new Date(`${b[type]}`);
 
-        return order === "desc"
+        return order === 'desc'
           ? bDate.getTime() - aDate.getTime()
           : aDate.getTime() - bDate.getTime();
       });
-    } else if (type === "tournamentTitle" || type === "organizer") {
+    }
+    if (type === 'tournamentTitle' || type === 'organizer') {
       return [...list].sort((a, b) => {
         const aStr = a[type].toLowerCase();
         const bStr = b[type].toLowerCase();
 
-        return order === "desc"
+        return order === 'desc'
           ? bStr.localeCompare(aStr)
           : aStr.localeCompare(bStr);
       });
-    } else if (type === "recruitmentDateFrom") {
+    }
+    if (type === 'recruitmentDateFrom') {
       return [...list].sort((a, b) => {
         const aDate = new Date(`${a[type]}`);
         const bDate = new Date(`${b[type]}`);
 
-        return order === "desc"
+        return order === 'desc'
           ? bDate.getTime() - aDate.getTime()
           : aDate.getTime() - bDate.getTime();
       });
-    } else {
-      return list;
     }
+    return list;
   };
 
   const getStatus = (start: Date, end: Date) => {
     const now = new Date();
     if (now.getTime() < start.getTime()) {
-      return "これから";
-    } else if (now.getTime() > end.getTime()) {
-      return "しめきり";
-    } else {
-      return "うけつけ";
+      return 'これから';
     }
+    if (now.getTime() > end.getTime()) {
+      return 'しめきり';
+    }
+    return 'うけつけ';
   };
 
   const isClosed = (eventEndDate: Date) => {
@@ -349,35 +363,35 @@ export default function Home() {
 
   const convertToKana = (str: string) =>
     str.replace(/[\u30A1-\u30F6]/g, (match) =>
-      String.fromCharCode(match.charCodeAt(0) - 0x60)
+      String.fromCharCode(match.charCodeAt(0) - 0x60),
     );
 
   const listSearch = (defaultList?: SheetData[]) => {
     const data = defaultList || sheetData;
     const l = listSort(data).filter((v) => {
       if (
-        search.organizer !== "" &&
+        search.organizer !== '' &&
         !convertToKana(v.organizer).includes(convertToKana(search.organizer))
       ) {
         return false;
       }
       if (
-        search.tournamentTitle !== "" &&
+        search.tournamentTitle !== '' &&
         !convertToKana(v.tournamentTitle).includes(
-          convertToKana(search.tournamentTitle)
+          convertToKana(search.tournamentTitle),
         )
       ) {
         return false;
       }
       if (
-        search.eventDateFrom !== "" &&
+        search.eventDateFrom !== '' &&
         new Date(search.eventDateFrom).getTime() >
           new Date(v.eventStartDateTime).getTime()
       ) {
         return false;
       }
       if (
-        search.eventDateTo !== "" &&
+        search.eventDateTo !== '' &&
         new Date(search.eventDateTo).getTime() <
           new Date(v.eventStartDateTime).getTime()
       ) {
@@ -390,19 +404,19 @@ export default function Home() {
 
       if (
         !search.recruitStatusPre &&
-        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === "これから"
+        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'これから'
       ) {
         return false;
       }
       if (
         !search.recruitStatusNow &&
-        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === "うけつけ"
+        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'うけつけ'
       ) {
         return false;
       }
       if (
         !search.recruitStatusEnd &&
-        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === "しめきり"
+        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'しめきり'
       ) {
         return false;
       }
@@ -410,7 +424,7 @@ export default function Home() {
       if (
         !search.tournamentTypeNintendo &&
         v.tournamentUrl &&
-        googleSheetService.getUrlName(v.tournamentUrl) === "タイカイサポート"
+        googleSheetService.getUrlName(v.tournamentUrl) === 'タイカイサポート'
       ) {
         return false;
       }
@@ -418,7 +432,7 @@ export default function Home() {
       if (
         !search.tournamentTypeOther &&
         v.tournamentUrl &&
-        googleSheetService.getUrlName(v.tournamentUrl) !== "タイカイサポート"
+        googleSheetService.getUrlName(v.tournamentUrl) !== 'タイカイサポート'
       ) {
         return false;
       }
@@ -427,9 +441,8 @@ export default function Home() {
     setFilteredList(l);
   };
 
-  const toStrDateTime = (date: Date) => {
-    return `${date.toLocaleDateString()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-  };
+  const toStrDateTime = (date: Date) =>
+    `${date.toLocaleDateString()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 
   useEffect(() => {
     (async () => {
@@ -451,7 +464,7 @@ export default function Home() {
         <Button
           label="アップデート"
           onClick={() => setShowInformation(true)}
-          style={{ padding: "4px 8px" }}
+          style={{ padding: '4px 8px' }}
           color="black"
         >
           <FontAwesomeIcon icon={faCircleInfo} />
@@ -474,7 +487,7 @@ export default function Home() {
                 onClick={() => {
                   window.open(
                     process.env.NEXT_PUBLIC_GOOGLE_FORM_URL,
-                    "_blank"
+                    '_blank',
                   );
                 }}
               />
@@ -488,7 +501,7 @@ export default function Home() {
                     onChange={(e) =>
                       setSearch({ ...search, tournamentTitle: e.target.value })
                     }
-                  ></InputText>
+                  />
                 </StyledSearchItem>
                 <StyledSearchItem>
                   <StyledSearchItemLabel>主催</StyledSearchItemLabel>
@@ -497,14 +510,14 @@ export default function Home() {
                     onChange={(e) =>
                       setSearch({ ...search, organizer: e.target.value })
                     }
-                  ></InputText>
+                  />
                 </StyledSearchItem>
               </StyledSearchContainerRow>
 
               <StyledSearchContainerRow>
                 <StyledSearchItem>
                   <StyledSearchItemLabel
-                    style={{ display: "flex", gap: "16px" }}
+                    style={{ display: 'flex', gap: '16px' }}
                   >
                     日程
                     <StyledSearchRecruitLabel
@@ -531,14 +544,14 @@ export default function Home() {
                       onChange={(e) =>
                         setSearch({ ...search, eventDateFrom: e.target.value })
                       }
-                    ></InputText>
+                    />
                     -
                     <InputText
                       type="date"
                       onChange={(e) =>
                         setSearch({ ...search, eventDateTo: e.target.value })
                       }
-                    ></InputText>
+                    />
                   </StyledSearchItemRow>
                 </StyledSearchItem>
               </StyledSearchContainerRow>
@@ -556,7 +569,7 @@ export default function Home() {
                         })
                       }
                       defaultChecked={search.recruitStatusPre}
-                    ></CheckButton>
+                    />
                     <CheckButton
                       id="recruitment-now"
                       label="うけつけ"
@@ -567,7 +580,7 @@ export default function Home() {
                         })
                       }
                       defaultChecked={search.recruitStatusNow}
-                    ></CheckButton>
+                    />
                     <CheckButton
                       id="recruitment-end"
                       label="しめきり"
@@ -578,7 +591,7 @@ export default function Home() {
                         })
                       }
                       defaultChecked={search.recruitStatusEnd}
-                    ></CheckButton>
+                    />
                   </StyledSearchItemRow>
                 </StyledSearchItem>
                 <StyledSearchItem>
@@ -594,7 +607,7 @@ export default function Home() {
                         })
                       }
                       defaultChecked={search.tournamentTypeNintendo}
-                    ></CheckButton>
+                    />
                     <CheckButton
                       id="tournament-type-other"
                       label="そのほか"
@@ -605,58 +618,56 @@ export default function Home() {
                         })
                       }
                       defaultChecked={search.tournamentTypeOther}
-                    ></CheckButton>
+                    />
                   </StyledSearchItemRow>
                 </StyledSearchItem>
               </StyledSearchContainerRow>
               <div
                 style={{
-                  marginTop: "8px",
-                  display: "flex",
-                  justifyContent: "end",
-                  alignContent: "baseline",
+                  marginTop: '8px',
+                  display: 'flex',
+                  justifyContent: 'end',
+                  alignContent: 'baseline',
                 }}
               >
                 <span
                   style={{
-                    color: "#fff",
-                    fontSize: "12px",
-                    display: "flex",
-                    alignItems: "end",
+                    color: '#fff',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'end',
                   }}
                 >
-                  {!displayCalendar ? "ヘッダークリックで並び替え" : ""}
+                  {!displayCalendar ? 'ヘッダークリックで並び替え' : ''}
                 </span>
                 <Button
                   color="blue"
                   label={
-                    displayCalendar ? "リストひょうじ" : "カレンダーひょうじ"
+                    displayCalendar ? 'リストひょうじ' : 'カレンダーひょうじ'
                   }
-                  style={{ marginLeft: "auto" }}
+                  style={{ marginLeft: 'auto' }}
                   onClick={() => setDisplayCalendar(!displayCalendar)}
                 />
               </div>
             </StyledSearchContainer>
             {displayCalendar ? (
-              <>
-                <Calendar
-                  events={filteredList.map((v) => ({
-                    title: `${v.tournamentTitle}(${v.organizer})`,
-                    date: v.eventStartDateTime.toISOString(),
-                    end: v.eventEndDateTime.toISOString(),
-                    eventInfo: v,
-                  }))}
-                  eventClick={(info: {
-                    event: {
-                      title: string;
-                      date: string;
-                      extendedProps: { eventInfo: SheetData };
-                    };
-                  }) => {
-                    setConfirmInfo(info.event.extendedProps.eventInfo);
-                  }}
-                />
-              </>
+              <Calendar
+                events={filteredList.map((v) => ({
+                  title: `${v.tournamentTitle}(${v.organizer})`,
+                  date: v.eventStartDateTime.toISOString(),
+                  end: v.eventEndDateTime.toISOString(),
+                  eventInfo: v,
+                }))}
+                eventClick={(info: {
+                  event: {
+                    title: string;
+                    date: string;
+                    extendedProps: { eventInfo: SheetData };
+                  };
+                }) => {
+                  setConfirmInfo(info.event.extendedProps.eventInfo);
+                }}
+              />
             ) : (
               <StyledTable>
                 <tbody>
@@ -665,17 +676,17 @@ export default function Home() {
                       <StyledSortLabelContainer
                         onClick={() =>
                           setSort({
-                            type: "tournamentTitle",
-                            order: sort.order === "asc" ? "desc" : "asc",
+                            type: 'tournamentTitle',
+                            order: sort.order === 'asc' ? 'desc' : 'asc',
                           })
                         }
                       >
                         タイカイ
                         <StyledSortIcon
                           type={
-                            sort.type === "tournamentTitle"
+                            sort.type === 'tournamentTitle'
                               ? sort.order
-                              : "none"
+                              : 'none'
                           }
                         >
                           -
@@ -684,55 +695,55 @@ export default function Home() {
                       <StyledSortLabelContainer
                         onClick={() =>
                           setSort({
-                            type: "organizer",
-                            order: sort.order === "asc" ? "desc" : "asc",
+                            type: 'organizer',
+                            order: sort.order === 'asc' ? 'desc' : 'asc',
                           })
                         }
                       >
                         しゅさい
                         <StyledSortIcon
-                          type={sort.type === "organizer" ? sort.order : "none"}
+                          type={sort.type === 'organizer' ? sort.order : 'none'}
                         >
                           -
                         </StyledSortIcon>
                       </StyledSortLabelContainer>
                     </th>
-                    <th className="ika-font" style={{ width: "90px" }}>
+                    <th className="ika-font" style={{ width: '90px' }}>
                       <StyledSortLabelContainer
                         onClick={() =>
                           setSort({
-                            type: "eventStartDateTime",
-                            order: sort.order === "asc" ? "desc" : "asc",
+                            type: 'eventStartDateTime',
+                            order: sort.order === 'asc' ? 'desc' : 'asc',
                           })
                         }
                       >
                         にってい
                         <StyledSortIcon
                           type={
-                            sort.type === "eventStartDateTime"
+                            sort.type === 'eventStartDateTime'
                               ? sort.order
-                              : "none"
+                              : 'none'
                           }
                         >
                           -
                         </StyledSortIcon>
                       </StyledSortLabelContainer>
                     </th>
-                    <th className="ika-font" style={{ width: "60px" }}>
+                    <th className="ika-font" style={{ width: '60px' }}>
                       <StyledSortLabelContainer
                         onClick={() =>
                           setSort({
-                            type: "recruitmentDateFrom",
-                            order: sort.order === "asc" ? "desc" : "asc",
+                            type: 'recruitmentDateFrom',
+                            order: sort.order === 'asc' ? 'desc' : 'asc',
                           })
                         }
                       >
                         ぼしゅう
                         <StyledSortIcon
                           type={
-                            sort.type === "recruitmentDateFrom"
+                            sort.type === 'recruitmentDateFrom'
                               ? sort.order
-                              : "none"
+                              : 'none'
                           }
                         >
                           -
@@ -742,8 +753,9 @@ export default function Home() {
                   </tr>
                   {filteredList.map((v, i) => (
                     <StyledTr
+                      // eslint-disable-next-line react/no-array-index-key
                       key={i}
-                      $status={isClosed(v.eventEndDateTime) ? "end" : "pre"}
+                      $status={isClosed(v.eventEndDateTime) ? 'end' : 'pre'}
                       onClick={() => setConfirmInfo(v)}
                     >
                       <td>
@@ -761,23 +773,23 @@ export default function Home() {
                       </td>
                       <td>
                         <StyledCenter>
-                          {toStrDateTime(v.eventStartDateTime)}-
+                          {`${toStrDateTime(v.eventStartDateTime)}-`}
                         </StyledCenter>
                       </td>
                       <td>
                         <div>
                           <div
                             style={{
-                              display: "flex",
-                              gap: "8px",
-                              alignItems: "center",
-                              justifyContent: "center",
+                              display: 'flex',
+                              gap: '8px',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
                           >
                             <span className="ika-font">
                               {getStatus(
                                 v.recruitmentDateFrom,
-                                v.recruitmentDateTo
+                                v.recruitmentDateTo,
                               )}
                             </span>
                           </div>
@@ -792,7 +804,7 @@ export default function Home() {
                       </td>
                     </tr>
                   ) : (
-                    ""
+                    ''
                   )}
                 </tbody>
               </StyledTable>
@@ -818,7 +830,8 @@ export default function Home() {
           header={
             <>
               <StyledCreateDatetime>
-                登録日:{toStrDateTime(confirmInfo.createDateTime)}
+                登録日:
+                {toStrDateTime(confirmInfo.createDateTime)}
               </StyledCreateDatetime>
               <AddGoogleCalendarButton eventInfo={confirmInfo} />
             </>
@@ -828,31 +841,29 @@ export default function Home() {
               <>
                 <Button
                   label="やめておく"
-                  style={{ width: "200px" }}
+                  style={{ width: '200px' }}
                   onClick={() => setConfirmInfo(undefined)}
                 />
                 <Button
                   color="red"
                   label="ひらく"
-                  style={{ width: "200px" }}
+                  style={{ width: '200px' }}
                   onClick={() => {
                     window.open(
                       confirmInfo.tournamentUrl,
-                      "_blank",
-                      "noreferrer"
+                      '_blank',
+                      'noreferrer',
                     );
                     setConfirmInfo(undefined);
                   }}
                 />
               </>
             ) : (
-              <>
-                <Button
-                  label="とじる"
-                  style={{ width: "200px" }}
-                  onClick={() => setConfirmInfo(undefined)}
-                />
-              </>
+              <Button
+                label="とじる"
+                style={{ width: '200px' }}
+                onClick={() => setConfirmInfo(undefined)}
+              />
             )
           }
         >
@@ -866,16 +877,15 @@ export default function Home() {
           <StyledConfirmInfo>
             <div>
               <StyledConfirmMarker>
-                {toStrDateTime(confirmInfo.eventStartDateTime)}-
-                {confirmInfo.eventEndDateTime
-                  ? toStrDateTime(confirmInfo.eventEndDateTime)
-                  : ""}
+                {`${toStrDateTime(confirmInfo.eventStartDateTime)}-${
+                  confirmInfo.eventEndDateTime
+                    ? toStrDateTime(confirmInfo.eventEndDateTime)
+                    : ''
+                }`}
               </StyledConfirmMarker>
             </div>
             <small>
-              募集期間:
-              {toStrDateTime(confirmInfo.recruitmentDateFrom)}-
-              {toStrDateTime(confirmInfo.recruitmentDateTo)}
+              {`募集期間:${toStrDateTime(confirmInfo.recruitmentDateFrom)}-${toStrDateTime(confirmInfo.recruitmentDateTo)}`}
             </small>
           </StyledConfirmInfo>
           {confirmInfo.tournamentUrl ? (
@@ -897,12 +907,12 @@ export default function Home() {
                 )}
 
                 <Button
-                  label={showQr ? "QRひひょうじ" : "QRひょうじ"}
+                  label={showQr ? 'QRひひょうじ' : 'QRひょうじ'}
                   color="black"
                   onClick={() => {
                     setShowQr(!showQr);
                   }}
-                ></Button>
+                />
               </StyledQRCodeSVGContainer>
             </>
           ) : null}
@@ -921,7 +931,7 @@ export default function Home() {
           footer={
             <Button
               label="とじる"
-              style={{ width: "200px" }}
+              style={{ width: '200px' }}
               onClick={() => setShowInformation(false)}
             />
           }

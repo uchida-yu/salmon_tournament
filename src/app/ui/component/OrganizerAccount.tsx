@@ -1,11 +1,12 @@
-import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faXTwitter,
   faTwitch,
   faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
-import { AccountType } from "@/infrastructure/api/GoogleSheetService";
+} from '@fortawesome/free-brands-svg-icons';
+import { AccountType } from '@/infrastructure/api/GoogleSheetService';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -36,7 +37,7 @@ export default function OrganizerAccount(props: Props) {
   return (
     <StyledContainer>
       <div>{organizer}</div>
-      {accountType && accountUrl ? (
+      {accountType && accountUrl && (
         <div>
           <StyledLink
             href={accountUrl}
@@ -44,14 +45,13 @@ export default function OrganizerAccount(props: Props) {
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
           >
-            {accountType === "X" && <FontAwesomeIcon icon={faXTwitter} />}
-            {accountType === "YouTube" && <FontAwesomeIcon icon={faYoutube} />}
-            {accountType === "Twitch" && <FontAwesomeIcon icon={faTwitch} />}
+            {accountType === 'X' && <FontAwesomeIcon icon={faXTwitter} />}
+            {accountType === 'YouTube' && <FontAwesomeIcon icon={faYoutube} />}
+            {accountType === 'Twitch' && <FontAwesomeIcon icon={faTwitch} />}
           </StyledLink>
         </div>
-      ) : account ? (
-        <div>({account})</div>
-      ) : null}
+      )}
+      {!(accountType && accountUrl) && account && <div>{`(${account})`}</div>}
     </StyledContainer>
   );
 }
