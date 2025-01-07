@@ -8,18 +8,22 @@ import GoogleSheetService, {
   SheetData,
 } from '@/infrastructure/api/GoogleSheetService';
 import React, { useState, useEffect } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { useRecoilState } from 'recoil';
+import displayModeState from '@/app/recoil/atom/displayModeAtom';
 import Calendar from './ui/component/Calender';
-import CheckButton from './ui/component/CheckButton';
 import Button from './ui/component/Button';
 import OrganizerAccount from './ui/component/OrganizerAccount';
-import AddGoogleCalendarButton from './ui/component/AddGoogleCalendarButton';
 import Modal from './ui/component/Modal';
+import ConfirmModal from './ui/component/ConfirmModal';
 import UpdateInformation from './ui/component/UpdateInformation';
-import InputText from './ui/component/InputText';
 import Loading from './ui/component/Loading';
+import searchConditionState from './recoil/atom/searchConditionAtom';
+import selectedTournamentState from './recoil/atom/selectedTournamentAtom';
+import showQrState from './recoil/atom/showQrAtom';
+import SearchForm from './ui/component/SearchForm';
 
 const StyledPage = styled.div`
   min-height: 100svh;
@@ -139,68 +143,9 @@ const StyledModalTitle = styled.div`
   margin-bottom: 8px;
 `;
 
-const StyledConfirmMarker = styled.span`
-  background: linear-gradient(transparent 0%, #5fff7e 0%);
-`;
-
-const StyledConfirmMessage = styled.div`
-  font-size: 12px;
-  margin: 8px 0;
-`;
-
-const StyledConfirmUrl = styled.div`
-  font-size: 14px;
-  margin: 8px 0;
-  font-weight: bold;
-  word-break: break-word;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 8px;
-`;
-
-const StyledSearchContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  flex-flow: column;
-  margin-bottom: 8px;
-`;
-
-const StyledSearchItem = styled.div`
-  display: flex;
-  gap: 8px;
-  flex-flow: column;
-  width: 100%;
-`;
-
-const StyledSearchItemRow = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: #fff;
-`;
-
-const StyledSearchContainerRow = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-`;
-
 const StyledContactLink = styled.a`
   color: var(--green);
   text-decoration: underline;
-  font-size: 12px;
-`;
-
-const StyledSearchRecruitLabel = styled.label`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  line-height: 1;
-  color: #fff;
-  font-size: 14px;
-`;
-const StyledSearchItemLabel = styled.label`
-  color: #fff;
   font-size: 12px;
 `;
 
@@ -229,42 +174,6 @@ const StyledSortIcon = styled.div<{ type: 'asc' | 'desc' | 'none' }>`
   transform: ${({ type }) => transformStyle(type)};
 `;
 
-const StyledConfirmInfo = styled.div`
-  margin: 8px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 14px;
-`;
-
-const StyledMemoContainer = styled.div`
-  border-radius: 8px;
-  margin-bottom: 8px;
-  color: #000;
-  font-size: 12px;
-`;
-
-const StyledCreateDatetime = styled.div`
-  font-size: 10px;
-  color: #333;
-  line-height: 1;
-`;
-
-const StyledQRCodeSVG = styled(QRCodeSVG)`
-  padding: 8px;
-  background-color: #fff;
-  border-radius: 4px;
-`;
-
-const StyledQRCodeSVGContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-`;
-
 // ここから機能
 
 export default function Home() {
@@ -272,7 +181,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [showInformation, setShowInformation] = useState(false);
   const [sheetData, setSheetData] = useState<SheetData[]>([]);
-  const [confirmInfo, setConfirmInfo] = useState<SheetData>();
   const [filteredList, setFilteredList] = useState<SheetData[]>([]);
   const [sort, setSort] = useState<{
     type: keyof SheetData | '';
@@ -282,33 +190,10 @@ export default function Home() {
     order: 'desc',
   });
 
-  const [showQr, setShowQr] = useState(false);
-
-  const [search, setSearch] = useState<{
-    organizer: string;
-    tournamentTitle: string;
-    eventDateFrom: string;
-    eventDateTo: string;
-    recruitStatusPre: boolean;
-    recruitStatusNow: boolean;
-    recruitStatusEnd: boolean;
-    hideClosed: boolean;
-    tournamentTypeNintendo: boolean;
-    tournamentTypeOther: boolean;
-  }>({
-    organizer: '',
-    tournamentTitle: '',
-    eventDateFrom: '',
-    eventDateTo: '',
-    recruitStatusPre: true,
-    recruitStatusNow: true,
-    recruitStatusEnd: true,
-    hideClosed: true,
-    tournamentTypeNintendo: true,
-    tournamentTypeOther: true,
-  });
-
-  const [displayCalendar, setDisplayCalendar] = useState(false);
+  const [, setDetail] = useRecoilState(selectedTournamentState);
+  const [searchCondition] = useRecoilState(searchConditionState);
+  const [displayMode] = useRecoilState(displayModeState);
+  const [, setShowQR] = useRecoilState(showQrState);
 
   const listSort = (list: SheetData[]) => {
     const { type, order } = sort;
@@ -370,59 +255,61 @@ export default function Home() {
     const data = defaultList || sheetData;
     const l = listSort(data).filter((v) => {
       if (
-        search.organizer !== '' &&
-        !convertToKana(v.organizer).includes(convertToKana(search.organizer))
-      ) {
-        return false;
-      }
-      if (
-        search.tournamentTitle !== '' &&
-        !convertToKana(v.tournamentTitle).includes(
-          convertToKana(search.tournamentTitle),
+        searchCondition.organizer !== '' &&
+        !convertToKana(v.organizer).includes(
+          convertToKana(searchCondition.organizer),
         )
       ) {
         return false;
       }
       if (
-        search.eventDateFrom !== '' &&
-        new Date(search.eventDateFrom).getTime() >
+        searchCondition.tournamentTitle !== '' &&
+        !convertToKana(v.tournamentTitle).includes(
+          convertToKana(searchCondition.tournamentTitle),
+        )
+      ) {
+        return false;
+      }
+      if (
+        searchCondition.eventDateFrom !== '' &&
+        new Date(searchCondition.eventDateFrom).getTime() >
           new Date(v.eventStartDateTime).getTime()
       ) {
         return false;
       }
       if (
-        search.eventDateTo !== '' &&
-        new Date(search.eventDateTo).getTime() <
+        searchCondition.eventDateTo !== '' &&
+        new Date(searchCondition.eventDateTo).getTime() <
           new Date(v.eventStartDateTime).getTime()
       ) {
         return false;
       }
 
-      if (search.hideClosed && isClosed(v.eventEndDateTime)) {
+      if (searchCondition.hideClosed && isClosed(v.eventEndDateTime)) {
         return false;
       }
 
       if (
-        !search.recruitStatusPre &&
+        !searchCondition.recruitStatusPre &&
         getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'これから'
       ) {
         return false;
       }
       if (
-        !search.recruitStatusNow &&
+        !searchCondition.recruitStatusNow &&
         getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'うけつけ'
       ) {
         return false;
       }
       if (
-        !search.recruitStatusEnd &&
+        !searchCondition.recruitStatusEnd &&
         getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'しめきり'
       ) {
         return false;
       }
 
       if (
-        !search.tournamentTypeNintendo &&
+        !searchCondition.tournamentTypeNintendo &&
         v.tournamentUrl &&
         googleSheetService.getUrlName(v.tournamentUrl) === 'タイカイサポート'
       ) {
@@ -430,7 +317,7 @@ export default function Home() {
       }
 
       if (
-        !search.tournamentTypeOther &&
+        !searchCondition.tournamentTypeOther &&
         v.tournamentUrl &&
         googleSheetService.getUrlName(v.tournamentUrl) !== 'タイカイサポート'
       ) {
@@ -450,13 +337,13 @@ export default function Home() {
       setSheetData(list);
       listSearch(list);
       setLoading(false);
-      setShowQr(window.innerWidth > 600);
+      setShowQR(window.innerWidth > 600);
     })();
   }, []);
 
   useEffect(() => {
     listSearch();
-  }, [search, sort]);
+  }, [searchCondition, sort]);
 
   return (
     <StyledPage>
@@ -492,175 +379,8 @@ export default function Home() {
                 }}
               />
             </StyledHeaderButtonContainer>
-            <StyledSearchContainer>
-              <StyledSearchContainerRow>
-                <StyledSearchItem>
-                  <StyledSearchItemLabel>大会名</StyledSearchItemLabel>
-                  <InputText
-                    placeholder="タイカイ名"
-                    onChange={(e) =>
-                      setSearch({ ...search, tournamentTitle: e.target.value })
-                    }
-                  />
-                </StyledSearchItem>
-                <StyledSearchItem>
-                  <StyledSearchItemLabel>主催</StyledSearchItemLabel>
-                  <InputText
-                    placeholder="主催者名"
-                    onChange={(e) =>
-                      setSearch({ ...search, organizer: e.target.value })
-                    }
-                  />
-                </StyledSearchItem>
-              </StyledSearchContainerRow>
-
-              <StyledSearchContainerRow>
-                <StyledSearchItem>
-                  <StyledSearchItemLabel
-                    style={{ display: 'flex', gap: '16px' }}
-                  >
-                    日程
-                    <StyledSearchRecruitLabel
-                      className="ika-font"
-                      htmlFor="hide-closed"
-                    >
-                      <input
-                        id="hide-closed"
-                        type="checkbox"
-                        onChange={(e) =>
-                          setSearch({
-                            ...search,
-                            hideClosed: e.target.checked,
-                          })
-                        }
-                        defaultChecked={search.hideClosed}
-                      />
-                      <div>おわったタイカイをかくす</div>
-                    </StyledSearchRecruitLabel>
-                  </StyledSearchItemLabel>
-                  <StyledSearchItemRow>
-                    <InputText
-                      type="date"
-                      onChange={(e) =>
-                        setSearch({ ...search, eventDateFrom: e.target.value })
-                      }
-                    />
-                    -
-                    <InputText
-                      type="date"
-                      onChange={(e) =>
-                        setSearch({ ...search, eventDateTo: e.target.value })
-                      }
-                    />
-                  </StyledSearchItemRow>
-                </StyledSearchItem>
-              </StyledSearchContainerRow>
-              <StyledSearchContainerRow>
-                <StyledSearchItem>
-                  <StyledSearchItemLabel>募集状況</StyledSearchItemLabel>
-                  <StyledSearchItemRow>
-                    <CheckButton
-                      id="recruitment-pre"
-                      label="これから"
-                      onChange={(e) =>
-                        setSearch({
-                          ...search,
-                          recruitStatusPre: e.target.checked,
-                        })
-                      }
-                      defaultChecked={search.recruitStatusPre}
-                    />
-                    <CheckButton
-                      id="recruitment-now"
-                      label="うけつけ"
-                      onChange={(e) =>
-                        setSearch({
-                          ...search,
-                          recruitStatusNow: e.target.checked,
-                        })
-                      }
-                      defaultChecked={search.recruitStatusNow}
-                    />
-                    <CheckButton
-                      id="recruitment-end"
-                      label="しめきり"
-                      onChange={(e) =>
-                        setSearch({
-                          ...search,
-                          recruitStatusEnd: e.target.checked,
-                        })
-                      }
-                      defaultChecked={search.recruitStatusEnd}
-                    />
-                  </StyledSearchItemRow>
-                </StyledSearchItem>
-                <StyledSearchItem>
-                  <StyledSearchItemLabel>大会種類</StyledSearchItemLabel>
-                  <StyledSearchItemRow>
-                    <CheckButton
-                      id="tournament-type-nintendo"
-                      label="タイカイサポート"
-                      onChange={(e) =>
-                        setSearch({
-                          ...search,
-                          tournamentTypeNintendo: e.target.checked,
-                        })
-                      }
-                      defaultChecked={search.tournamentTypeNintendo}
-                    />
-                    <CheckButton
-                      id="tournament-type-other"
-                      label="そのほか"
-                      onChange={(e) =>
-                        setSearch({
-                          ...search,
-                          tournamentTypeOther: e.target.checked,
-                        })
-                      }
-                      defaultChecked={search.tournamentTypeOther}
-                    />
-                  </StyledSearchItemRow>
-                </StyledSearchItem>
-              </StyledSearchContainerRow>
-              <div
-                style={{
-                  marginTop: '8px',
-                  display: 'flex',
-                  justifyContent: 'end',
-                  alignContent: 'baseline',
-                }}
-              >
-                <span
-                  style={{
-                    color: '#fff',
-                    fontSize: '12px',
-                    display: 'flex',
-                    alignItems: 'end',
-                  }}
-                >
-                  {!displayCalendar ? 'ヘッダークリックで並び替え' : ''}
-                </span>
-                <Button
-                  color="blue"
-                  label={
-                    displayCalendar ? 'リストひょうじ' : 'カレンダーひょうじ'
-                  }
-                  style={{ marginLeft: 'auto' }}
-                  onClick={() => setDisplayCalendar(!displayCalendar)}
-                />
-              </div>
-            </StyledSearchContainer>
-            {displayCalendar ? (
-              <Calendar
-                events={filteredList.map((v) => ({
-                  title: `${v.tournamentTitle}(${v.organizer})`,
-                  date: v.eventStartDateTime.toISOString(),
-                  end: v.eventEndDateTime.toISOString(),
-                  eventInfo: v,
-                }))}
-                eventClick={setConfirmInfo}
-              />
-            ) : (
+            <SearchForm />
+            {displayMode === 'list' && (
               <StyledTable>
                 <tbody>
                   <tr>
@@ -748,7 +468,7 @@ export default function Home() {
                       // eslint-disable-next-line react/no-array-index-key
                       key={i}
                       $status={isClosed(v.eventEndDateTime) ? 'end' : 'pre'}
-                      onClick={() => setConfirmInfo(v)}
+                      onClick={() => setDetail(v)}
                     >
                       <td>
                         <StyledCenter>
@@ -801,6 +521,17 @@ export default function Home() {
                 </tbody>
               </StyledTable>
             )}
+            {displayMode === 'calendar' && (
+              <Calendar
+                events={filteredList.map((v) => ({
+                  title: `${v.tournamentTitle}(${v.organizer})`,
+                  date: v.eventStartDateTime.toISOString(),
+                  end: v.eventEndDateTime.toISOString(),
+                  eventInfo: v,
+                }))}
+                eventClick={setDetail}
+              />
+            )}
           </>
         )}
       </main>
@@ -816,107 +547,7 @@ export default function Home() {
           </StyledContactLink>
         </StyledPageFooterInner>
       </StyledPageFooter>
-      {!confirmInfo ? null : (
-        <Modal
-          onClose={() => setConfirmInfo(undefined)}
-          header={
-            <>
-              <StyledCreateDatetime>
-                登録日:
-                {toStrDateTime(confirmInfo.createDateTime)}
-              </StyledCreateDatetime>
-              <AddGoogleCalendarButton eventInfo={confirmInfo} />
-            </>
-          }
-          footer={
-            confirmInfo.tournamentUrl ? (
-              <>
-                <Button
-                  label="やめておく"
-                  style={{ width: '200px' }}
-                  onClick={() => setConfirmInfo(undefined)}
-                />
-                <Button
-                  color="red"
-                  label="ひらく"
-                  style={{ width: '200px' }}
-                  onClick={() => {
-                    window.open(
-                      confirmInfo.tournamentUrl,
-                      '_blank',
-                      'noreferrer',
-                    );
-                    setConfirmInfo(undefined);
-                  }}
-                />
-              </>
-            ) : (
-              <Button
-                label="とじる"
-                style={{ width: '200px' }}
-                onClick={() => setConfirmInfo(undefined)}
-              />
-            )
-          }
-        >
-          <StyledModalTitle>{confirmInfo.tournamentTitle}</StyledModalTitle>
-          <OrganizerAccount
-            organizer={confirmInfo.organizer}
-            account={confirmInfo.organizerAccount}
-            accountType={confirmInfo.organizerAccountType}
-            accountUrl={confirmInfo.accountUrl}
-          />
-          <StyledConfirmInfo>
-            <div>
-              <StyledConfirmMarker>
-                {`${toStrDateTime(confirmInfo.eventStartDateTime)}-${
-                  confirmInfo.eventEndDateTime
-                    ? toStrDateTime(confirmInfo.eventEndDateTime)
-                    : ''
-                }`}
-              </StyledConfirmMarker>
-            </div>
-            <small>
-              {`募集期間:${toStrDateTime(confirmInfo.recruitmentDateFrom)}-${toStrDateTime(confirmInfo.recruitmentDateTo)}`}
-            </small>
-          </StyledConfirmInfo>
-          {confirmInfo.tournamentUrl ? (
-            <>
-              <StyledModalTitle className="ika-font">
-                {googleSheetService.getUrlName(confirmInfo.tournamentUrl)}
-              </StyledModalTitle>
-              <StyledConfirmMessage>
-                あやしい文字列が含まれていないことをご確認の上アクセスしてください
-              </StyledConfirmMessage>
-              <StyledConfirmUrl>{confirmInfo.tournamentUrl}</StyledConfirmUrl>
-              <StyledQRCodeSVGContainer>
-                {showQr && (
-                  <StyledQRCodeSVG
-                    width={100}
-                    height={100}
-                    value={confirmInfo.tournamentUrl}
-                  />
-                )}
-
-                <Button
-                  label={showQr ? 'QRひひょうじ' : 'QRひょうじ'}
-                  color="black"
-                  onClick={() => {
-                    setShowQr(!showQr);
-                  }}
-                />
-              </StyledQRCodeSVGContainer>
-            </>
-          ) : null}
-
-          {confirmInfo.memo ? (
-            <StyledMemoContainer>
-              <StyledModalTitle className="ika-font">メモ</StyledModalTitle>
-              <div>{confirmInfo.memo}</div>
-            </StyledMemoContainer>
-          ) : null}
-        </Modal>
-      )}
+      <ConfirmModal />
       {showInformation ? (
         <Modal
           onClose={() => setShowInformation(false)}
