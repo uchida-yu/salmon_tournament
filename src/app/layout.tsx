@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
 import Analytics from './ui/component/Analytics';
-import RecoilProvider from './recoil/provider/RecoilProvider';
+import AppProvider from './provider';
 
 export const metadata: Metadata = {
   title: 'サーモンランタイカイ検索',
@@ -21,9 +21,9 @@ export default function RootLayout({
       <head>
         <Analytics gaTrackingId={GA_TRACKING_ID} />
       </head>
-      <RecoilProvider>
-        <body>{children}</body>
-      </RecoilProvider>
+      <body>
+        <AppProvider>{children}</AppProvider>
+      </body>
     </html>
   );
 }

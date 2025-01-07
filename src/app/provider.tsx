@@ -3,8 +3,8 @@
 import React from 'react';
 import { RecoilRoot } from 'recoil';
 
-function RecoilProvider({ children }: { children: React.ReactNode }) {
+function AppProvider({ children }: { children: React.ReactNode }) {
   return <RecoilRoot>{children}</RecoilRoot>;
 }
 
-export default RecoilProvider;
+export default AppProvider;
