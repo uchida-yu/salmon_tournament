@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/indent */
-
 'use client';
 
 import './globals.css';
@@ -8,22 +6,24 @@ import GoogleSheetService, {
   SheetData,
 } from '@/infrastructure/api/GoogleSheetService';
 import React, { useState, useEffect } from 'react';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useRecoilState } from 'recoil';
 import displayModeState from '@/app/recoil/atom/displayModeAtom';
-import Calendar from './ui/component/Calender';
-import Button from './ui/component/Button';
-import OrganizerAccount from './ui/component/OrganizerAccount';
-import Modal from './ui/component/Modal';
-import ConfirmModal from './ui/component/ConfirmModal';
-import UpdateInformation from './ui/component/UpdateInformation';
-import Loading from './ui/component/Loading';
-import searchConditionState from './recoil/atom/searchConditionAtom';
-import selectedTournamentState from './recoil/atom/selectedTournamentAtom';
-import showQrState from './recoil/atom/showQrAtom';
-import SearchForm from './ui/component/SearchForm';
+import Calendar from '@/app/ui/component/Calender';
+import Button from '@/app/ui/component/Button';
+import Modal from '@/app/ui/component/Modal';
+import ConfirmModal from '@/app/ui/component/ConfirmModal';
+import UpdateInformation from '@/app/ui/component/UpdateInformation';
+import Loading from '@/app/ui/component/Loading';
+import SearchForm from '@/app/ui/component/SearchForm';
+import showQrState from '@/app/recoil/atom/showQrAtom';
+import searchConditionState from '@/app/recoil/atom/searchConditionAtom';
+import selectedTournamentState from '@/app/recoil/atom/selectedTournamentAtom';
+import TournamentList from '@/app/ui/component/TournamentList';
+import PageTitle from '@/app/ui/component/PageTitle';
+import isCloseTournament from '@/app/util/isCloseTournament';
+import getRecruitmentStatus from '@/app/util/getRecruitmentStatus';
 
 const StyledPage = styled.div`
   min-height: 100svh;
@@ -63,78 +63,11 @@ const StyledInfoButtonContainer = styled.div`
   right: 8px;
 `;
 
-const StyledTitle = styled.h1`
-  font-size: 36px;
-  color: #000;
-  text-align: center;
-`;
-
 const StyledHeaderButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 8px;
   margin: 16px 0;
-`;
-
-const StyledTable = styled.table`
-  font-size: 12px;
-  border-collapse: collapse;
-  width: 100%;
-  margin-bottom: 16px;
-  table-layout: fixed;
-
-  & tr:first-of-type {
-    & th:first-of-type {
-      border-top-left-radius: 8px;
-    }
-    & th:last-of-type {
-      border-top-right-radius: 8px;
-    }
-  }
-  & tr:nth-of-type(2) {
-    & td {
-      border-top: none;
-    }
-  }
-  & tr:last-of-type {
-    & td:first-of-type {
-      border-bottom-left-radius: 8px;
-    }
-    & td:last-of-type {
-      border-bottom-right-radius: 8px;
-    }
-  }
-  & th {
-    background-color: #000;
-    padding: 8px 4px;
-    color: var(--green);
-  }
-  & td {
-    background-color: var(--yellow);
-    padding: 4px;
-    border-top: 2px dashed var(--gray);
-    color: #333;
-    text-align: center;
-  }
-`;
-
-const StyledTr = styled.tr<{ $status: 'pre' | 'end' }>`
-  & td {
-    background-color: ${({ $status }) =>
-      $status === 'pre' ? '#dbef3b' : '#98a832'};
-    cursor: pointer;
-  }
-`;
-
-const StyledTournament = styled.div`
-  font-weight: bold;
-`;
-
-const StyledCenter = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 `;
 
 const StyledModalTitle = styled.div`
@@ -149,46 +82,12 @@ const StyledContactLink = styled.a`
   font-size: 12px;
 `;
 
-const StyledSortLabelContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-`;
-
-const transformStyle = (type: 'asc' | 'desc' | 'none') => {
-  switch (type) {
-    case 'asc':
-      return 'rotate(-90deg)';
-    case 'desc':
-      return 'rotate(90deg)';
-    default:
-      return 'none';
-  }
-};
-
-const StyledSortIcon = styled.div<{ type: 'asc' | 'desc' | 'none' }>`
-  display: ${({ type }) => (type === 'none' ? 'none' : 'block')};
-  font-size: 12px;
-  transform: ${({ type }) => transformStyle(type)};
-`;
-
-// ここから機能
-
 export default function Home() {
   const googleSheetService = new GoogleSheetService();
   const [loading, setLoading] = useState(true);
   const [showInformation, setShowInformation] = useState(false);
   const [sheetData, setSheetData] = useState<SheetData[]>([]);
   const [filteredList, setFilteredList] = useState<SheetData[]>([]);
-  const [sort, setSort] = useState<{
-    type: keyof SheetData | '';
-    order: 'asc' | 'desc';
-  }>({
-    type: '',
-    order: 'desc',
-  });
 
   const [, setDetail] = useRecoilState(selectedTournamentState);
   const [searchCondition] = useRecoilState(searchConditionState);
@@ -196,7 +95,7 @@ export default function Home() {
   const [, setShowQR] = useRecoilState(showQrState);
 
   const listSort = (list: SheetData[]) => {
-    const { type, order } = sort;
+    const { type, order } = searchCondition.sort;
     if (type === 'eventStartDateTime') {
       return [...list].sort((a, b) => {
         const aDate = new Date(`${a[type]}`);
@@ -228,22 +127,6 @@ export default function Home() {
       });
     }
     return list;
-  };
-
-  const getStatus = (start: Date, end: Date) => {
-    const now = new Date();
-    if (now.getTime() < start.getTime()) {
-      return 'これから';
-    }
-    if (now.getTime() > end.getTime()) {
-      return 'しめきり';
-    }
-    return 'うけつけ';
-  };
-
-  const isClosed = (eventEndDate: Date) => {
-    const now = new Date();
-    return now.getTime() > eventEndDate.getTime();
   };
 
   const convertToKana = (str: string) =>
@@ -285,25 +168,28 @@ export default function Home() {
         return false;
       }
 
-      if (searchCondition.hideClosed && isClosed(v.eventEndDateTime)) {
+      if (searchCondition.hideClosed && isCloseTournament(v.eventEndDateTime)) {
         return false;
       }
 
       if (
         !searchCondition.recruitStatusPre &&
-        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'これから'
+        getRecruitmentStatus(v.recruitmentDateFrom, v.recruitmentDateTo) ===
+          'これから'
       ) {
         return false;
       }
       if (
         !searchCondition.recruitStatusNow &&
-        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'うけつけ'
+        getRecruitmentStatus(v.recruitmentDateFrom, v.recruitmentDateTo) ===
+          'うけつけ'
       ) {
         return false;
       }
       if (
         !searchCondition.recruitStatusEnd &&
-        getStatus(v.recruitmentDateFrom, v.recruitmentDateTo) === 'しめきり'
+        getRecruitmentStatus(v.recruitmentDateFrom, v.recruitmentDateTo) ===
+          'しめきり'
       ) {
         return false;
       }
@@ -328,9 +214,6 @@ export default function Home() {
     setFilteredList(l);
   };
 
-  const toStrDateTime = (date: Date) =>
-    `${date.toLocaleDateString()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-
   useEffect(() => {
     (async () => {
       const list = await googleSheetService.getSheetData();
@@ -343,7 +226,7 @@ export default function Home() {
 
   useEffect(() => {
     listSearch();
-  }, [searchCondition, sort]);
+  }, [searchCondition]);
 
   return (
     <StyledPage>
@@ -358,169 +241,26 @@ export default function Home() {
         </Button>
       </StyledInfoButtonContainer>
 
-      <StyledTitle className="ika-font">
+      <PageTitle>
         <div>サーモンラン</div>
         <div>タイカイ スケジュール</div>
-      </StyledTitle>
+      </PageTitle>
+      <StyledHeaderButtonContainer>
+        <Button
+          color="green"
+          label="タイカイをトウロクする"
+          onClick={() => {
+            window.open(process.env.NEXT_PUBLIC_GOOGLE_FORM_URL, '_blank');
+          }}
+        />
+      </StyledHeaderButtonContainer>
       <main>
         {loading ? (
           <Loading />
         ) : (
           <>
-            <StyledHeaderButtonContainer>
-              <Button
-                color="green"
-                label="タイカイをトウロクする"
-                onClick={() => {
-                  window.open(
-                    process.env.NEXT_PUBLIC_GOOGLE_FORM_URL,
-                    '_blank',
-                  );
-                }}
-              />
-            </StyledHeaderButtonContainer>
             <SearchForm />
-            {displayMode === 'list' && (
-              <StyledTable>
-                <tbody>
-                  <tr>
-                    <th className="ika-font">
-                      <StyledSortLabelContainer
-                        onClick={() =>
-                          setSort({
-                            type: 'tournamentTitle',
-                            order: sort.order === 'asc' ? 'desc' : 'asc',
-                          })
-                        }
-                      >
-                        タイカイ
-                        <StyledSortIcon
-                          type={
-                            sort.type === 'tournamentTitle'
-                              ? sort.order
-                              : 'none'
-                          }
-                        >
-                          -
-                        </StyledSortIcon>
-                      </StyledSortLabelContainer>
-                      <StyledSortLabelContainer
-                        onClick={() =>
-                          setSort({
-                            type: 'organizer',
-                            order: sort.order === 'asc' ? 'desc' : 'asc',
-                          })
-                        }
-                      >
-                        しゅさい
-                        <StyledSortIcon
-                          type={sort.type === 'organizer' ? sort.order : 'none'}
-                        >
-                          -
-                        </StyledSortIcon>
-                      </StyledSortLabelContainer>
-                    </th>
-                    <th className="ika-font" style={{ width: '90px' }}>
-                      <StyledSortLabelContainer
-                        onClick={() =>
-                          setSort({
-                            type: 'eventStartDateTime',
-                            order: sort.order === 'asc' ? 'desc' : 'asc',
-                          })
-                        }
-                      >
-                        にってい
-                        <StyledSortIcon
-                          type={
-                            sort.type === 'eventStartDateTime'
-                              ? sort.order
-                              : 'none'
-                          }
-                        >
-                          -
-                        </StyledSortIcon>
-                      </StyledSortLabelContainer>
-                    </th>
-                    <th className="ika-font" style={{ width: '60px' }}>
-                      <StyledSortLabelContainer
-                        onClick={() =>
-                          setSort({
-                            type: 'recruitmentDateFrom',
-                            order: sort.order === 'asc' ? 'desc' : 'asc',
-                          })
-                        }
-                      >
-                        ぼしゅう
-                        <StyledSortIcon
-                          type={
-                            sort.type === 'recruitmentDateFrom'
-                              ? sort.order
-                              : 'none'
-                          }
-                        >
-                          -
-                        </StyledSortIcon>
-                      </StyledSortLabelContainer>
-                    </th>
-                  </tr>
-                  {filteredList.map((v, i) => (
-                    <StyledTr
-                      // eslint-disable-next-line react/no-array-index-key
-                      key={i}
-                      $status={isClosed(v.eventEndDateTime) ? 'end' : 'pre'}
-                      onClick={() => setDetail(v)}
-                    >
-                      <td>
-                        <StyledCenter>
-                          <StyledTournament>
-                            {v.tournamentTitle}
-                          </StyledTournament>
-                          <OrganizerAccount
-                            organizer={v.organizer}
-                            account={v.organizerAccount}
-                            accountType={v.organizerAccountType}
-                            accountUrl={v.accountUrl}
-                          />
-                        </StyledCenter>
-                      </td>
-                      <td>
-                        <StyledCenter>
-                          {`${toStrDateTime(v.eventStartDateTime)}-`}
-                        </StyledCenter>
-                      </td>
-                      <td>
-                        <div>
-                          <div
-                            style={{
-                              display: 'flex',
-                              gap: '8px',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <span className="ika-font">
-                              {getStatus(
-                                v.recruitmentDateFrom,
-                                v.recruitmentDateTo,
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                    </StyledTr>
-                  ))}
-                  {filteredList.length === 0 ? (
-                    <tr>
-                      <td className="ika-font" colSpan={3}>
-                        みつかりませんでした
-                      </td>
-                    </tr>
-                  ) : (
-                    ''
-                  )}
-                </tbody>
-              </StyledTable>
-            )}
+            {displayMode === 'list' && <TournamentList list={filteredList} />}
             {displayMode === 'calendar' && (
               <Calendar
                 events={filteredList.map((v) => ({

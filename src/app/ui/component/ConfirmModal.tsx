@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useRecoilState } from 'recoil';
+import { QRCodeSVG } from 'qrcode.react';
 import GoogleSheetService from '@/infrastructure/api/GoogleSheetService';
 import Modal from '@/app/ui/component/Modal';
 import Button from '@/app/ui/component/Button';
 import AddGoogleCalendarButton from '@/app/ui/component/AddGoogleCalendarButton';
 import OrganizerAccount from '@/app/ui/component/OrganizerAccount';
-import { QRCodeSVG } from 'qrcode.react';
-import { useRecoilState } from 'recoil';
 import selectedTournamentState from '@/app/recoil/atom/selectedTournamentAtom';
 import showQrState from '@/app/recoil/atom/showQrAtom';
+import toStrDateTime from '@/app/util/toStrDateTime';
 
 const StyledModalTitle = styled.div`
   font-size: 16px;
@@ -75,9 +76,6 @@ function ConfirmModal() {
   const googleSheetService = new GoogleSheetService();
   const [detail, setDetail] = useRecoilState(selectedTournamentState);
   const [showQr, setShowQr] = useRecoilState(showQrState);
-
-  const toStrDateTime = (date: Date) =>
-    `${date.toLocaleDateString()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 
   return (
     detail && (

@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import './globals.css';
-import Analytics from './ui/component/Analytics';
-import AppProvider from './provider';
+import '@/app/globals.css';
+import Analytics from '@/app/ui/component/Analytics';
+import AppProvider from '@/app/provider';
 
 export const metadata: Metadata = {
   title: 'サーモンランタイカイ検索',

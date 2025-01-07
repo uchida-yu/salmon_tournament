@@ -1,4 +1,4 @@
-import GoogleSheetApi from './GoogleSheetApi';
+import GoogleSheetApi from '@/infrastructure/api/GoogleSheetApi';
 
 export type AccountType = 'X' | 'YouTube' | 'Twitch';
 

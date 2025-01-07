@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { SheetData } from '@/infrastructure/api/GoogleSheetService';
 
 const searchConditionState = atom<{
   organizer: string;
@@ -11,6 +12,10 @@ const searchConditionState = atom<{
   hideClosed: boolean;
   tournamentTypeNintendo: boolean;
   tournamentTypeOther: boolean;
+  sort: {
+    type: keyof SheetData | '';
+    order: 'asc' | 'desc';
+  };
 }>({
   key: 'searchConditionState',
   default: {
@@ -24,6 +29,10 @@ const searchConditionState = atom<{
     hideClosed: true,
     tournamentTypeNintendo: true,
     tournamentTypeOther: true,
+    sort: {
+      type: 'createDateTime',
+      order: 'asc',
+    },
   },
 });
 
