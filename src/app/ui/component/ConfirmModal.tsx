@@ -7,8 +7,8 @@ import Modal from '@/app/ui/component/Modal';
 import Button from '@/app/ui/component/Button';
 import AddGoogleCalendarButton from '@/app/ui/component/AddGoogleCalendarButton';
 import OrganizerAccount from '@/app/ui/component/OrganizerAccount';
-import selectedTournamentState from '@/app/recoil/atom/selectedTournamentAtom';
-import showQrState from '@/app/recoil/atom/showQrAtom';
+import selectedTournamentState from '@/app/jotai/atom/selectedTournamentAtom';
+import showQrState from '@/app/jotai/atom/showQrAtom';
 import toStrDateTime from '@/app/util/toStrDateTime';
 
 const StyledModalTitle = styled.div`

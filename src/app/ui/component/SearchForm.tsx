@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import CheckButton from '@/app/ui/component/CheckButton';
 import InputText from '@/app/ui/component//InputText';
 import Button from '@/app/ui/component/Button';
-import searchConditionState from '@/app/recoil/atom/searchConditionAtom';
-import displayModeState from '@/app/recoil/atom/displayModeAtom';
+import searchConditionState from '@/app/jotai/atom/searchConditionAtom';
+import displayModeState from '@/app/jotai/atom/displayModeAtom';
 
 const StyledSearchContainer = styled.div`
   display: flex;
