@@ -25,7 +25,7 @@ export async function GET() {
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${token.access_token}`,
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-store',
       },
       cache: 'no-store',
     }).then((res) => res.json());
