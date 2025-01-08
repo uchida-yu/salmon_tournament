@@ -26,6 +26,7 @@ export async function GET() {
       headers: {
         Authorization: `Bearer ${token.access_token}`,
       },
+      cache: 'no-store',
     }).then((res) => res.json());
 
     return NextResponse.json({
