@@ -31,6 +31,7 @@
     "implicit-arrow-linebreak": "off",
     "operator-linebreak": "off",
     "prettier/prettier": "warn",
+    "@typescript-eslint/indent": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {
