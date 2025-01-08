@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 
-export const runtime = 'nodejs';
-
 export async function GET() {
   // OAuth2認証クライアントの作成
   const clientEmail = process.env.CLIENT_EMAIL;
@@ -27,7 +25,6 @@ export async function GET() {
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${token.access_token}`,
-        'Cache-Control': 'no-store',
       },
       cache: 'no-store',
     }).then((res) => res.json());
