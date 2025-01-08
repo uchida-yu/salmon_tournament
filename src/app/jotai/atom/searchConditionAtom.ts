@@ -29,7 +29,7 @@ const searchConditionState = atom<{
   tournamentTypeOther: true,
   sort: {
     type: 'createDateTime',
-    order: 'asc',
+    order: 'desc',
   },
 });
 

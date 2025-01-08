@@ -89,7 +89,11 @@ export default function Home() {
 
   const listSort = (list: SheetData[]) => {
     const { type, order } = searchCondition.sort;
-    if (type === 'eventStartDateTime') {
+    if (
+      type === 'createDateTime' ||
+      type === 'eventStartDateTime' ||
+      type === 'recruitmentDateFrom'
+    ) {
       return [...list].sort((a, b) => {
         const aDate = new Date(`${a[type]}`);
         const bDate = new Date(`${b[type]}`);
@@ -107,16 +111,6 @@ export default function Home() {
         return order === 'desc'
           ? bStr.localeCompare(aStr)
           : aStr.localeCompare(bStr);
-      });
-    }
-    if (type === 'recruitmentDateFrom') {
-      return [...list].sort((a, b) => {
-        const aDate = new Date(`${a[type]}`);
-        const bDate = new Date(`${b[type]}`);
-
-        return order === 'desc'
-          ? bDate.getTime() - aDate.getTime()
-          : aDate.getTime() - bDate.getTime();
       });
     }
     return list;

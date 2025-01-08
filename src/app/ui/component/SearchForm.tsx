@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import CheckButton from '@/app/ui/component/CheckButton';
 import InputText from '@/app/ui/component//InputText';
 import Button from '@/app/ui/component/Button';
+import SelectBox from '@/app/ui/component/SelectBox';
 import searchConditionState from '@/app/jotai/atom/searchConditionAtom';
 import displayModeState from '@/app/jotai/atom/displayModeAtom';
+import { SheetData } from '@/infrastructure/api/GoogleSheetService';
 
 const StyledSearchContainer = styled.div`
   display: flex;
@@ -46,6 +48,22 @@ const StyledSearchItemLabel = styled.label`
   color: #fff;
   font-size: 12px;
 `;
+
+const SORT_OPTIONS: Record<
+  | 'createDateTimeDesc'
+  | 'createDateTimeAsc'
+  | 'eventStartDateTimeDesc'
+  | 'eventStartDateTimeAsc',
+  {
+    type: keyof SheetData;
+    order: 'asc' | 'desc';
+  }
+> = {
+  createDateTimeDesc: { type: 'createDateTime', order: 'desc' },
+  createDateTimeAsc: { type: 'createDateTime', order: 'asc' },
+  eventStartDateTimeDesc: { type: 'eventStartDateTime', order: 'desc' },
+  eventStartDateTimeAsc: { type: 'eventStartDateTime', order: 'asc' },
+};
 
 function SearchCondition() {
   const [searchCondition, setSearchCondition] = useAtom(searchConditionState);
@@ -200,16 +218,25 @@ function SearchCondition() {
           alignContent: 'baseline',
         }}
       >
-        <span
-          style={{
-            color: '#fff',
-            fontSize: '12px',
-            display: 'flex',
-            alignItems: 'end',
+        <SelectBox
+          defaultValue="createDateTimeDesc"
+          options={[
+            { label: '登録:新しい順', value: 'createDateTimeDesc' },
+            { label: '登録:古い順', value: 'createDateTimeAsc' },
+            { label: '日程:遅い順', value: 'eventStartDateTimeDesc' },
+            { label: '日程:早い順', value: 'eventStartDateTimeAsc' },
+          ]}
+          onChange={(e) => {
+            const v = e.target.value as keyof typeof SORT_OPTIONS;
+            setSearchCondition({
+              ...searchCondition,
+              sort: {
+                type: SORT_OPTIONS[v].type,
+                order: SORT_OPTIONS[v].order,
+              },
+            });
           }}
-        >
-          {displayMode === 'list' ? 'ヘッダークリックで並び替え' : ''}
-        </span>
+        />
         <Button
           color="blue"
           label={

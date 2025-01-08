@@ -64,9 +64,9 @@ const StyledTr = styled.tr<{ $status: 'pre' | 'end' }>`
 const transformStyle = (type: 'asc' | 'desc' | 'none') => {
   switch (type) {
     case 'asc':
-      return 'rotate(-90deg)';
-    case 'desc':
       return 'rotate(90deg)';
+    case 'desc':
+      return 'rotate(-90deg)';
     default:
       return 'none';
   }
@@ -169,7 +169,7 @@ function TournamentList(props: Props) {
               </StyledSortIcon>
             </StyledSortLabelContainer>
           </th>
-          <th className="ika-font" style={{ width: '60px' }}>
+          <th className="ika-font" style={{ width: '64px' }}>
             <StyledSortLabelContainer
               onClick={() =>
                 setSearchCondition({
