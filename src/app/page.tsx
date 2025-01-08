@@ -12,7 +12,6 @@ import { useRecoilState } from 'recoil';
 import displayModeState from '@/app/recoil/atom/displayModeAtom';
 import Calendar from '@/app/ui/component/Calender';
 import Button from '@/app/ui/component/Button';
-import Modal from '@/app/ui/component/Modal';
 import ConfirmModal from '@/app/ui/component/ConfirmModal';
 import UpdateInformation from '@/app/ui/component/UpdateInformation';
 import Loading from '@/app/ui/component/Loading';
@@ -68,12 +67,6 @@ const StyledHeaderButtonContainer = styled.div`
   justify-content: center;
   gap: 8px;
   margin: 16px 0;
-`;
-
-const StyledModalTitle = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 8px;
 `;
 
 const StyledContactLink = styled.a`
@@ -288,23 +281,9 @@ export default function Home() {
         </StyledPageFooterInner>
       </StyledPageFooter>
       <ConfirmModal />
-      {showInformation ? (
-        <Modal
-          onClose={() => setShowInformation(false)}
-          footer={
-            <Button
-              label="とじる"
-              style={{ width: '200px' }}
-              onClick={() => setShowInformation(false)}
-            />
-          }
-        >
-          <StyledModalTitle className="ika-font">
-            さいきんのアップデート
-          </StyledModalTitle>
-          <UpdateInformation />
-        </Modal>
-      ) : null}
+      {showInformation && (
+        <UpdateInformation onClose={() => setShowInformation(false)} />
+      )}
     </StyledPage>
   );
 }

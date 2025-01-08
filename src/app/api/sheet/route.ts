@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 
+export const runtime = 'nodejs';
+
 export async function GET() {
   // OAuth2認証クライアントの作成
   const clientEmail = process.env.CLIENT_EMAIL;

@@ -21,6 +21,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "googleapis": "^144.0.0",
     "next": "^13.5.4",
+    "node-fetch": "^3.3.2",
     "qrcode.react": "^4.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

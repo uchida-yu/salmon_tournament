@@ -97,9 +97,6 @@ export default class GoogleSheetService {
   public async getSheetData() {
     const { response } = await this.api.getSheetData();
 
-    // FIXME: cache確認
-    console.log(response);
-
     const checkDomain = (url: string) => {
       const urlObj = new URL(url);
       return this.allowDomainList.some(
