@@ -10,7 +10,7 @@ export default class GoogleSheetApi {
   // eslint-disable-next-line class-methods-use-this
   public async getSheetData(): Promise<GetSheetDataResponse> {
     try {
-      const response = await fetch('/api/sheet', {
+      const response = await fetch(`/api/sheet?_=${new Date().getTime()}}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
