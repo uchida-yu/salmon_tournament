@@ -15,6 +15,7 @@ export default class GoogleSheetApi {
         headers: {
           'Content-Type': 'application/json',
         },
+        cache: 'no-store',
       });
       if (response.status === 200) {
         return await response.json();
