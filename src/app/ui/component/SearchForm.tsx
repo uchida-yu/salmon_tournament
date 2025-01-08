@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import styled from 'styled-components';
 import CheckButton from '@/app/ui/component/CheckButton';
 import InputText from '@/app/ui/component//InputText';
@@ -48,9 +48,8 @@ const StyledSearchItemLabel = styled.label`
 `;
 
 function SearchCondition() {
-  const [searchCondition, setSearchCondition] =
-    useRecoilState(searchConditionState);
-  const [displayMode, setDisplayMode] = useRecoilState(displayModeState);
+  const [searchCondition, setSearchCondition] = useAtom(searchConditionState);
+  const [displayMode, setDisplayMode] = useAtom(displayModeState);
 
   return (
     <StyledSearchContainer>

@@ -1,9 +1,6 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 import { SheetData } from '@/infrastructure/api/GoogleSheetService';
 
-const selectedTournamentState = atom<SheetData | undefined>({
-  key: 'selectedTournamentState',
-  default: undefined,
-});
+const selectedTournamentState = atom<SheetData | undefined>(undefined);
 
 export default selectedTournamentState;

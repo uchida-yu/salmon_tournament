@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import searchConditionState from '@/app/recoil/atom/searchConditionAtom';
 import { SheetData } from '@/infrastructure/api/GoogleSheetService';
 import OrganizerAccount from '@/app/ui/component/OrganizerAccount';
@@ -103,11 +103,10 @@ type Props = {
 
 function TournamentList(props: Props) {
   const { list } = props;
-  const [searchCondition, setSearchCondition] =
-    useRecoilState(searchConditionState);
+  const [searchCondition, setSearchCondition] = useAtom(searchConditionState);
   const { sort } = searchCondition;
 
-  const [, setDetail] = useRecoilState(selectedTournamentState);
+  const [, setDetail] = useAtom(selectedTournamentState);
   return (
     <StyledTable>
       <tbody>

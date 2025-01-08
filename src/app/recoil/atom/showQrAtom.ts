@@ -1,8 +1,5 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 
-const showQrState = atom<boolean>({
-  key: 'showQrState',
-  default: false,
-});
+const showQrState = atom<boolean>(false);
 
 export default showQrState;

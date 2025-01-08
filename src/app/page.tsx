@@ -8,7 +8,7 @@ import GoogleSheetService, {
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import displayModeState from '@/app/recoil/atom/displayModeAtom';
 import Calendar from '@/app/ui/component/Calender';
 import Button from '@/app/ui/component/Button';
@@ -82,10 +82,10 @@ export default function Home() {
   const [sheetData, setSheetData] = useState<SheetData[]>([]);
   const [filteredList, setFilteredList] = useState<SheetData[]>([]);
 
-  const [, setDetail] = useRecoilState(selectedTournamentState);
-  const [searchCondition] = useRecoilState(searchConditionState);
-  const [displayMode] = useRecoilState(displayModeState);
-  const [, setShowQR] = useRecoilState(showQrState);
+  const [, setDetail] = useAtom(selectedTournamentState);
+  const [searchCondition] = useAtom(searchConditionState);
+  const [displayMode] = useAtom(displayModeState);
+  const [, setShowQR] = useAtom(showQrState);
 
   const listSort = (list: SheetData[]) => {
     const { type, order } = searchCondition.sort;

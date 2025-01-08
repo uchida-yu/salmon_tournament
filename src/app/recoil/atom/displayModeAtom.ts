@@ -1,8 +1,5 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 
-const displayModeState = atom<'list' | 'calendar'>({
-  key: 'displayModeState',
-  default: 'list',
-});
+const displayModeState = atom<'list' | 'calendar'>('list');
 
 export default displayModeState;

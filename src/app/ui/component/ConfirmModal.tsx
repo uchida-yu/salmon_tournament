@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { QRCodeSVG } from 'qrcode.react';
 import GoogleSheetService from '@/infrastructure/api/GoogleSheetService';
 import Modal from '@/app/ui/component/Modal';
@@ -74,8 +74,8 @@ const StyledConfirmUrl = styled.div`
 
 function ConfirmModal() {
   const googleSheetService = new GoogleSheetService();
-  const [detail, setDetail] = useRecoilState(selectedTournamentState);
-  const [showQr, setShowQr] = useRecoilState(showQrState);
+  const [detail, setDetail] = useAtom(selectedTournamentState);
+  const [showQr, setShowQr] = useAtom(showQrState);
 
   return (
     detail && (

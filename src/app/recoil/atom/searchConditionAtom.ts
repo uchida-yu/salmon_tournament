@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 import { SheetData } from '@/infrastructure/api/GoogleSheetService';
 
 const searchConditionState = atom<{
@@ -17,22 +17,19 @@ const searchConditionState = atom<{
     order: 'asc' | 'desc';
   };
 }>({
-  key: 'searchConditionState',
-  default: {
-    organizer: '',
-    tournamentTitle: '',
-    eventDateFrom: '',
-    eventDateTo: '',
-    recruitStatusPre: true,
-    recruitStatusNow: true,
-    recruitStatusEnd: true,
-    hideClosed: true,
-    tournamentTypeNintendo: true,
-    tournamentTypeOther: true,
-    sort: {
-      type: 'createDateTime',
-      order: 'asc',
-    },
+  organizer: '',
+  tournamentTitle: '',
+  eventDateFrom: '',
+  eventDateTo: '',
+  recruitStatusPre: true,
+  recruitStatusNow: true,
+  recruitStatusEnd: true,
+  hideClosed: true,
+  tournamentTypeNintendo: true,
+  tournamentTypeOther: true,
+  sort: {
+    type: 'createDateTime',
+    order: 'asc',
   },
 });
 
