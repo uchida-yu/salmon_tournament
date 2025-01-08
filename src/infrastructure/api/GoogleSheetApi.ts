@@ -17,8 +17,10 @@ export default class GoogleSheetApi {
         },
         cache: 'no-store',
       });
+      const data = await response.json();
+      console.log(data);
       if (response.status === 200) {
-        return await response.json();
+        return data;
       }
 
       throw new Error('error');
