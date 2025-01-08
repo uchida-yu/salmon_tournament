@@ -16,6 +16,9 @@ export default class GoogleSheetApi {
           'Content-Type': 'application/json',
         },
         cache: 'no-store',
+        next: {
+          revalidate: 1,
+        },
       });
       const data = await response.json();
       console.log(data);
