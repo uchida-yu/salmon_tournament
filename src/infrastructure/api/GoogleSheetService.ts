@@ -48,6 +48,12 @@ const ACCOUNT_URL_PATTERN: string[] = [
 ];
 
 export default class GoogleSheetService {
+  private api: GoogleSheetApi;
+
+  constructor() {
+    this.api = new GoogleSheetApi();
+  }
+
   // allow domain
   public readonly allowDomainList = [
     {
@@ -89,7 +95,7 @@ export default class GoogleSheetService {
   }
 
   public async getSheetData() {
-    const { response } = await GoogleSheetApi.getSheetData();
+    const { response } = await this.api.getSheetData();
 
     const checkDomain = (url: string) => {
       const urlObj = new URL(url);
