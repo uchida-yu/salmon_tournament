@@ -55,7 +55,7 @@ export default class GoogleSheetService {
   }
 
   // allow domain
-  public readonly allowDomainList = [
+  public static readonly allowDomainList = [
     {
       origin: 'https://s.nintendo.com',
       type: 'support',
@@ -73,11 +73,15 @@ export default class GoogleSheetService {
     },
   ];
 
-  public getUrlName(url: string) {
+  public static getUrlTypeName(url: string) {
     const urlObj = new URL(url);
     return this.allowDomainList.find(
       (domain) => urlObj.origin === domain.origin,
     )?.name;
+  }
+
+  public static isSupport(url: string) {
+    return this.getUrlTypeName(url) === 'タイカイサポート';
   }
 
   private static getAccountUrl(account?: string, accountType?: AccountType) {
@@ -99,7 +103,7 @@ export default class GoogleSheetService {
 
     const checkDomain = (url: string) => {
       const urlObj = new URL(url);
-      return this.allowDomainList.some(
+      return GoogleSheetService.allowDomainList.some(
         (domain) => urlObj.origin === domain.origin,
       );
     };

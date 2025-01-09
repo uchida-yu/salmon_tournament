@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const StyledButton = styled.button<{
   $color: 'red' | 'green' | 'blue' | 'black' | 'gray';
-  $size: 'small' | 'medium' | 'large';
+  $size: 'xs' | 'small' | 'medium' | 'large';
 }>`
   background-color: ${({ $color }) =>
     $color === 'red'
@@ -18,7 +18,7 @@ const StyledButton = styled.button<{
             : 'var(--gray)'};
   color: ${({ $color }) =>
     $color === 'gray' || $color === 'green' ? 'var(--black)' : 'var(--white)'};
-  padding: 8px;
+  padding: ${({ $size }) => ($size === 'xs' ? '4px' : '8px')};
   border-radius: 16px;
   border: none;
   line-height: 1;
@@ -28,7 +28,7 @@ const StyledButton = styled.button<{
 type Props = {
   label: string;
   color?: 'red' | 'green' | 'blue' | 'black' | 'gray';
-  size?: 'small' | 'medium' | 'large';
+  size?: 'xs' | 'small' | 'medium' | 'large';
   style?: React.CSSProperties;
   onClick: () => void;
   children?: React.ReactNode;

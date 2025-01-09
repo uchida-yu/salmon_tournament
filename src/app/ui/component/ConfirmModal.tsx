@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { QRCodeSVG } from 'qrcode.react';
 import GoogleSheetService from '@/infrastructure/api/GoogleSheetService';
 import Modal from '@/app/ui/component/Modal';
-import Button from '@/app/ui/component/Button';
+import Button from '@/app/ui/component/atoms/Button';
 import AddGoogleCalendarButton from '@/app/ui/component/AddGoogleCalendarButton';
 import OrganizerAccount from '@/app/ui/component/OrganizerAccount';
 import selectedTournamentState from '@/app/jotai/atom/selectedTournamentAtom';
@@ -73,7 +73,6 @@ const StyledConfirmUrl = styled.div`
 `;
 
 function ConfirmModal() {
-  const googleSheetService = new GoogleSheetService();
   const [detail, setDetail] = useAtom(selectedTournamentState);
   const [showQr, setShowQr] = useAtom(showQrState);
 
@@ -141,7 +140,7 @@ function ConfirmModal() {
         {detail.tournamentUrl ? (
           <>
             <StyledModalTitle className="ika-font">
-              {googleSheetService.getUrlName(detail.tournamentUrl)}
+              {GoogleSheetService.getUrlTypeName(detail.tournamentUrl)}
             </StyledModalTitle>
             <StyledConfirmMessage>
               あやしい文字列が含まれていないことをご確認の上アクセスしてください

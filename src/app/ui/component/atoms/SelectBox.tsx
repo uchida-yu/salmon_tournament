@@ -13,7 +13,7 @@ const StyledSelect = styled.select`
   font-size: 10px;
   background-color: #333333af;
   border: none;
-  border-radius: 8px;
+  border-radius: 16px;
   color: var(--white);
 `;
 

@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import styled from 'styled-components';
-import CheckButton from '@/app/ui/component/CheckButton';
-import InputText from '@/app/ui/component//InputText';
-import Button from '@/app/ui/component/Button';
-import SelectBox from '@/app/ui/component/SelectBox';
+import CheckButton from '@/app/ui/component/atoms/CheckButton';
+import InputText from '@/app/ui/component/atoms/InputText';
+import Button from '@/app/ui/component/atoms/Button';
+import SelectBox from '@/app/ui/component/atoms/SelectBox';
 import searchConditionState from '@/app/jotai/atom/searchConditionAtom';
 import displayModeState from '@/app/jotai/atom/displayModeAtom';
-import { SheetData } from '@/infrastructure/api/GoogleSheetService';
+import GoogleSheetService, {
+  SheetData,
+} from '@/infrastructure/api/GoogleSheetService';
+import listDataState from '@/app/jotai/atom/listDataAtom';
+import isCloseTournament from '@/app/util/isCloseTournament';
+import {
+  isBeforeRecruitmentStatus,
+  isRecruitingRecruitmentStatus,
+  isClosingRecruitmentStatus,
+} from '@/app/util/getRecruitmentStatus';
 
 const StyledSearchContainer = styled.div`
   display: flex;
@@ -18,7 +27,7 @@ const StyledSearchContainer = styled.div`
 
 const StyledSearchItem = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 4px;
   flex-flow: column;
   width: 100%;
 `;
@@ -49,6 +58,12 @@ const StyledSearchItemLabel = styled.label`
   font-size: 12px;
 `;
 
+const StyledToolsContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+`;
+
 const SORT_OPTIONS: Record<
   | 'createDateTimeDesc'
   | 'createDateTimeAsc'
@@ -68,6 +83,130 @@ const SORT_OPTIONS: Record<
 function SearchCondition() {
   const [searchCondition, setSearchCondition] = useAtom(searchConditionState);
   const [displayMode, setDisplayMode] = useAtom(displayModeState);
+  const [listData, setListData] = useAtom(listDataState);
+
+  const listSort = (list: SheetData[]) => {
+    const { type, order } = searchCondition.sort;
+    if (
+      type === 'createDateTime' ||
+      type === 'eventStartDateTime' ||
+      type === 'recruitmentDateFrom'
+    ) {
+      return [...list].sort((a, b) => {
+        const aDate = new Date(`${a[type]}`);
+        const bDate = new Date(`${b[type]}`);
+
+        return order === 'desc'
+          ? bDate.getTime() - aDate.getTime()
+          : aDate.getTime() - bDate.getTime();
+      });
+    }
+    if (type === 'tournamentTitle' || type === 'organizer') {
+      return [...list].sort((a, b) => {
+        const aStr = a[type].toLowerCase();
+        const bStr = b[type].toLowerCase();
+
+        return order === 'desc'
+          ? bStr.localeCompare(aStr)
+          : aStr.localeCompare(bStr);
+      });
+    }
+    return list;
+  };
+
+  const convertToKana = (str: string) =>
+    str.replace(/[\u30A1-\u30F6]/g, (match) =>
+      String.fromCharCode(match.charCodeAt(0) - 0x60),
+    );
+
+  const listSearch = (defaultList?: SheetData[]) => {
+    const data = defaultList || listData;
+    const l = listSort(data).map((v) => {
+      const invisibleData = {
+        ...v,
+        visible: false,
+      };
+
+      // 主催者名
+      if (
+        searchCondition.organizer !== '' &&
+        !convertToKana(v.organizer).includes(
+          convertToKana(searchCondition.organizer),
+        )
+      ) {
+        return invisibleData;
+      }
+
+      // 大会名
+      if (
+        searchCondition.tournamentTitle !== '' &&
+        !convertToKana(v.tournamentTitle).includes(
+          convertToKana(searchCondition.tournamentTitle),
+        )
+      ) {
+        return invisibleData;
+      }
+
+      // 開催日
+      if (
+        (searchCondition.eventDateFrom !== '' &&
+          new Date(searchCondition.eventDateFrom).getTime() >
+            new Date(v.eventStartDateTime).getTime()) ||
+        (searchCondition.eventDateTo !== '' &&
+          new Date(searchCondition.eventDateTo).getTime() <
+            new Date(v.eventStartDateTime).getTime())
+      ) {
+        return invisibleData;
+      }
+
+      if (searchCondition.hideClosed && isCloseTournament(v.eventEndDateTime)) {
+        return invisibleData;
+      }
+
+      // 募集ステータス
+      if (
+        (!searchCondition.recruitStatusPre &&
+          isBeforeRecruitmentStatus(
+            v.recruitmentDateFrom,
+            v.recruitmentDateTo,
+          )) ||
+        (!searchCondition.recruitStatusNow &&
+          isRecruitingRecruitmentStatus(
+            v.recruitmentDateFrom,
+            v.recruitmentDateTo,
+          )) ||
+        (!searchCondition.recruitStatusEnd &&
+          isClosingRecruitmentStatus(
+            v.recruitmentDateFrom,
+            v.recruitmentDateTo,
+          ))
+      ) {
+        return invisibleData;
+      }
+
+      if (
+        v.tournamentUrl &&
+        !(
+          (searchCondition.tournamentTypeNintendo &&
+            GoogleSheetService.isSupport(v.tournamentUrl)) ||
+          (searchCondition.tournamentTypeOther &&
+            !GoogleSheetService.isSupport(v.tournamentUrl))
+        )
+      ) {
+        return invisibleData;
+      }
+
+      return {
+        ...v,
+        visible: true,
+      };
+    });
+    setListData(l);
+  };
+
+  useEffect(() => {
+    listSearch();
+  }, [searchCondition]);
 
   return (
     <StyledSearchContainer>
@@ -210,14 +349,7 @@ function SearchCondition() {
           </StyledSearchItemRow>
         </StyledSearchItem>
       </StyledSearchContainerRow>
-      <div
-        style={{
-          marginTop: '8px',
-          display: 'flex',
-          justifyContent: 'end',
-          alignContent: 'baseline',
-        }}
-      >
+      <StyledToolsContainer>
         <SelectBox
           defaultValue="createDateTimeDesc"
           options={[
@@ -242,12 +374,11 @@ function SearchCondition() {
           label={
             displayMode === 'list' ? 'カレンダーひょうじ' : 'リストひょうじ'
           }
-          style={{ marginLeft: 'auto' }}
           onClick={() =>
             setDisplayMode(displayMode === 'list' ? 'calendar' : 'list')
           }
         />
-      </div>
+      </StyledToolsContainer>
     </StyledSearchContainer>
   );
 }
