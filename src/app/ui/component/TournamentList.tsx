@@ -61,21 +61,25 @@ const StyledTr = styled.tr<{ $status: 'pre' | 'end' }>`
   }
 `;
 
-const transformStyle = (type: 'asc' | 'desc' | 'none') => {
+const sortArrow = (type: 'asc' | 'desc' | 'none') => {
   switch (type) {
     case 'asc':
-      return 'rotate(90deg)';
+      return '↓';
     case 'desc':
-      return 'rotate(-90deg)';
+      return '↑';
     default:
-      return 'none';
+      return '';
   }
 };
 
 const StyledSortIcon = styled.div<{ type: 'asc' | 'desc' | 'none' }>`
+  &::after {
+    display: block;
+    content: '${({ type }) => sortArrow(type)}';
+  }
   display: ${({ type }) => (type === 'none' ? 'none' : 'block')};
   font-size: 12px;
-  transform: ${({ type }) => transformStyle(type)};
+  height: 15px;
 `;
 
 const StyledSortLabelContainer = styled.div`
@@ -126,9 +130,7 @@ function TournamentList(props: Props) {
               タイカイ
               <StyledSortIcon
                 type={sort.type === 'tournamentTitle' ? sort.order : 'none'}
-              >
-                -
-              </StyledSortIcon>
+              />
             </StyledSortLabelContainer>
             <StyledSortLabelContainer
               onClick={() =>
@@ -144,9 +146,7 @@ function TournamentList(props: Props) {
               しゅさい
               <StyledSortIcon
                 type={sort.type === 'organizer' ? sort.order : 'none'}
-              >
-                -
-              </StyledSortIcon>
+              />
             </StyledSortLabelContainer>
           </th>
           <th className="ika-font" style={{ width: '90px' }}>
@@ -164,9 +164,7 @@ function TournamentList(props: Props) {
               にってい
               <StyledSortIcon
                 type={sort.type === 'eventStartDateTime' ? sort.order : 'none'}
-              >
-                -
-              </StyledSortIcon>
+              />
             </StyledSortLabelContainer>
           </th>
           <th className="ika-font" style={{ width: '64px' }}>
@@ -184,9 +182,7 @@ function TournamentList(props: Props) {
               ぼしゅう
               <StyledSortIcon
                 type={sort.type === 'recruitmentDateFrom' ? sort.order : 'none'}
-              >
-                -
-              </StyledSortIcon>
+              />
             </StyledSortLabelContainer>
           </th>
         </tr>

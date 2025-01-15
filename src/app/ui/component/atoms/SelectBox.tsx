@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 type Props = {
   options: { value: string; label: string }[];
-  defaultValue?: string;
+  value?: string;
   className?: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 };
@@ -18,13 +18,9 @@ const StyledSelect = styled.select`
 `;
 
 function SelectBox(props: Props) {
-  const { options, defaultValue = '', className = '', onChange } = props;
+  const { options, value = '', className = '', onChange } = props;
   return (
-    <StyledSelect
-      className={className}
-      defaultValue={defaultValue}
-      onChange={onChange}
-    >
+    <StyledSelect className={className} value={value} onChange={onChange}>
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}

@@ -68,7 +68,13 @@ const SORT_OPTIONS: Record<
   | 'createDateTimeDesc'
   | 'createDateTimeAsc'
   | 'eventStartDateTimeDesc'
-  | 'eventStartDateTimeAsc',
+  | 'eventStartDateTimeAsc'
+  | 'tournamentTitleDesc'
+  | 'tournamentTitleAsc'
+  | 'organizerDesc'
+  | 'organizerAsc'
+  | 'recruitmentDateFromDesc'
+  | 'recruitmentDateFromAsc',
   {
     type: keyof SheetData;
     order: 'asc' | 'desc';
@@ -78,6 +84,12 @@ const SORT_OPTIONS: Record<
   createDateTimeAsc: { type: 'createDateTime', order: 'asc' },
   eventStartDateTimeDesc: { type: 'eventStartDateTime', order: 'desc' },
   eventStartDateTimeAsc: { type: 'eventStartDateTime', order: 'asc' },
+  tournamentTitleDesc: { type: 'tournamentTitle', order: 'desc' },
+  tournamentTitleAsc: { type: 'tournamentTitle', order: 'asc' },
+  organizerDesc: { type: 'organizer', order: 'desc' },
+  organizerAsc: { type: 'organizer', order: 'asc' },
+  recruitmentDateFromDesc: { type: 'recruitmentDateFrom', order: 'desc' },
+  recruitmentDateFromAsc: { type: 'recruitmentDateFrom', order: 'asc' },
 };
 
 function SearchCondition() {
@@ -207,6 +219,9 @@ function SearchCondition() {
   useEffect(() => {
     listSearch();
   }, [searchCondition]);
+
+  const getSortType = (sort: (typeof searchCondition)['sort']) =>
+    `${sort.type}${sort.order.charAt(0).toUpperCase() + sort.order.slice(1)}`;
 
   return (
     <StyledSearchContainer>
@@ -351,12 +366,18 @@ function SearchCondition() {
       </StyledSearchContainerRow>
       <StyledToolsContainer>
         <SelectBox
-          defaultValue="createDateTimeDesc"
+          value={getSortType(searchCondition.sort)}
           options={[
             { label: '登録:新しい順', value: 'createDateTimeDesc' },
             { label: '登録:古い順', value: 'createDateTimeAsc' },
             { label: '日程:遅い順', value: 'eventStartDateTimeDesc' },
             { label: '日程:早い順', value: 'eventStartDateTimeAsc' },
+            { label: 'タイカイ名:昇順', value: 'tournamentTitleAsc' },
+            { label: 'タイカイ名:降順', value: 'tournamentTitleDesc' },
+            { label: '主催:昇順', value: 'organizerAsc' },
+            { label: '主催:降順', value: 'organizerDesc' },
+            { label: '募集日:遅い順', value: 'recruitmentDateFromDesc' },
+            { label: '募集日:早い順', value: 'recruitmentDateFromAsc' },
           ]}
           onChange={(e) => {
             const v = e.target.value as keyof typeof SORT_OPTIONS;
