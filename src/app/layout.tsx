@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import '@/app/globals.css';
+import '@/styles/globals.css';
 import Analytics from '@/ui/component/Analytics';
 
 export const metadata: Metadata = {

@@ -1,6 +1,6 @@
 'use client';
 
-import './globals.css';
+import '@/styles/globals.css';
 import styled from 'styled-components';
 import GoogleSheetService from '@/infrastructure/api/GoogleSheetService';
 import React, { useState, useEffect } from 'react';
@@ -26,7 +26,7 @@ const StyledPage = styled.div`
   }
 `;
 
-export default function Home() {
+export default function Page() {
   const googleSheetService = new GoogleSheetService();
   const [loading, setLoading] = useState(true);
   const [init, setInit] = useState(false);
