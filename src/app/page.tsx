@@ -5,15 +5,15 @@ import styled from 'styled-components';
 import GoogleSheetService from '@/infrastructure/api/GoogleSheetService';
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
-import ConfirmModal from '@/app/ui/component/ConfirmModal';
-import UpdateInformation from '@/app/ui/component/UpdateInformation';
-import Loading from '@/app/ui/component/Loading';
-import SearchForm from '@/app/ui/component/SearchForm';
-import SearchResult from '@/app/ui/component/SearchResult';
-import showQrState from '@/app/jotai/atom/showQrAtom';
-import Header from '@/app/ui/component/Header';
-import listDataState from '@/app/jotai/atom/listDataAtom';
-import Footer from './ui/component/Footer';
+import ConfirmModal from '@/ui/component/ConfirmModal';
+import showQrState from '@/ui/store/jotai/atom/showQrAtom';
+import listDataState from '@/ui/store/jotai/atom/listDataAtom';
+import UpdateInformation from '@/ui/component/UpdateInformation';
+import Loading from '@/ui/component/Loading';
+import SearchForm from '@/ui/component/SearchForm';
+import SearchResult from '@/ui/component/SearchResult';
+import Header from '@/ui/component/Header';
+import Footer from '@/ui/component/Footer';
 
 const StyledPage = styled.div`
   min-height: 100vh;

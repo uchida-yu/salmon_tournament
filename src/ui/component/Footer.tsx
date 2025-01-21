@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Link from '@/app/ui/component/atoms/Link';
+import Link from '@/ui/component/atoms/Link';
 
 const StyledPageFooter = styled.footer`
   display: flex;

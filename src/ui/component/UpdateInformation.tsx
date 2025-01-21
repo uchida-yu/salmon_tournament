@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import update from '@/data/update.json';
-import Modal from '@/app/ui/component/Modal';
-import Button from '@/app/ui/component/atoms/Button';
+import Modal from '@/ui/component/Modal';
+import Button from '@/ui/component/atoms/Button';
 import { useAtom } from 'jotai';
-import showUpdateInfoAtom from '@/app/jotai/atom/showUpdateInfoAtom';
+import showUpdateInfoAtom from '@/ui/store/jotai/atom/showUpdateInfoAtom';
 
 const StyledInfoList = styled.ul`
   list-style: none;

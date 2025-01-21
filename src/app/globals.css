@@ -13,13 +13,13 @@
 @font-face {
   /* stylelint-disable-next-line font-family-name-quotes */
   font-family: 'ikamodoki';
-  src: url('./fonts/ikamodoki.woff2') format('woff');
+  src: url('../assets/fonts/ikamodoki.woff2') format('woff');
 }
 
 @font-face {
   /* stylelint-disable-next-line font-family-name-quotes */
   font-family: 'paintball';
-  src: url('./fonts/Paintball_Beta_3.woff2') format('woff');
+  src: url('../assets/fonts/Paintball_Beta_3.woff2') format('woff');
 }
 
 html,

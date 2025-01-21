@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import { useAtom } from 'jotai';
 import { QRCodeSVG } from 'qrcode.react';
 import GoogleSheetService from '@/infrastructure/api/GoogleSheetService';
-import Modal from '@/app/ui/component/Modal';
-import Button from '@/app/ui/component/atoms/Button';
-import AddGoogleCalendarButton from '@/app/ui/component/AddGoogleCalendarButton';
-import OrganizerAccount from '@/app/ui/component/OrganizerAccount';
-import selectedTournamentState from '@/app/jotai/atom/selectedTournamentAtom';
-import showQrState from '@/app/jotai/atom/showQrAtom';
-import toStrDateTime from '@/app/util/toStrDateTime';
+import Modal from '@/ui/component/Modal';
+import Button from '@/ui/component/atoms/Button';
+import AddGoogleCalendarButton from '@/ui/component/AddGoogleCalendarButton';
+import OrganizerAccount from '@/ui/component/OrganizerAccount';
+import selectedTournamentState from '@/ui/store/jotai/atom/selectedTournamentAtom';
+import showQrState from '@/ui/store/jotai/atom/showQrAtom';
+import toStrDateTime from '@/ui/util/toStrDateTime';
 
 const StyledModalTitle = styled.div`
   font-size: 16px;

@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useAtom } from 'jotai';
-import showUpdateInfoAtom from '@/app/jotai/atom/showUpdateInfoAtom';
+import showUpdateInfoAtom from '@/ui/store/jotai/atom/showUpdateInfoAtom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
-import Button from '@/app/ui/component/atoms/Button';
+import Button from '@/ui/component/atoms/Button';
 
 const StyledInfoButtonContainer = styled.div`
   position: absolute;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useAtom } from 'jotai';
-import displayModeState from '@/app/jotai/atom/displayModeAtom';
-import TournamentList from '@/app/ui/component/TournamentList';
-import Calendar from '@/app/ui/component/Calender';
-import listDataState from '@/app/jotai/atom/listDataAtom';
-import selectedTournamentState from '@/app/jotai/atom/selectedTournamentAtom';
+import displayModeState from '@/ui/store/jotai/atom/displayModeAtom';
+import TournamentList from '@/ui/component/TournamentList';
+import Calendar from '@/ui/component/Calender';
+import listDataState from '@/ui/store/jotai/atom/listDataAtom';
+import selectedTournamentState from '@/ui/store/jotai/atom/selectedTournamentAtom';
 
 function SearchResult() {
   const [displayMode] = useAtom(displayModeState);

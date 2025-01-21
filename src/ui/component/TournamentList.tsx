@@ -3,13 +3,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useAtom } from 'jotai';
-import searchConditionState from '@/app/jotai/atom/searchConditionAtom';
+import searchConditionState from '@/ui/store/jotai/atom/searchConditionAtom';
 import { SheetData } from '@/infrastructure/api/GoogleSheetService';
-import OrganizerAccount from '@/app/ui/component/OrganizerAccount';
-import selectedTournamentState from '@/app/jotai/atom/selectedTournamentAtom';
-import toStrDateTime from '@/app/util/toStrDateTime';
-import isCloseTournament from '@/app/util/isCloseTournament';
-import getRecruitmentStatus from '@/app/util/getRecruitmentStatus';
+import OrganizerAccount from '@/ui/component/OrganizerAccount';
+import selectedTournamentState from '@/ui/store/jotai/atom/selectedTournamentAtom';
+import toStrDateTime from '@/ui/util/toStrDateTime';
+import isCloseTournament from '@/ui/util/isCloseTournament';
+import getRecruitmentStatus from '@/ui/util/getRecruitmentStatus';
 
 const StyledTable = styled.table`
   font-size: 12px;
