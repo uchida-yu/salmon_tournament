@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { useAtom } from 'jotai';
 import styled from 'styled-components';
 import CheckButton from '@/ui/component/atoms/CheckButton';
@@ -17,6 +17,7 @@ import {
   isRecruitingRecruitmentStatus,
   isClosingRecruitmentStatus,
 } from '@/ui/util/getRecruitmentStatus';
+import convertToKana from '@/core/util/convertToKana';
 
 const StyledSearchContainer = styled.div`
   display: flex;
@@ -78,18 +79,51 @@ const SORT_OPTIONS: Record<
   {
     type: keyof SheetData;
     order: 'asc' | 'desc';
+    label: string;
   }
 > = {
-  createDateTimeDesc: { type: 'createDateTime', order: 'desc' },
-  createDateTimeAsc: { type: 'createDateTime', order: 'asc' },
-  eventStartDateTimeDesc: { type: 'eventStartDateTime', order: 'desc' },
-  eventStartDateTimeAsc: { type: 'eventStartDateTime', order: 'asc' },
-  tournamentTitleDesc: { type: 'tournamentTitle', order: 'desc' },
-  tournamentTitleAsc: { type: 'tournamentTitle', order: 'asc' },
-  organizerDesc: { type: 'organizer', order: 'desc' },
-  organizerAsc: { type: 'organizer', order: 'asc' },
-  recruitmentDateFromDesc: { type: 'recruitmentDateFrom', order: 'desc' },
-  recruitmentDateFromAsc: { type: 'recruitmentDateFrom', order: 'asc' },
+  createDateTimeDesc: {
+    type: 'createDateTime',
+    order: 'desc',
+    label: '登録:新しい順',
+  },
+  createDateTimeAsc: {
+    type: 'createDateTime',
+    order: 'asc',
+    label: '登録:古い順',
+  },
+  eventStartDateTimeDesc: {
+    type: 'eventStartDateTime',
+    order: 'desc',
+    label: '日程:遅い順',
+  },
+  eventStartDateTimeAsc: {
+    type: 'eventStartDateTime',
+    order: 'asc',
+    label: '日程:早い順',
+  },
+  tournamentTitleDesc: {
+    type: 'tournamentTitle',
+    order: 'desc',
+    label: 'タイカイ名:降順',
+  },
+  tournamentTitleAsc: {
+    type: 'tournamentTitle',
+    order: 'asc',
+    label: 'タイカイ名:昇順',
+  },
+  organizerDesc: { type: 'organizer', order: 'desc', label: '主催:降順' },
+  organizerAsc: { type: 'organizer', order: 'asc', label: '主催:昇順' },
+  recruitmentDateFromDesc: {
+    type: 'recruitmentDateFrom',
+    order: 'desc',
+    label: '募集日:遅い順',
+  },
+  recruitmentDateFromAsc: {
+    type: 'recruitmentDateFrom',
+    order: 'asc',
+    label: '募集日:早い順',
+  },
 };
 
 function SearchCondition() {
@@ -126,18 +160,12 @@ function SearchCondition() {
     return list;
   };
 
-  const convertToKana = (str: string) =>
-    str.replace(/[\u30A1-\u30F6]/g, (match) =>
-      String.fromCharCode(match.charCodeAt(0) - 0x60),
-    );
-
-  const listSearch = (defaultList?: SheetData[]) => {
-    const data = defaultList || listData;
-    const l = listSort(data).map((v) => {
-      const invisibleData = {
+  const listFilter = (list: SheetData[]) =>
+    list.map((v) => {
+      const getFilteredItem = (visible: boolean) => ({
         ...v,
-        visible: false,
-      };
+        visible,
+      });
 
       // 主催者名
       if (
@@ -146,7 +174,7 @@ function SearchCondition() {
           convertToKana(searchCondition.organizer),
         )
       ) {
-        return invisibleData;
+        return getFilteredItem(false);
       }
 
       // 大会名
@@ -156,23 +184,28 @@ function SearchCondition() {
           convertToKana(searchCondition.tournamentTitle),
         )
       ) {
-        return invisibleData;
+        return getFilteredItem(false);
       }
 
       // 開催日
       if (
-        (searchCondition.eventDateFrom !== '' &&
-          new Date(searchCondition.eventDateFrom).getTime() >
-            new Date(v.eventStartDateTime).getTime()) ||
-        (searchCondition.eventDateTo !== '' &&
-          new Date(searchCondition.eventDateTo).getTime() <
-            new Date(v.eventStartDateTime).getTime())
+        searchCondition.eventDateFrom !== '' &&
+        new Date(v.eventStartDateTime).getTime() <=
+          new Date(searchCondition.eventDateFrom).getTime()
       ) {
-        return invisibleData;
+        return getFilteredItem(false);
+      }
+
+      if (searchCondition.eventDateTo !== '') {
+        const end = new Date(v.eventEndDateTime);
+        end.setHours(23, 59, 59);
+        if (new Date(searchCondition.eventDateTo).getTime() <= end.getTime()) {
+          return getFilteredItem(false);
+        }
       }
 
       if (searchCondition.hideClosed && isCloseTournament(v.eventEndDateTime)) {
-        return invisibleData;
+        return getFilteredItem(false);
       }
 
       // 募集ステータス
@@ -193,9 +226,10 @@ function SearchCondition() {
             v.recruitmentDateTo,
           ))
       ) {
-        return invisibleData;
+        return getFilteredItem(false);
       }
 
+      // 大会種類
       if (
         v.tournamentUrl &&
         !(
@@ -205,23 +239,64 @@ function SearchCondition() {
             !GoogleSheetService.isSupport(v.tournamentUrl))
         )
       ) {
-        return invisibleData;
+        return getFilteredItem(false);
       }
 
-      return {
-        ...v,
-        visible: true,
-      };
+      return getFilteredItem(true);
     });
-    setListData(l);
+
+  const filteredAndSortedList = useMemo(
+    () => listFilter(listSort(listData)),
+    [listData, searchCondition],
+  );
+
+  const getSortType = () => {
+    const { type, order } = searchCondition.sort;
+    return `${type}${order.charAt(0).toUpperCase() + order.slice(1)}`;
   };
 
-  useEffect(() => {
-    listSearch();
-  }, [searchCondition]);
+  const handleInputChange = useCallback(
+    (key: keyof typeof searchCondition) =>
+      (e: React.ChangeEvent<HTMLInputElement>) =>
+        setSearchCondition({
+          ...searchCondition,
+          [key]: e.target.value,
+        }),
+    [searchCondition],
+  );
 
-  const getSortType = (sort: (typeof searchCondition)['sort']) =>
-    `${sort.type}${sort.order.charAt(0).toUpperCase() + sort.order.slice(1)}`;
+  const handleCheckboxChange = useCallback(
+    (key: keyof typeof searchCondition) =>
+      (e: React.ChangeEvent<HTMLInputElement>) =>
+        setSearchCondition({
+          ...searchCondition,
+          [key]: e.target.checked,
+        }),
+    [searchCondition],
+  );
+
+  const handleSortChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const v = e.target.value as keyof typeof SORT_OPTIONS;
+      setSearchCondition({
+        ...searchCondition,
+        sort: {
+          type: SORT_OPTIONS[v].type,
+          order: SORT_OPTIONS[v].order,
+        },
+      });
+    },
+    [searchCondition.sort],
+  );
+
+  const handleDisplayModeChange = useCallback(
+    () => setDisplayMode(displayMode === 'list' ? 'calendar' : 'list'),
+    [displayMode],
+  );
+
+  useEffect(() => {
+    setListData(filteredAndSortedList);
+  }, [searchCondition]);
 
   return (
     <StyledSearchContainer>
@@ -230,24 +305,14 @@ function SearchCondition() {
           <StyledSearchItemLabel>大会名</StyledSearchItemLabel>
           <InputText
             placeholder="タイカイ名"
-            onChange={(e) =>
-              setSearchCondition({
-                ...searchCondition,
-                tournamentTitle: e.target.value,
-              })
-            }
+            onChange={handleInputChange('tournamentTitle')}
           />
         </StyledSearchItem>
         <StyledSearchItem>
           <StyledSearchItemLabel>主催</StyledSearchItemLabel>
           <InputText
             placeholder="主催者名"
-            onChange={(e) =>
-              setSearchCondition({
-                ...searchCondition,
-                organizer: e.target.value,
-              })
-            }
+            onChange={handleInputChange('organizer')}
           />
         </StyledSearchItem>
       </StyledSearchContainerRow>
@@ -263,12 +328,7 @@ function SearchCondition() {
               <input
                 id="hide-closed"
                 type="checkbox"
-                onChange={(e) =>
-                  setSearchCondition({
-                    ...searchCondition,
-                    hideClosed: e.target.checked,
-                  })
-                }
+                onChange={handleCheckboxChange('hideClosed')}
                 defaultChecked={searchCondition.hideClosed}
               />
               <div>おわったタイカイをかくす</div>
@@ -277,22 +337,12 @@ function SearchCondition() {
           <StyledSearchItemRow>
             <InputText
               type="date"
-              onChange={(e) =>
-                setSearchCondition({
-                  ...searchCondition,
-                  eventDateFrom: e.target.value,
-                })
-              }
+              onChange={handleInputChange('eventDateFrom')}
             />
             -
             <InputText
               type="date"
-              onChange={(e) =>
-                setSearchCondition({
-                  ...searchCondition,
-                  eventDateTo: e.target.value,
-                })
-              }
+              onChange={handleInputChange('eventDateTo')}
             />
           </StyledSearchItemRow>
         </StyledSearchItem>
@@ -304,34 +354,19 @@ function SearchCondition() {
             <CheckButton
               id="recruitment-pre"
               label="これから"
-              onChange={(e) =>
-                setSearchCondition({
-                  ...searchCondition,
-                  recruitStatusPre: e.target.checked,
-                })
-              }
+              onChange={handleCheckboxChange('recruitStatusPre')}
               defaultChecked={searchCondition.recruitStatusPre}
             />
             <CheckButton
               id="recruitment-now"
               label="うけつけ"
-              onChange={(e) =>
-                setSearchCondition({
-                  ...searchCondition,
-                  recruitStatusNow: e.target.checked,
-                })
-              }
+              onChange={handleCheckboxChange('recruitStatusNow')}
               defaultChecked={searchCondition.recruitStatusNow}
             />
             <CheckButton
               id="recruitment-end"
               label="しめきり"
-              onChange={(e) =>
-                setSearchCondition({
-                  ...searchCondition,
-                  recruitStatusEnd: e.target.checked,
-                })
-              }
+              onChange={handleCheckboxChange('recruitStatusEnd')}
               defaultChecked={searchCondition.recruitStatusEnd}
             />
           </StyledSearchItemRow>
@@ -342,23 +377,13 @@ function SearchCondition() {
             <CheckButton
               id="tournament-type-nintendo"
               label="タイカイサポート"
-              onChange={(e) =>
-                setSearchCondition({
-                  ...searchCondition,
-                  tournamentTypeNintendo: e.target.checked,
-                })
-              }
+              onChange={handleCheckboxChange('tournamentTypeNintendo')}
               defaultChecked={searchCondition.tournamentTypeNintendo}
             />
             <CheckButton
               id="tournament-type-other"
               label="そのほか"
-              onChange={(e) =>
-                setSearchCondition({
-                  ...searchCondition,
-                  tournamentTypeOther: e.target.checked,
-                })
-              }
+              onChange={handleCheckboxChange('tournamentTypeOther')}
               defaultChecked={searchCondition.tournamentTypeOther}
             />
           </StyledSearchItemRow>
@@ -366,38 +391,51 @@ function SearchCondition() {
       </StyledSearchContainerRow>
       <StyledToolsContainer>
         <SelectBox
-          value={getSortType(searchCondition.sort)}
+          value={getSortType()}
           options={[
-            { label: '登録:新しい順', value: 'createDateTimeDesc' },
-            { label: '登録:古い順', value: 'createDateTimeAsc' },
-            { label: '日程:遅い順', value: 'eventStartDateTimeDesc' },
-            { label: '日程:早い順', value: 'eventStartDateTimeAsc' },
-            { label: 'タイカイ名:昇順', value: 'tournamentTitleAsc' },
-            { label: 'タイカイ名:降順', value: 'tournamentTitleDesc' },
-            { label: '主催:昇順', value: 'organizerAsc' },
-            { label: '主催:降順', value: 'organizerDesc' },
-            { label: '募集日:遅い順', value: 'recruitmentDateFromDesc' },
-            { label: '募集日:早い順', value: 'recruitmentDateFromAsc' },
+            {
+              label: SORT_OPTIONS.createDateTimeDesc.label,
+              value: 'createDateTimeDesc',
+            },
+            {
+              label: SORT_OPTIONS.createDateTimeAsc.label,
+              value: 'createDateTimeAsc',
+            },
+            {
+              label: SORT_OPTIONS.eventStartDateTimeDesc.label,
+              value: 'eventStartDateTimeDesc',
+            },
+            {
+              label: SORT_OPTIONS.eventStartDateTimeAsc.label,
+              value: 'eventStartDateTimeAsc',
+            },
+            {
+              label: SORT_OPTIONS.tournamentTitleAsc.label,
+              value: 'tournamentTitleAsc',
+            },
+            {
+              label: SORT_OPTIONS.tournamentTitleDesc.label,
+              value: 'tournamentTitleDesc',
+            },
+            { label: SORT_OPTIONS.organizerAsc.label, value: 'organizerAsc' },
+            { label: SORT_OPTIONS.organizerDesc.label, value: 'organizerDesc' },
+            {
+              label: SORT_OPTIONS.recruitmentDateFromDesc.label,
+              value: 'recruitmentDateFromDesc',
+            },
+            {
+              label: SORT_OPTIONS.recruitmentDateFromAsc.label,
+              value: 'recruitmentDateFromAsc',
+            },
           ]}
-          onChange={(e) => {
-            const v = e.target.value as keyof typeof SORT_OPTIONS;
-            setSearchCondition({
-              ...searchCondition,
-              sort: {
-                type: SORT_OPTIONS[v].type,
-                order: SORT_OPTIONS[v].order,
-              },
-            });
-          }}
+          onChange={handleSortChange}
         />
         <Button
           color="blue"
           label={
             displayMode === 'list' ? 'カレンダーひょうじ' : 'リストひょうじ'
           }
-          onClick={() =>
-            setDisplayMode(displayMode === 'list' ? 'calendar' : 'list')
-          }
+          onClick={handleDisplayModeChange}
         />
       </StyledToolsContainer>
     </StyledSearchContainer>
