@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/indent */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { useAtom } from 'jotai';
 import searchConditionState from '@/ui/store/jotai/atom/searchConditionAtom';
-import { SheetData } from '@/infrastructure/api/GoogleSheetService';
+import {
+  SheetData,
+  SheetRawData,
+} from '@/infrastructure/api/GoogleSheetService';
 import OrganizerAccount from '@/ui/component/OrganizerAccount';
 import selectedTournamentState from '@/ui/store/jotai/atom/selectedTournamentAtom';
 import toStrDateTime from '@/ui/util/toStrDateTime';
-import isCloseTournament from '@/ui/util/isCloseTournament';
+
 import getRecruitmentStatus from '@/ui/util/getRecruitmentStatus';
+import isCloseTournament from '@/ui/util/isCloseTournament';
 
 const StyledTable = styled.table`
   font-size: 12px;
@@ -111,78 +115,57 @@ function TournamentList(props: Props) {
   const { sort } = searchCondition;
 
   const [, setDetail] = useAtom(selectedTournamentState);
+
+  const getSortType = useCallback(
+    (field: keyof SheetRawData) => (sort.type === field ? sort.order : 'none'),
+    [sort],
+  );
+
+  const handleSortLabelClick = useCallback(
+    (type: keyof SheetRawData) => () => {
+      setSearchCondition({
+        ...searchCondition,
+        sort: {
+          type,
+          order: sort.order === 'asc' ? 'desc' : 'asc',
+        },
+      });
+    },
+    [searchCondition, setSearchCondition],
+  );
+
   return (
     <StyledTable>
       <tbody>
         <tr>
           <th className="ika-font">
             <StyledSortLabelContainer
-              onClick={() =>
-                setSearchCondition({
-                  ...searchCondition,
-                  sort: {
-                    type: 'tournamentTitle',
-                    order: sort.order === 'asc' ? 'desc' : 'asc',
-                  },
-                })
-              }
+              onClick={handleSortLabelClick('tournamentTitle')}
             >
               タイカイ
-              <StyledSortIcon
-                type={sort.type === 'tournamentTitle' ? sort.order : 'none'}
-              />
+              <StyledSortIcon type={getSortType('tournamentTitle')} />
             </StyledSortLabelContainer>
             <StyledSortLabelContainer
-              onClick={() =>
-                setSearchCondition({
-                  ...searchCondition,
-                  sort: {
-                    type: 'organizer',
-                    order: sort.order === 'asc' ? 'desc' : 'asc',
-                  },
-                })
-              }
+              onClick={handleSortLabelClick('organizer')}
             >
               しゅさい
-              <StyledSortIcon
-                type={sort.type === 'organizer' ? sort.order : 'none'}
-              />
+              <StyledSortIcon type={getSortType('organizer')} />
             </StyledSortLabelContainer>
           </th>
           <th className="ika-font" style={{ width: '90px' }}>
             <StyledSortLabelContainer
-              onClick={() =>
-                setSearchCondition({
-                  ...searchCondition,
-                  sort: {
-                    type: 'eventStartDateTime',
-                    order: sort.order === 'asc' ? 'desc' : 'asc',
-                  },
-                })
-              }
+              onClick={handleSortLabelClick('eventStartDateTime')}
             >
               にってい
-              <StyledSortIcon
-                type={sort.type === 'eventStartDateTime' ? sort.order : 'none'}
-              />
+              <StyledSortIcon type={getSortType('eventStartDateTime')} />
             </StyledSortLabelContainer>
           </th>
           <th className="ika-font" style={{ width: '64px' }}>
             <StyledSortLabelContainer
-              onClick={() =>
-                setSearchCondition({
-                  ...searchCondition,
-                  sort: {
-                    type: 'recruitmentDateFrom',
-                    order: sort.order === 'asc' ? 'desc' : 'asc',
-                  },
-                })
-              }
+              onClick={handleSortLabelClick('recruitmentDateFrom')}
             >
               ぼしゅう
-              <StyledSortIcon
-                type={sort.type === 'recruitmentDateFrom' ? sort.order : 'none'}
-              />
+              <StyledSortIcon type={getSortType('recruitmentDateFrom')} />
             </StyledSortLabelContainer>
           </th>
         </tr>
@@ -210,34 +193,21 @@ function TournamentList(props: Props) {
               </StyledCenter>
             </td>
             <td>
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '8px',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <span className="ika-font">
-                    {getRecruitmentStatus(
-                      v.recruitmentDateFrom,
-                      v.recruitmentDateTo,
-                    )}
-                  </span>
-                </div>
-              </div>
+              <span className="ika-font">
+                {getRecruitmentStatus(
+                  v.recruitmentDateFrom,
+                  v.recruitmentDateTo,
+                )}
+              </span>
             </td>
           </StyledTr>
         ))}
-        {list.length === 0 ? (
+        {list.length === 0 && (
           <tr>
             <td className="ika-font" colSpan={3}>
               みつかりませんでした
             </td>
           </tr>
-        ) : (
-          ''
         )}
       </tbody>
     </StyledTable>

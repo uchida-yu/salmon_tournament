@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import displayModeState from '@/ui/store/jotai/atom/displayModeAtom';
 import TournamentList from '@/ui/component/TournamentList';
@@ -11,21 +11,27 @@ function SearchResult() {
   const [listData] = useAtom(listDataState);
   const [, setDetail] = useAtom(selectedTournamentState);
 
-  const getVisibleList = () => listData.filter((v) => v.visible);
+  const visibleList = useMemo(
+    () => listData.filter((v) => v.visible),
+    [listData],
+  );
+
+  const calendarList = useMemo(
+    () =>
+      visibleList.map((v) => ({
+        title: `${v.tournamentTitle}(${v.organizer})`,
+        date: v.eventStartDateTime.toISOString(),
+        end: v.eventEndDateTime.toISOString(),
+        eventInfo: v,
+      })),
+    [visibleList],
+  );
 
   return (
     <div>
-      {displayMode === 'list' && <TournamentList list={getVisibleList()} />}
+      {displayMode === 'list' && <TournamentList list={visibleList} />}
       {displayMode === 'calendar' && (
-        <Calendar
-          events={getVisibleList().map((v) => ({
-            title: `${v.tournamentTitle}(${v.organizer})`,
-            date: v.eventStartDateTime.toISOString(),
-            end: v.eventEndDateTime.toISOString(),
-            eventInfo: v,
-          }))}
-          eventClick={setDetail}
-        />
+        <Calendar events={calendarList} eventClick={setDetail} />
       )}
     </div>
   );
