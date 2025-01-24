@@ -197,9 +197,9 @@ function SearchCondition() {
       }
 
       if (searchCondition.eventDateTo !== '') {
-        const end = new Date(v.eventEndDateTime);
+        const end = new Date(searchCondition.eventDateTo);
         end.setHours(23, 59, 59);
-        if (new Date(searchCondition.eventDateTo).getTime() <= end.getTime()) {
+        if (end.getTime() <= v.eventEndDateTime.getTime()) {
           return getFilteredItem(false);
         }
       }
