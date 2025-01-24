@@ -286,7 +286,7 @@ function SearchCondition() {
         },
       });
     },
-    [searchCondition.sort],
+    [searchCondition],
   );
 
   const handleDisplayModeChange = useCallback(
