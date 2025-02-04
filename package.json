@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "run-s msw && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "run-p lint:*",
     "lint:eslint": "eslint --ext .ts,.tsx src",
-    "lint:eslint:fix": "eslint --ext .ts,.tsx src --fix"
+    "lint:eslint:fix": "eslint --ext .ts,.tsx src --fix",
+    "msw": "msw init public --no-save"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.1",
@@ -23,6 +24,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "googleapis": "^144.0.0",
     "jotai": "^2.11.0",
+    "msw": "^1.3.2",
     "next": "^15.1.4",
     "node-fetch": "^3.3.2",
     "qrcode.react": "^4.1.0",
@@ -52,5 +54,8 @@
     "stylelint-order": "^6.0.3",
     "stylelint-prettier": "^4.0.2",
     "typescript": "^5.7.2"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
