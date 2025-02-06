@@ -83,7 +83,6 @@ const StyledSortIcon = styled.div<{ type: 'asc' | 'desc' | 'none' }>`
   }
   display: ${({ type }) => (type === 'none' ? 'none' : 'block')};
   font-size: 12px;
-  height: 15px;
 `;
 
 const StyledSortLabelContainer = styled.div`

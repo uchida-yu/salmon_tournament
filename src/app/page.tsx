@@ -19,6 +19,7 @@ const StyledPage = styled.div`
   min-height: 100vh;
   padding: 80px;
   margin: auto;
+  max-width: 800px;
 
   @media (max-width: 600px) {
     padding: 24px 16px 16px;

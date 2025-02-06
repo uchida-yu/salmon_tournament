@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useCallback } from 'react';
 import { useAtom } from 'jotai';
 import styled from 'styled-components';
 import CheckButton from '@/ui/component/atoms/CheckButton';
+import CheckBox from '@/ui/component/atoms/CheckBox';
 import InputText from '@/ui/component/atoms/InputText';
 import Button from '@/ui/component/atoms/Button';
 import SelectBox from '@/ui/component/atoms/SelectBox';
@@ -46,14 +47,6 @@ const StyledSearchContainerRow = styled.div`
   align-items: center;
 `;
 
-const StyledSearchRecruitLabel = styled.label`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  line-height: 1;
-  color: #fff;
-  font-size: 14px;
-`;
 const StyledSearchItemLabel = styled.label`
   color: #fff;
   font-size: 12px;
@@ -294,6 +287,18 @@ function SearchCondition() {
     [displayMode],
   );
 
+  const isExistVisible =
+    filteredAndSortedList.filter((v) => v.visible).length !== 0;
+
+  useEffect(() => {
+    if (!isExistVisible) {
+      setSearchCondition({
+        ...searchCondition,
+        hideClosed: false,
+      });
+    }
+  }, []);
+
   useEffect(() => {
     setListData(filteredAndSortedList);
   }, [searchCondition]);
@@ -321,18 +326,12 @@ function SearchCondition() {
         <StyledSearchItem>
           <StyledSearchItemLabel style={{ display: 'flex', gap: '16px' }}>
             日程
-            <StyledSearchRecruitLabel
-              className="ika-font"
-              htmlFor="hide-closed"
-            >
-              <input
-                id="hide-closed"
-                type="checkbox"
-                onChange={handleCheckboxChange('hideClosed')}
-                defaultChecked={searchCondition.hideClosed}
-              />
-              <div>おわったタイカイをかくす</div>
-            </StyledSearchRecruitLabel>
+            <CheckBox
+              id="hide-closed"
+              label="おわったタイカイをかくす"
+              onChange={handleCheckboxChange('hideClosed')}
+              defaultChecked={isExistVisible}
+            />
           </StyledSearchItemLabel>
           <StyledSearchItemRow>
             <InputText
